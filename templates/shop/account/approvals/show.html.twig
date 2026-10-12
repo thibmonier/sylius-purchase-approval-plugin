@@ -1,6 +1,6 @@
 {% extends '@SyliusShop/account/common/index.html.twig' %}
 
 {% set prefixes = ['tmonier_purchase_approval_shop.account.approval'] %}
-{% set attrs = { approval, order, company, member, can_decide, page: 'approval' } %}
+{% set attrs = { approval, order, company, member, can_decide, active_tab: 'approvals', page: 'approval' } %}
 
 {% block title %}{{ 'tmonier_purchase_approval.ui.approval_of'|trans({'%number%': order.number}) }} | {{ parent() }}{% endblock %}

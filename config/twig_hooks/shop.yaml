@@ -11,7 +11,7 @@ sylius_twig_hooks:
                 template: '@TmonierSyliusPurchaseApprovalPlugin/shop/account/common/title.html.twig'
                 priority: 100
             navigation:
-                template: '@TmonierSyliusPurchaseApprovalPlugin/shop/account/common/tabs.html.twig'
+                template: '@TmonierSyliusPurchaseApprovalPlugin/shop/account/common/navigation.html.twig'
                 priority: 0
 
         'tmonier_purchase_approval_shop.account.approvals.index.content.main':
@@ -30,7 +30,7 @@ sylius_twig_hooks:
                 template: '@TmonierSyliusPurchaseApprovalPlugin/shop/account/common/title.html.twig'
                 priority: 100
             navigation:
-                template: '@TmonierSyliusPurchaseApprovalPlugin/shop/account/common/tabs.html.twig'
+                template: '@TmonierSyliusPurchaseApprovalPlugin/shop/account/common/navigation.html.twig'
                 priority: 0
 
         'tmonier_purchase_approval_shop.account.approval.index.content.main':
@@ -49,7 +49,7 @@ sylius_twig_hooks:
                 template: '@TmonierSyliusPurchaseApprovalPlugin/shop/account/common/title.html.twig'
                 priority: 100
             navigation:
-                template: '@TmonierSyliusPurchaseApprovalPlugin/shop/account/common/tabs.html.twig'
+                template: '@TmonierSyliusPurchaseApprovalPlugin/shop/account/common/navigation.html.twig'
                 priority: 0
 
         'tmonier_purchase_approval_shop.account.limits.index.content.main':
@@ -57,25 +57,14 @@ sylius_twig_hooks:
                 template: '@TmonierSyliusPurchaseApprovalPlugin/shop/account/limits/list.html.twig'
                 priority: -10
 
-        # Company-accounts pages: links to the approvals (approvers) and the limits (company admins).
-        'tmonier_company_accounts_shop.account.company.show.index.content.main.header':
-            tmonier_approval_navigation:
-                template: '@TmonierSyliusPurchaseApprovalPlugin/shop/account/common/navigation.html.twig'
-                priority: -10
-
-        'tmonier_company_accounts_shop.account.company.members.index.content.main.header':
-            tmonier_approval_navigation:
-                template: '@TmonierSyliusPurchaseApprovalPlugin/shop/account/common/navigation.html.twig'
-                priority: -10
-
-        'tmonier_company_accounts_shop.account.company.orders.index.content.main.header':
-            tmonier_approval_navigation:
-                template: '@TmonierSyliusPurchaseApprovalPlugin/shop/account/common/navigation.html.twig'
-                priority: -10
-
-        'tmonier_company_accounts_shop.account.company.order.index.content.main.header':
-            tmonier_approval_navigation:
-                template: '@TmonierSyliusPurchaseApprovalPlugin/shop/account/common/navigation.html.twig'
+        # Tabs of "My company" (company-accounts 1.1 extension point): Approvals for approvers,
+        # Purchase limits for company admins, after the company tabs.
+        'tmonier_company_accounts.shop.account.company.tabs':
+            tmonier_approvals:
+                template: '@TmonierSyliusPurchaseApprovalPlugin/shop/account/company_tabs/approvals.html.twig'
+                priority: 0
+            tmonier_purchase_limits:
+                template: '@TmonierSyliusPurchaseApprovalPlugin/shop/account/company_tabs/limits.html.twig'
                 priority: -10
 
         # Customer order page: approval of the order (buyer).

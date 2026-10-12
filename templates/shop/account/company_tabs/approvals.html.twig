@@ -1,0 +1,12 @@
+{# "My company" tab (company-accounts hook): approvals of the company, for approvers. #}
+{% set context = hookable_metadata.context %}
+{% if is_granted('APPROVAL_LIST', context.company) %}
+    {% set pending = tmonier_pending_approvals_count(context.company) %}
+    {% set active = context.active_tab == 'approvals' %}
+    <li class="nav-item">
+        <a class="nav-link {{ active ? 'active' }}" href="{{ path('tmonier_purchase_approval_shop_approvals') }}" {% if active %}aria-current="page"{% endif %} {{ sylius_test_html_attribute('tmonier-approvals-link') }}>
+            {{ 'tmonier_purchase_approval.ui.approvals'|trans }}
+            {% if pending > 0 %}<span class="badge text-bg-warning ms-1">{{ pending }}<span class="visually-hidden"> {{ 'tmonier_purchase_approval.ui.pending'|trans }}</span></span>{% endif %}
+        </a>
+    </li>
+{% endif %}

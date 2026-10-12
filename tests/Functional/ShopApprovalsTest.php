@@ -174,7 +174,7 @@ final class ShopApprovalsTest extends WebTestCase
 
         foreach (['/account/company/approvals', '/account/company/approvals/' . $s->pendingOrder->getNumber()] as $path) {
             $crawler = $this->client->request('GET', $this->shopUrl($path));
-            $tabs = $crawler->filter('[data-test-tmonier-approval-tabs] .nav-link');
+            $tabs = $crawler->filter('[data-test-tmonier-company-navigation] .nav-link');
             self::assertSame([$this->shopUrl('/account/company'), $this->shopUrl('/account/company/members'), $this->shopUrl('/account/company/orders'), $this->shopUrl('/account/company/approvals')], $tabs->each(static fn ($tab): string => (string) $tab->attr('href')), $path);
             self::assertSame('page', $crawler->filter('[data-test-tmonier-approvals-link]')->attr('aria-current'), $path);
         }
@@ -182,7 +182,7 @@ final class ShopApprovalsTest extends WebTestCase
         $this->logout();
         $this->loginShopUser(ApprovalScenario::customerOf($s->adminA));
         $crawler = $this->client->request('GET', $this->shopUrl('/account/company/limits'));
-        self::assertCount(1, $crawler->filter(sprintf('[data-test-tmonier-approval-tabs] a[href="%s"]', $this->shopUrl('/account/company/members'))));
+        self::assertCount(1, $crawler->filter(sprintf('[data-test-tmonier-company-navigation] a[href="%s"]', $this->shopUrl('/account/company/members'))));
         self::assertSame('page', $crawler->filter('[data-test-tmonier-limits-link]')->attr('aria-current'));
     }
 

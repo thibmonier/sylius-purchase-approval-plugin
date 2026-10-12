@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.1.0
+
+- Requires tmonier/sylius-company-accounts-plugin ^1.1: the Approvals and Purchase limits tabs
+  are registered in its "My company" tabs hook, so they appear in the company tab bar on every
+  company page; the approval pages show that same tab bar (no duplicated tabs, no extra links
+  under the company tabs).
+
 ## 1.0.1 (2026-10-12)
 
 - Shop: the approval pages show the company tabs (Overview, Members, Company orders) followed by

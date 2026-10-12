@@ -51,7 +51,7 @@ migration).
 | PHP | 8.2+ (Sylius 2.2), 8.3+ (Sylius 2.3) |
 | Sylius | 2.2.9+, 2.3 |
 | Symfony | 6.4, 7.4 (Sylius 2.2); 6.4, 7.4, 8.0 (Sylius 2.3, Symfony 8 needs PHP 8.4) |
-| Required | tmonier/sylius-company-accounts-plugin 1.0, tmonier/sylius-order-hold-plugin 1.0 |
+| Required | tmonier/sylius-company-accounts-plugin 1.1, tmonier/sylius-order-hold-plugin 1.0 |
 | Optional | sylius/invoicing-plugin 2.x, tmonier/sylius-webhook-outbox-plugin 1.0, tmonier/sylius-admin-order-creation-plugin 1.0 |
 
 The `sylius_order_checkout`, `sylius_order`, `sylius_payment` and `sylius_shipment` graphs must
@@ -177,8 +177,8 @@ the permission is refused.
 | Hook | Content |
 |---|---|
 | `tmonier_purchase_approval_shop.account.{approvals,approval,limits}.index.content.main` → `section` | Body of the pages |
-| `tmonier_company_accounts_shop.account.company.*.index.content.main.header` → `tmonier_approval_navigation` | Links to the approvals and limits on the company pages |
-| `tmonier_purchase_approval_shop.account.{approvals,approval,limits}.index.content.main.header` → `navigation` | Tab bar of the approval pages: the company-accounts tabs (rendered again: that plugin has no hook to add tabs) and the approval tabs |
+| `tmonier_company_accounts.shop.account.company.tabs` → `tmonier_approvals`, `tmonier_purchase_limits` | Approvals and Purchase limits tabs of "My company" (company-accounts 1.1 tabs hook) |
+| `tmonier_purchase_approval_shop.account.{approvals,approval,limits}.index.content.main.header` → `navigation` | The company-accounts tab bar on the approval pages (`active_tab`: `approvals`, `limits`) |
 | `sylius_shop.account.order.show.content.main.header` → `tmonier_approval` | Approval notice on the customer order page |
 | `sylius_admin.order.show.content.sections#right` → `tmonier_approval` | Approval card of the admin order page |
 

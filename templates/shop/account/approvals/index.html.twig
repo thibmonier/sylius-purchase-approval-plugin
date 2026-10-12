@@ -1,6 +1,6 @@
 {% extends '@SyliusShop/account/common/index.html.twig' %}
 
 {% set prefixes = ['tmonier_purchase_approval_shop.account.approvals'] %}
-{% set attrs = { company, member, approvals, pending_only, page: 'approvals', current_page: page, pages, total } %}
+{% set attrs = { company, member, approvals, pending_only, active_tab: 'approvals', page: 'approvals', current_page: page, pages, total } %}
 
 {% block title %}{{ 'tmonier_purchase_approval.ui.approvals'|trans }} | {{ parent() }}{% endblock %}

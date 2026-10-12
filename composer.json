@@ -16,7 +16,7 @@
     "require": {
         "php": "^8.2",
         "sylius/sylius": "^2.2.9 || ^2.3",
-        "tmonier/sylius-company-accounts-plugin": "^1.0",
+        "tmonier/sylius-company-accounts-plugin": "^1.1",
         "tmonier/sylius-order-hold-plugin": "^1.0"
     },
     "require-dev": {
@@ -56,7 +56,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-main": "1.0-dev"
+            "dev-main": "1.1-dev"
         },
         "symfony": {
             "require": "^7.4"
