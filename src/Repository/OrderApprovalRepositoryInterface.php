@@ -36,6 +36,14 @@ interface OrderApprovalRepositoryInterface extends RepositoryInterface
     public function countPendingByCompany(CompanyInterface $company): int;
 
     /**
+     * Ids of the approvals still pending whose order is no longer new (cancelled by a path that
+     * bypassed the order workflow).
+     *
+     * @return list<int>
+     */
+    public function findPendingIdsOfClosedOrders(int $limit): array;
+
+    /**
      * Ids of the approvals still pending that were requested before the date.
      *
      * @return list<int>

@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Tests\Tmonier\SyliusPurchaseApprovalPlugin\Integration;
 
 use Sylius\Bundle\ApiBundle\Command\Checkout\SendOrderConfirmation;
+use Sylius\Bundle\CoreBundle\Command\ResendOrderConfirmationEmail;
+use Sylius\Bundle\CoreBundle\Mailer\OrderEmailManagerInterface;
 use Sylius\Component\Core\Model\OrderInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -87,6 +89,19 @@ final class ApprovalEmailsTest extends KernelTestCase
 
         $this->decisionMaker()->approve($this->approvalOf($order), Decider::member($approver));
         self::assertSame([$this->confirmationSubject($order)], $this->subjectsTo($order));
+    }
+
+    public function testAConfirmationSentOnPurposeAfterTheApprovalGoesOut(): void
+    {
+        $order = $this->catalog()->orderAgainstLimit($this->catalog()->member($this->catalog()->company()), -1);
+        $this->decisionMaker()->approve($this->approvalOf($order), Decider::administrator(null));
+
+        // Code calling the order e-mail manager, and the admin "Resend confirmation email".
+        $this->service('sylius.mailer.order_email_manager', OrderEmailManagerInterface::class)->sendConfirmationEmail($order);
+        $this->service('sylius.command_bus', MessageBusInterface::class)->dispatch(new ResendOrderConfirmationEmail((string) $order->getTokenValue()));
+
+        self::assertCount(3, $this->messagesTo($order));
+        self::assertSame([$this->confirmationSubject($order), $this->confirmationSubject($order)], array_slice($this->subjectsTo($order), 0, 2));
     }
 
     public function testAnApproverPlacingAnOrderIsNotAskedToApproveIt(): void

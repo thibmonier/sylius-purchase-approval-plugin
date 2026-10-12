@@ -122,6 +122,25 @@ class OrderApprovalRepository extends EntityRepository implements OrderApprovalR
         ;
     }
 
+    public function findPendingIdsOfClosedOrders(int $limit): array
+    {
+        /** @var list<int|string> $ids */
+        $ids = $this->createQueryBuilder('o')
+            ->select('o.id')
+            ->innerJoin('o.order', 'ord')
+            ->andWhere('o.state = :pending')
+            ->andWhere('ord.state <> :new')
+            ->setParameter('pending', OrderApprovalInterface::STATE_PENDING)
+            ->setParameter('new', \Sylius\Component\Core\Model\OrderInterface::STATE_NEW)
+            ->orderBy('o.id', 'ASC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getSingleColumnResult()
+        ;
+
+        return array_map(static fn (int|string $id): int => (int) $id, $ids);
+    }
+
     public function findPendingIdsRequestedBefore(\DateTimeImmutable $date, int $limit): array
     {
         /** @var list<int|string> $ids */

@@ -18,6 +18,8 @@ sylius_fixtures:
                         orders_per_member: 1
                 tmonier_purchase_approval:
                     priority: -110
+                    options:
+                        pending_orders: 4
 
 # Tests only: the API order confirmation is asynchronous, as on a production setup with a
 # worker (tests consume the in-memory transport themselves).

@@ -34,6 +34,22 @@ final class ExpireApprovalsCommandTest extends KernelTestCase
         self::assertSame([OrderApprovalInterface::STATE_PENDING, OrderInterface::STATE_NEW], $this->states($recent));
     }
 
+    public function testPendingApprovalsOfOrdersCancelledOutsideTheWorkflowAreClosed(): void
+    {
+        $company = $this->catalog()->company();
+        $cancelled = $this->catalog()->orderAgainstLimit($this->catalog()->member($company), -1);
+        $open = $this->catalog()->orderAgainstLimit($this->catalog()->member($company), -1);
+        $this->connection()->executeStatement("UPDATE sylius_order SET state = 'cancelled' WHERE id = ?", [$cancelled->getId()]);
+
+        self::assertStringContainsString((string) $cancelled->getNumber(), $this->expire(['--dry-run' => true]));
+        self::assertSame(OrderApprovalInterface::STATE_PENDING, $this->states($cancelled)[0], 'Dry run.');
+        $this->expire();
+
+        self::assertSame([OrderApprovalInterface::STATE_CANCELLED, OrderInterface::STATE_CANCELLED], $this->states($cancelled));
+        self::assertSame([OrderApprovalInterface::STATE_PENDING, OrderInterface::STATE_NEW], $this->states($open));
+        self::assertSame(OrderApprovalInterface::DECIDED_BY_SYSTEM, $this->connection()->fetchOne('SELECT decider_type FROM tmonier_purchase_approval_order_approval WHERE order_id = ?', [$cancelled->getId()]));
+    }
+
     private function requestedDaysAgo(OrderInterface $order, int $days): void
     {
         $this->connection()->executeStatement(

@@ -18,8 +18,9 @@ use Tmonier\SyliusPurchaseApprovalPlugin\Entity\OrderApprovalInterface;
 use Tmonier\SyliusPurchaseApprovalPlugin\Repository\OrderApprovalRepositoryInterface;
 
 /**
- * Expires the approvals still pending after `expire_after_days` and cancels their orders. Run
- * it daily (cron). Each approval is decided and flushed on its own; one that fails is logged and
+ * Expires the approvals still pending after `expire_after_days` and cancels their orders, and
+ * closes (`cancelled`) the pending approvals whose order was cancelled without the order
+ * workflow (raw SQL, imports). Run it daily (cron). Each approval is decided and flushed on its own; one that fails is logged and
  * skipped, the others are still expired.
  */
 #[AsCommand(name: 'tmonier:approval:expire', description: 'Expire the purchase approvals pending for too long and cancel their orders')]
@@ -48,6 +49,21 @@ final class ExpireApprovalsCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $before = new \DateTimeImmutable(sprintf('-%d days', $this->expireAfterDays));
         $dryRun = (bool) $input->getOption('dry-run');
+
+        $closed = 0;
+        foreach ($this->approvalRepository->findPendingIdsOfClosedOrders(1000) as $id) {
+            $approval = $this->approvalRepository->find($id);
+            if (!$approval instanceof OrderApprovalInterface) {
+                continue;
+            }
+            if ($dryRun) {
+                $io->writeln(sprintf('Order %s is no longer open: its approval would be closed.', (string) $approval->getOrder()?->getNumber()));
+                ++$closed;
+            } elseif ($this->decisionMaker->closeForClosedOrder($approval)) {
+                ++$closed;
+            }
+        }
+        $this->entityManager->clear();
 
         $expired = 0;
         $failed = 0;
@@ -84,7 +100,7 @@ final class ExpireApprovalsCommand extends Command
             $this->entityManager->clear();
         } while ([] !== $ids);
 
-        $io->success(sprintf('%d approval(s) %s, %d failed.', $expired, $dryRun ? 'would expire' : 'expired', $failed));
+        $io->success(sprintf('%d approval(s) %s, %d closed (order no longer open), %d failed.', $expired, $dryRun ? 'would expire' : 'expired', $closed, $failed));
 
         return 0 === $failed ? Command::SUCCESS : Command::FAILURE;
     }

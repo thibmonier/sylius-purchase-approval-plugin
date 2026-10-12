@@ -20,7 +20,7 @@ alternative, native to Sylius 2.2 / 2.3, for merchants without Sylius Plus.
 | Let the company set its rules | **Purchase limits** page for company admins (one form per colleague; nobody changes their own limits). Store administrators set them on the member form of the back office or through the API. |
 | No payment, shipment or invoice before the approval | The pending approval is created **in the flush that completes the checkout**. Through the order-hold kernel, the pay page, the Payum capture routes and the shop API payment requests are blocked until it is approved (flash / 422 message; the Pay buttons of the order pages are replaced by the approval notice), and `sylius:cancel-unpaid-orders` leaves pending orders alone; **once approved, the unpaid-orders delay starts from the approval date**. A guard stops `sylius_shipment.ship`. With [sylius/invoicing-plugin](https://github.com/Sylius/InvoicingPlugin), the invoice is generated at approval, never for a rejected order (no credit note needed). |
 | Tell people what happens | **Acknowledgement of receipt** instead of the order confirmation while the order waits, on both confirmation paths (shop checkout and API, also asynchronous); the regular **confirmation once approved**, sent once; the approvers of the company are notified of a new request; the buyer is told of a rejection or an expiry, with the comment. |
-| Do not keep orders waiting forever | `tmonier:approval:expire` expires approvals pending for more than 14 days (configurable) and cancels their orders. A rejected or expired order is cancelled with the core `sylius_order.cancel` transition (stock and promotion usage released). An order cancelled by the store (or the API, or another plugin) while it waits closes its approval (`cancelled`): it can no longer be approved. |
+| Do not keep orders waiting forever | `tmonier:approval:expire` expires approvals pending for more than 14 days (configurable) and cancels their orders; it also closes the pending approvals of orders cancelled without the order workflow (raw SQL, imports). A rejected or expired order is cancelled with the core `sylius_order.cancel` transition (stock and promotion usage released). An order cancelled by the store (or the API, or another plugin) while it waits closes its approval (`cancelled`): it can no longer be approved. |
 | See and act in the back office | **Approval card on the order page** (state, company, limit, decision, comment) with approve / reject for the store; **approval filter in the orders grid** (pending, approved, rejected, expired, none). |
 | Headless | Shop API `/api/v2/shop/company/approvals` (list, item, `approve`, `reject`); admin API `/api/v2/admin/order-approvals` and `/api/v2/admin/company-member-limits`. |
 | Feed other tools | Symfony events after each step (`requested`, `approved`, `rejected`, `expired`); with [tmonier/sylius-webhook-outbox-plugin](https://github.com/thibmonier/sylius-webhook-outbox-plugin), webhooks `order.approval_requested`, `order.approved` (the business "order confirmed" event), `order.approval_rejected`, `order.approval_expired`, written in the transaction of the decision. |
@@ -125,8 +125,10 @@ Sylius resource.
 
 Override them like any Sylius e-mail (`sylius_mailer.emails`).
 
-An API confirmation consumed by a late worker after the approval is dropped: the buyer gets the
-confirmation once (at the approval) and no acknowledgement any more.
+An API confirmation (`SendOrderConfirmation`) consumed by a late worker after the decision is
+dropped: the buyer gets the confirmation once (at the approval) and no acknowledgement any
+more. Confirmations sent on purpose (code, the admin "Resend confirmation email") always go
+out.
 
 ### Events
 

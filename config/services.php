@@ -24,7 +24,9 @@ use Tmonier\SyliusPurchaseApprovalPlugin\EventListener\ShipmentApprovalGuardList
 use Tmonier\SyliusPurchaseApprovalPlugin\Fixture\PurchaseApprovalFixture;
 use Tmonier\SyliusPurchaseApprovalPlugin\Form\Extension\CompanyMemberLimitsTypeExtension;
 use Tmonier\SyliusPurchaseApprovalPlugin\Grid\Filter\ApprovalStateFilter;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Tmonier\SyliusPurchaseApprovalPlugin\Mailer\AcknowledgementEmailSender;
+use Tmonier\SyliusPurchaseApprovalPlugin\Mailer\ApprovalAwareOrderConfirmationHandler;
 use Tmonier\SyliusPurchaseApprovalPlugin\Mailer\ApprovalEmailListener;
 use Tmonier\SyliusPurchaseApprovalPlugin\Menu\AccountMenuListener;
 use Tmonier\SyliusPurchaseApprovalPlugin\OrderHold\ApprovalHold;
@@ -117,6 +119,11 @@ return static function (ContainerConfigurator $container): void {
         ->set('tmonier_purchase_approval.mailer.acknowledgement_sender', AcknowledgementEmailSender::class)
         ->decorate('sylius.email_sender')
         ->args([service('.inner'), service('tmonier_purchase_approval.repository.order_approval')])
+    ;
+    $services
+        ->set('tmonier_purchase_approval.mailer.order_confirmation_handler', ApprovalAwareOrderConfirmationHandler::class)
+        ->decorate('sylius_api.command_handler.checkout.send_order_confirmation', null, 0, ContainerInterface::IGNORE_ON_INVALID_REFERENCE)
+        ->args([service('.inner'), service('sylius.repository.order'), service('tmonier_purchase_approval.repository.order_approval')])
     ;
     $services
         ->set('tmonier_purchase_approval.mailer.approval_emails', ApprovalEmailListener::class)

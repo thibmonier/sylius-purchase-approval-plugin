@@ -80,9 +80,11 @@ order payment page are replaced while the order waits. A guard on `sylius_shipme
 ### 3.5 E-mails
 
 `AcknowledgementEmailSender` decorates `sylius.email_sender`: `order_confirmation` of an order
-waiting for approval becomes `tmonier_purchase_approval_acknowledgement`; of a rejected or
-expired order it is dropped (late asynchronous message); for an approved order it passes once
-(`confirmationSentAt`), so a late asynchronous confirmation after the approval is dropped. One decorator covers the shop listener
+waiting for approval becomes `tmonier_purchase_approval_acknowledgement`; for an approved
+order, `confirmationSentAt` is recorded after a successful send. `ApprovalAwareOrderConfirmationHandler` decorates the API
+`SendOrderConfirmation` handler: a message consumed after the decision (approved and already
+confirmed, or rejected / expired / cancelled) is dropped. Confirmations sent on purpose (code,
+admin resend) are never filtered. One decorator covers the shop listener
 and the Messenger handler. `ApprovalEmailListener`: approvers notified on request (not the
 buyer), core confirmation on approval, rejection / expiry e-mail with the comment.
 

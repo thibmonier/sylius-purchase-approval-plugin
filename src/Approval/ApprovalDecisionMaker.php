@@ -74,6 +74,33 @@ final class ApprovalDecisionMaker
         return $found instanceof CompanyMemberInterface ? $found : null;
     }
 
+    /**
+     * Closes the approval of an order that is no longer new (cancelled outside the order
+     * workflow): system decision, no event, the order is left as it is.
+     *
+     * @return bool whether it was closed
+     */
+    public function closeForClosedOrder(OrderApprovalInterface $approval): bool
+    {
+        /** @var bool $closed */
+        $closed = $this->entityManager->wrapInTransaction(function () use ($approval): bool {
+            $this->entityManager->refresh($approval, LockMode::PESSIMISTIC_WRITE);
+            $order = $approval->getOrder();
+            if (!$approval->isPending() || null === $order || OrderInterface::STATE_NEW === $order->getState() || !$this->stateMachine->can($approval, self::GRAPH, self::TRANSITION_CANCEL)) {
+                return false;
+            }
+            $this->stateMachine->apply($approval, self::GRAPH, self::TRANSITION_CANCEL);
+            $approval->setDecidedAt(new \DateTimeImmutable());
+            $approval->setDeciderType(OrderApprovalInterface::DECIDED_BY_SYSTEM);
+            $approval->setDecidedBy(null);
+            $approval->setDeciderName(null);
+
+            return true;
+        });
+
+        return $closed;
+    }
+
     private function decide(OrderApprovalInterface $approval, Decider $decider, string $transition, ?string $comment): ?string
     {
         $comment = null === $comment ? null : mb_substr(trim($comment), 0, self::COMMENT_MAX_LENGTH);
