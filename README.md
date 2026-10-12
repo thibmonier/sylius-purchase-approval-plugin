@@ -30,6 +30,20 @@ Also included: translations in English, French, German, Spanish, Italian, Dutch 
 (pages, e-mails, messages); a demo fixture; MySQL, MariaDB and PostgreSQL support (Schema API
 migration).
 
+## Screenshots
+
+![Orders awaiting approval on the approver's Approvals page](docs/images/shop-approvals.jpg)
+
+![Approval decision: approve or reject with a comment for the buyer](docs/images/shop-approval-decision.jpg)
+
+![Buyer's order awaiting approval, without the Pay button](docs/images/shop-order-awaiting-approval.jpg)
+
+![Purchase limits managed by the company admin](docs/images/shop-purchase-limits.jpg)
+
+![Approval card on the admin order page](docs/images/admin-order-approval.jpg)
+
+![Admin orders grid filtered on Awaiting approval](docs/images/admin-orders-approval-filter.jpg)
+
 ## Requirements
 
 | | Version |
