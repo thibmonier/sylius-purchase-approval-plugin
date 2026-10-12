@@ -72,6 +72,16 @@ final class ApprovalEmailsTest extends KernelTestCase
         self::assertSame([$this->confirmationSubject($order)], $this->subjectsTo($order));
     }
 
+    public function testAnApproverPlacingAnOrderIsNotAskedToApproveIt(): void
+    {
+        $company = $this->catalog()->company();
+        $other = $this->catalog()->member($company, null, CompanyMemberInterface::ROLE_APPROVER);
+        $order = $this->catalog()->orderAgainstLimit($this->catalog()->member($company, null, CompanyMemberInterface::ROLE_APPROVER), -1);
+
+        $requested = array_values(array_filter($this->messages(), static fn (Email $email): bool => str_contains((string) $email->getSubject(), (string) $order->getNumber())));
+        self::assertSame([(string) $other->getCustomer()?->getEmail()], array_map(static fn (Email $email): string => $email->getTo()[0]->getAddress(), $requested));
+    }
+
     public function testTheBuyerIsToldOfARejectionWithTheComment(): void
     {
         $order = $this->catalog()->orderAgainstLimit($this->catalog()->member($this->catalog()->company()), -1);
