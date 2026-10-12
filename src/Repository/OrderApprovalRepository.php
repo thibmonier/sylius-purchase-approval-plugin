@@ -28,6 +28,29 @@ class OrderApprovalRepository extends EntityRepository implements OrderApprovalR
         return $approval instanceof OrderApprovalInterface ? $approval : null;
     }
 
+    public function findByOrderIds(array $orderIds): array
+    {
+        if ([] === $orderIds) {
+            return [];
+        }
+        /** @var list<OrderApprovalInterface> $approvals */
+        $approvals = $this->createQueryBuilder('o')
+            ->andWhere('IDENTITY(o.order) IN (:orders)')
+            ->setParameter('orders', $orderIds)
+            ->getQuery()
+            ->getResult()
+        ;
+        $indexed = [];
+        foreach ($approvals as $approval) {
+            $id = $approval->getOrder()?->getId();
+            if (is_int($id)) {
+                $indexed[$id] = $approval;
+            }
+        }
+
+        return $indexed;
+    }
+
     public function findOneByOrderNumberAndCompany(string $number, CompanyInterface $company): ?OrderApprovalInterface
     {
         $approval = $this->createQueryBuilder('o')

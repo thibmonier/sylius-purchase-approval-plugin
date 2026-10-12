@@ -1,0 +1,7 @@
+{# Orders grid: approval state (one query for the whole page, see tmonier_order_approval_in_list()). #}
+{% set approval = tmonier_order_approval_in_list(data) %}
+{% if approval is not null %}
+    {% include '@TmonierSyliusPurchaseApprovalPlugin/shared/state_badge.html.twig' %}
+{% else %}
+    <span class="text-body-secondary">-</span>
+{% endif %}

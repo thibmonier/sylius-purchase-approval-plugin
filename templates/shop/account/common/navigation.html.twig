@@ -1,4 +1,4 @@
-{# Links of the approval area, also shown on the company-accounts pages (approvers, company admins). #}
+{# Links of the approval area under the company-accounts tabs (approvers, company admins). #}
 {% set company = hookable_metadata.context.company|default(null) %}
 {% set page = hookable_metadata.context.page|default(null) %}
 {% set can_list = company is not null and is_granted('APPROVAL_LIST', company) %}

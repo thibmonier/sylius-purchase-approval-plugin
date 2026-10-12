@@ -11,7 +11,7 @@ sylius_twig_hooks:
                 template: '@TmonierSyliusPurchaseApprovalPlugin/shop/account/common/title.html.twig'
                 priority: 100
             navigation:
-                template: '@TmonierSyliusPurchaseApprovalPlugin/shop/account/common/navigation.html.twig'
+                template: '@TmonierSyliusPurchaseApprovalPlugin/shop/account/common/tabs.html.twig'
                 priority: 0
 
         'tmonier_purchase_approval_shop.account.approvals.index.content.main':
@@ -30,7 +30,7 @@ sylius_twig_hooks:
                 template: '@TmonierSyliusPurchaseApprovalPlugin/shop/account/common/title.html.twig'
                 priority: 100
             navigation:
-                template: '@TmonierSyliusPurchaseApprovalPlugin/shop/account/common/navigation.html.twig'
+                template: '@TmonierSyliusPurchaseApprovalPlugin/shop/account/common/tabs.html.twig'
                 priority: 0
 
         'tmonier_purchase_approval_shop.account.approval.index.content.main':
@@ -49,7 +49,7 @@ sylius_twig_hooks:
                 template: '@TmonierSyliusPurchaseApprovalPlugin/shop/account/common/title.html.twig'
                 priority: 100
             navigation:
-                template: '@TmonierSyliusPurchaseApprovalPlugin/shop/account/common/navigation.html.twig'
+                template: '@TmonierSyliusPurchaseApprovalPlugin/shop/account/common/tabs.html.twig'
                 priority: 0
 
         'tmonier_purchase_approval_shop.account.limits.index.content.main':

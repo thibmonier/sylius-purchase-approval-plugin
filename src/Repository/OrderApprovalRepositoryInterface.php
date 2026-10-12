@@ -16,6 +16,15 @@ interface OrderApprovalRepositoryInterface extends RepositoryInterface
     /** Also an approval persisted in the flush running now (not inserted yet). */
     public function findOneByOrder(OrderInterface $order): ?OrderApprovalInterface;
 
+    /**
+     * Approvals of several orders in one query (lists, grids).
+     *
+     * @param list<int> $orderIds
+     *
+     * @return array<int, OrderApprovalInterface> by order id
+     */
+    public function findByOrderIds(array $orderIds): array;
+
     public function findOneByOrderNumberAndCompany(string $number, CompanyInterface $company): ?OrderApprovalInterface;
 
     /** Also an approval persisted in the flush running now (not inserted yet). */

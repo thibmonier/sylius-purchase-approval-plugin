@@ -167,6 +167,25 @@ final class ShopApprovalsTest extends WebTestCase
         self::assertStringContainsString(sprintf('Order #%s is waiting for the approval of your company', (string) $s->pendingOrder->getNumber()), implode(' ', $this->flashes($crawler)));
     }
 
+    public function testTheApprovalPagesKeepTheCompanyTabs(): void
+    {
+        $s = new ApprovalScenario($this->catalog());
+        $this->loginShopUser(ApprovalScenario::customerOf($s->approverA));
+
+        foreach (['/account/company/approvals', '/account/company/approvals/' . $s->pendingOrder->getNumber()] as $path) {
+            $crawler = $this->client->request('GET', $this->shopUrl($path));
+            $tabs = $crawler->filter('[data-test-tmonier-approval-tabs] .nav-link');
+            self::assertSame([$this->shopUrl('/account/company'), $this->shopUrl('/account/company/members'), $this->shopUrl('/account/company/orders'), $this->shopUrl('/account/company/approvals')], $tabs->each(static fn ($tab): string => (string) $tab->attr('href')), $path);
+            self::assertSame('page', $crawler->filter('[data-test-tmonier-approvals-link]')->attr('aria-current'), $path);
+        }
+
+        $this->logout();
+        $this->loginShopUser(ApprovalScenario::customerOf($s->adminA));
+        $crawler = $this->client->request('GET', $this->shopUrl('/account/company/limits'));
+        self::assertCount(1, $crawler->filter(sprintf('[data-test-tmonier-approval-tabs] a[href="%s"]', $this->shopUrl('/account/company/members'))));
+        self::assertSame('page', $crawler->filter('[data-test-tmonier-limits-link]')->attr('aria-current'));
+    }
+
     public function testApproversFindTheApprovalsFromTheCompanyPages(): void
     {
         $s = new ApprovalScenario($this->catalog());

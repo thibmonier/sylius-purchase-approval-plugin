@@ -152,8 +152,10 @@ return static function (ContainerConfigurator $container): void {
             service('tmonier_purchase_approval.repository.member_limit'),
             service('tmonier_company_accounts.current_member_resolver'),
             service('tmonier_purchase_approval.policy'),
+            service('doctrine.orm.entity_manager'),
         ])
         ->tag('twig.extension')
+        ->tag('kernel.reset', ['method' => 'reset'])
     ;
     $services
         ->set('tmonier_purchase_approval.listener.account_menu', AccountMenuListener::class)

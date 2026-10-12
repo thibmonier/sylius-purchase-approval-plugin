@@ -64,6 +64,37 @@ final class AdminApprovalTest extends WebTestCase
         self::assertStringContainsString((string) $within->getNumber(), $numbers('none'));
     }
 
+    public function testTheOrdersGridShowsTheApprovalWithOneQueryForThePage(): void
+    {
+        $s = new ApprovalScenario($this->catalog());
+        $this->loginAdmin();
+        $grid = function (): array {
+            // Measured on a second request: the first one also collects the queries made by the
+            // test between requests.
+            $this->client->request('GET', '/admin/orders/?limit=100&criteria[tmonier_approval_state]=pending');
+            $this->client->enableProfiler();
+            $crawler = $this->client->request('GET', '/admin/orders/?limit=100&criteria[tmonier_approval_state]=pending');
+            self::assertResponseIsSuccessful();
+            $profile = $this->client->getProfile();
+            self::assertInstanceOf(\Symfony\Component\HttpKernel\Profiler\Profile::class, $profile);
+            $collector = $profile->getCollector('db');
+            self::assertInstanceOf(\Doctrine\Bundle\DoctrineBundle\DataCollector\DoctrineDataCollector::class, $collector);
+
+            return [$crawler, $collector->getQueryCount()];
+        };
+
+        [$crawler, $queriesForOne] = $grid();
+        self::assertSame('pending', $crawler->filter('table [data-test-tmonier-approval-state]')->first()->attr('data-test-tmonier-approval-state'));
+
+        $this->catalog()->orderAgainstLimit($s->colleagueA, -1);
+        $this->catalog()->orderAgainstLimit($s->colleagueA, -1);
+        $this->catalog()->orderAgainstLimit($s->colleagueA, -1);
+        [$crawler, $queriesForFour] = $grid();
+        self::assertGreaterThanOrEqual(4, $crawler->filter('table [data-test-tmonier-approval-state="pending"]')->count());
+        // Three more rows: at most one query of difference (cache warm-up), never one per row.
+        self::assertLessThanOrEqual($queriesForOne + 1, $queriesForFour, 'No query per row.');
+    }
+
     public function testTheMemberFormHoldsThePurchaseLimits(): void
     {
         $s = new ApprovalScenario($this->catalog());

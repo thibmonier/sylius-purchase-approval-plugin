@@ -1,0 +1,42 @@
+{#
+ # Tab bar of the approval pages: the company-accounts tabs (that plugin renders them from one
+ # template, without a hook for more tabs) followed by the approval tabs.
+ #}
+{% set company = hookable_metadata.context.company|default(null) %}
+{% set page = hookable_metadata.context.page|default(null) %}
+{% set in_company = company is not null and is_granted('COMPANY_VIEW', company) %}
+{% set can_list = company is not null and is_granted('APPROVAL_LIST', company) %}
+{% set can_limit = company is not null and is_granted('APPROVAL_LIMITS_MANAGE', company) %}
+
+{% if in_company or can_list or can_limit %}
+    <ul class="nav nav-tabs mt-4" {{ sylius_test_html_attribute('tmonier-approval-tabs') }}>
+        {% if in_company %}
+            <li class="nav-item">
+                <a class="nav-link" href="{{ path('tmonier_company_accounts_shop_company_show') }}">{{ 'tmonier_company_accounts.ui.overview'|trans }}</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ path('tmonier_company_accounts_shop_company_members') }}">{{ 'tmonier_company_accounts.ui.members'|trans }}</a>
+            </li>
+            {% if is_granted('ORDER_VIEW_COMPANY', company) %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('tmonier_company_accounts_shop_company_orders') }}">{{ 'tmonier_company_accounts.ui.company_orders'|trans }}</a>
+                </li>
+            {% endif %}
+        {% endif %}
+        {% if can_list %}
+            {% set pending = tmonier_pending_approvals_count(company) %}
+            {% set active = page in ['approvals', 'approval'] %}
+            <li class="nav-item">
+                <a class="nav-link {{ active ? 'active' }}" href="{{ path('tmonier_purchase_approval_shop_approvals') }}" {% if active %}aria-current="page"{% endif %} {{ sylius_test_html_attribute('tmonier-approvals-link') }}>
+                    {{ 'tmonier_purchase_approval.ui.approvals'|trans }}
+                    {% if pending > 0 %}<span class="badge text-bg-warning ms-1">{{ pending }}<span class="visually-hidden"> {{ 'tmonier_purchase_approval.ui.pending'|trans }}</span></span>{% endif %}
+                </a>
+            </li>
+        {% endif %}
+        {% if can_limit %}
+            <li class="nav-item">
+                <a class="nav-link {{ page == 'limits' ? 'active' }}" href="{{ path('tmonier_purchase_approval_shop_limits') }}" {% if page == 'limits' %}aria-current="page"{% endif %} {{ sylius_test_html_attribute('tmonier-limits-link') }}>{{ 'tmonier_purchase_approval.ui.purchase_limits'|trans }}</a>
+            </li>
+        {% endif %}
+    </ul>
+{% endif %}
