@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.0.1 (unreleased)
+## 1.0.1 (2026-10-12)
 
 - Shop: the approval pages show the company tabs (Overview, Members, Company orders) followed by
   Approvals and Purchase limits; the Approvals tab stays active on an approval page.
