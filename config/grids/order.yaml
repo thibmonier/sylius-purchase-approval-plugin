@@ -1,4 +1,7 @@
 sylius_grid:
+    templates:
+        filter:
+            tmonier_purchase_approval_state: '@SyliusAdmin/shared/grid/filter/select.html.twig'
     grids:
         # Approval state of the orders (filter); orders that needed no approval: "None".
         sylius_admin_order:

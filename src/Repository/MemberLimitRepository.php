@@ -25,8 +25,8 @@ class MemberLimitRepository extends EntityRepository implements MemberLimitRepos
     {
         /** @var list<MemberLimitInterface> $limits */
         $limits = $this->createQueryBuilder('o')
-            ->innerJoin('o.member', 'member')
-            ->andWhere('member.company = :company')
+            ->innerJoin('o.member', 'membership')
+            ->andWhere('membership.company = :company')
             ->setParameter('company', $company)
             ->getQuery()
             ->getResult()

@@ -31,6 +31,8 @@ use Sylius\Component\Order\Modifier\OrderModifierInterface;
 use Sylius\Component\Product\Factory\ProductFactoryInterface;
 use Sylius\Resource\Factory\FactoryInterface;
 use Tmonier\SyliusAdminOrderCreationPlugin\Entity\AdminOrderCreationInterface;
+use Tmonier\SyliusPurchaseApprovalPlugin\Entity\MemberLimitInterface;
+use Tmonier\SyliusPurchaseApprovalPlugin\Repository\MemberLimitRepositoryInterface;
 use Tmonier\SyliusCompanyAccountsPlugin\Entity\CompanyInterface;
 use Tmonier\SyliusCompanyAccountsPlugin\Entity\CompanyMemberInterface;
 use Tmonier\SyliusCompanyAccountsPlugin\Factory\CompanyMemberFactoryInterface;
@@ -159,6 +161,48 @@ final class TestCatalog
         $factory = $this->container->get('tmonier_company_accounts.factory.company_member');
 
         return $factory->createForCustomer($company, $customer, $role);
+    }
+
+    /** Limits of a member, in minor units of the channel base currency unless another one is given. */
+    public function limit(CompanyMemberInterface $member, ?int $orderLimit, ?int $approvalLimit = null, ?string $currencyCode = null): MemberLimitInterface
+    {
+        /** @var MemberLimitRepositoryInterface $repository */
+        $repository = $this->container->get('tmonier_purchase_approval.repository.member_limit');
+        /** @var FactoryInterface<MemberLimitInterface> $factory */
+        $factory = $this->container->get('tmonier_purchase_approval.factory.member_limit');
+        $limit = $repository->findOneByMember($member) ?? $factory->createNew();
+        $limit->setMember($member);
+        $limit->setOrderLimit($orderLimit);
+        $limit->setApprovalLimit($approvalLimit);
+        $limit->setCurrencyCode($currencyCode ?? $this->currencyCode());
+        $this->entityManager()->persist($limit);
+        $this->entityManager()->flush();
+
+        return $limit;
+    }
+
+    public function currencyCode(): string
+    {
+        return (string) $this->channel()->getBaseCurrency()?->getCode();
+    }
+
+    /**
+     * An order of the member completed with the given order limit: the cart total is read first,
+     * so that the limit is set relative to it whatever promotions the fixtures hold.
+     *
+     * @param int $limitDelta order limit = cart total + delta (negative: the order is above it)
+     */
+    public function orderAgainstLimit(CompanyMemberInterface $member, int $limitDelta, ?int $approvalLimit = null, bool $byStaff = false, bool $asGuest = false): OrderInterface
+    {
+        $member = $this->managed($member);
+        $customer = $member->getCustomer();
+        Assert::isInstanceOf($customer, CustomerInterface::class);
+        $order = $this->placedOrder($customer, $asGuest, 'payment_selected', $byStaff);
+        $this->limit($member, $order->getTotal() + $limitDelta, $approvalLimit);
+        $this->apply($order, OrderCheckoutTransitions::TRANSITION_COMPLETE);
+        $this->entityManager()->flush();
+
+        return $order;
     }
 
     public function customerGroup(string $name = 'Wholesale'): CustomerGroupInterface

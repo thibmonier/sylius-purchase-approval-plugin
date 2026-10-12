@@ -79,7 +79,8 @@ return static function (ContainerConfigurator $container): void {
             service('tmonier_purchase_approval.factory.order_approval'),
             service('event_dispatcher'),
         ])
-        ->tag('doctrine.event_listener', ['event' => 'onFlush'])
+        // Before the listeners that read the approvals of the flush (webhook outbox capture).
+        ->tag('doctrine.event_listener', ['event' => 'onFlush', 'priority' => 100])
         ->tag('doctrine.event_listener', ['event' => 'postFlush'])
         ->tag('doctrine.event_listener', ['event' => 'onClear'])
         ->tag('kernel.reset', ['method' => 'reset'])
