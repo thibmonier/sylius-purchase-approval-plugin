@@ -1,0 +1,7 @@
+tmonier_purchase_approval:
+    order_approved: 'De bestelling is goedgekeurd.'
+    order_rejected: 'De bestelling is afgewezen en geannuleerd.'
+    limits_updated: 'De limieten zijn bijgewerkt.'
+    payment_entry:
+        awaiting_approval: 'Bestelling #%number% wacht op de goedkeuring van uw bedrijf: u kunt betalen zodra ze is goedgekeurd.'
+        not_approved: 'Bestelling #%number% is niet goedgekeurd: ze kan niet worden betaald.'

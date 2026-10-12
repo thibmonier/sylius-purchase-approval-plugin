@@ -1,0 +1,24 @@
+{# Links of the approval area, also shown on the company-accounts pages (approvers, company admins). #}
+{% set company = hookable_metadata.context.company|default(null) %}
+{% set page = hookable_metadata.context.page|default(null) %}
+{% set can_list = company is not null and is_granted('APPROVAL_LIST', company) %}
+{% set can_limit = company is not null and is_granted('APPROVAL_LIMITS_MANAGE', company) %}
+
+{% if can_list or can_limit %}
+    <ul class="nav nav-pills mt-3" {{ sylius_test_html_attribute('tmonier-approval-navigation') }}>
+        {% if can_list %}
+            {% set pending = tmonier_pending_approvals_count(company) %}
+            <li class="nav-item">
+                <a class="nav-link {{ page == 'approvals' ? 'active' }}" href="{{ path('tmonier_purchase_approval_shop_approvals') }}" {% if page == 'approvals' %}aria-current="page"{% endif %} {{ sylius_test_html_attribute('tmonier-approvals-link') }}>
+                    {{ 'tmonier_purchase_approval.ui.approvals'|trans }}
+                    {% if pending > 0 %}<span class="badge text-bg-warning ms-1">{{ pending }}<span class="visually-hidden"> {{ 'tmonier_purchase_approval.ui.pending'|trans }}</span></span>{% endif %}
+                </a>
+            </li>
+        {% endif %}
+        {% if can_limit %}
+            <li class="nav-item">
+                <a class="nav-link {{ page == 'limits' ? 'active' }}" href="{{ path('tmonier_purchase_approval_shop_limits') }}" {% if page == 'limits' %}aria-current="page"{% endif %} {{ sylius_test_html_attribute('tmonier-limits-link') }}>{{ 'tmonier_purchase_approval.ui.purchase_limits'|trans }}</a>
+            </li>
+        {% endif %}
+    </ul>
+{% endif %}

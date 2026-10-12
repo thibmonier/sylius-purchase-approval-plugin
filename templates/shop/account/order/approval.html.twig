@@ -1,0 +1,12 @@
+{# Customer order page: the approval of the order, for its buyer. #}
+{% set order = hookable_metadata.context.order|default(null) %}
+{% set approval = tmonier_order_approval(order) %}
+{% if approval is not null %}
+    <div class="alert {{ approval.state == 'approved' ? 'alert-success' : (approval.state == 'pending' ? 'alert-warning' : 'alert-danger') }} mt-3" role="status" {{ sylius_test_html_attribute('tmonier-order-approval', approval.state) }}>
+        <strong>{{ ('tmonier_purchase_approval.order_page.' ~ approval.state)|trans }}</strong>
+        {% if approval.comment is not empty and not approval.pending %}
+            <div class="mt-1" style="white-space: pre-line">{{ approval.comment }}</div>
+        {% endif %}
+        <div class="mt-1"><a href="{{ path('tmonier_purchase_approval_shop_approval_show', {'number': order.number}) }}" class="alert-link">{{ 'tmonier_purchase_approval.ui.approval_details'|trans }}</a></div>
+    </div>
+{% endif %}

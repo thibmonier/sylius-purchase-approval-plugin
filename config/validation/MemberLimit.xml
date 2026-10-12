@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<constraint-mapping xmlns="http://symfony.com/schema/dic/constraint-mapping"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                    xsi:schemaLocation="http://symfony.com/schema/dic/constraint-mapping http://symfony.com/schema/dic/services/constraint-mapping-1.0.xsd">
+    <class name="Tmonier\SyliusPurchaseApprovalPlugin\Entity\MemberLimit">
+        <constraint name="Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity">
+            <option name="fields">member</option>
+            <option name="message">tmonier_purchase_approval.limit.member_unique</option>
+            <option name="errorPath">member</option>
+            <option name="groups">sylius</option>
+        </constraint>
+        <property name="member">
+            <constraint name="NotNull">
+                <option name="groups">sylius</option>
+            </constraint>
+        </property>
+        <property name="orderLimit">
+            <constraint name="Range">
+                <option name="min">0</option>
+                <option name="max">1000000000</option>
+                <option name="notInRangeMessage">tmonier_purchase_approval.limit.invalid_amount</option>
+                <option name="groups">sylius</option>
+            </constraint>
+        </property>
+        <property name="approvalLimit">
+            <constraint name="Range">
+                <option name="min">0</option>
+                <option name="max">1000000000</option>
+                <option name="notInRangeMessage">tmonier_purchase_approval.limit.invalid_amount</option>
+                <option name="groups">sylius</option>
+            </constraint>
+        </property>
+        <property name="currencyCode">
+            <constraint name="NotBlank">
+                <option name="message">tmonier_purchase_approval.limit.invalid_currency</option>
+                <option name="groups">sylius</option>
+            </constraint>
+            <constraint name="Currency">
+                <option name="message">tmonier_purchase_approval.limit.invalid_currency</option>
+                <option name="groups">sylius</option>
+            </constraint>
+        </property>
+    </class>
+</constraint-mapping>

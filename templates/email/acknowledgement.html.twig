@@ -1,0 +1,17 @@
+{% extends '@SyliusCore/Email/layout.html.twig' %}
+
+{% block subject %}{{ 'tmonier_purchase_approval.email.acknowledgement.subject'|trans({'%number%': order.number}, 'messages', localeCode)|raw }}{% endblock %}
+
+{% block content %}
+    {% include '@TmonierSyliusPurchaseApprovalPlugin/email/_summary.html.twig' %}
+    <div style="text-align: center; margin-bottom: 30px;">
+        {{ 'tmonier_purchase_approval.email.acknowledgement.body'|trans({}, 'messages', localeCode) }}
+    </div>
+    {% if sylius_bundle_loaded_checker('SyliusShopBundle') %}
+        <div style="text-align: center; margin-bottom: 30px;">
+            <a href="{{ sylius_channel_url(path('sylius_shop_account_order_show', {'number': order.number, '_locale': localeCode}), channel)|raw }}" style="display: inline-block; background: #1abb9c; padding: 18px 28px; color: #fff; text-decoration: none; border-radius: 3px;">
+                {{ 'tmonier_purchase_approval.email.view_order'|trans({}, 'messages', localeCode) }}
+            </a>
+        </div>
+    {% endif %}
+{% endblock %}

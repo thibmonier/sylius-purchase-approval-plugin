@@ -1,0 +1,53 @@
+{% set context = hookable_metadata.context %}
+{% set viewer = context.member %}
+
+<p class="text-body-secondary" {{ sylius_test_html_attribute('tmonier-limits-help') }}>{{ 'tmonier_purchase_approval.ui.limits_help'|trans }}</p>
+
+<div class="table-responsive">
+    <table class="table align-middle" {{ sylius_test_html_attribute('tmonier-limits') }}>
+        <thead>
+            <tr>
+                <th scope="col">{{ 'sylius.ui.name'|trans }}</th>
+                <th scope="col">{{ 'tmonier_purchase_approval.ui.role'|trans }}</th>
+                <th scope="col">{{ 'tmonier_purchase_approval.ui.order_limit'|trans }}</th>
+                <th scope="col">{{ 'tmonier_purchase_approval.ui.approval_limit'|trans }}</th>
+                <th scope="col">{{ 'sylius.ui.currency'|trans }}</th>
+                <th scope="col"><span class="visually-hidden">{{ 'sylius.ui.actions'|trans }}</span></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for member in context.members %}
+                {% set limit = context.limits[member.id]|default(null) %}
+                {% set name = member.customer.fullName|default('')|trim ?: '-' %}
+                {% set form_id = 'tmonier-limit-form-' ~ member.id %}
+                {% set currency = limit.currencyCode|default(context.currencies|first|default('')) %}
+                <tr {{ sylius_test_html_attribute('tmonier-limit', member.id) }}>
+                    <th scope="row" class="fw-normal">{{ name }}</th>
+                    <td>{{ ('tmonier_company_accounts.role.' ~ member.role)|trans }}</td>
+                    {% if member.id == viewer.id %}
+                        <td>{{ limit is not null and limit.orderLimit is not null ? limit.orderLimit|sylius_format_money(currency, app.request.locale) : 'tmonier_purchase_approval.ui.no_limit'|trans }}</td>
+                        <td>{{ limit is not null and limit.approvalLimit is not null ? limit.approvalLimit|sylius_format_money(currency, app.request.locale) : 'tmonier_purchase_approval.ui.no_limit'|trans }}</td>
+                        <td>{{ currency }}</td>
+                        <td class="text-body-secondary small">{{ 'tmonier_purchase_approval.ui.own_limits'|trans }}</td>
+                    {% else %}
+                        <td><input type="text" inputmode="decimal" class="form-control form-control-sm" name="order_limit" form="{{ form_id }}" value="{{ limit is null ? '' : (limit.orderLimit is null ? '' : '%.2f'|format(limit.orderLimit / 100)) }}" placeholder="{{ 'tmonier_purchase_approval.ui.no_limit'|trans }}" aria-label="{{ 'tmonier_purchase_approval.ui.order_limit_of'|trans({'%member%': name}) }}"></td>
+                        <td><input type="text" inputmode="decimal" class="form-control form-control-sm" name="approval_limit" form="{{ form_id }}" value="{{ limit is null ? '' : (limit.approvalLimit is null ? '' : '%.2f'|format(limit.approvalLimit / 100)) }}" placeholder="{{ 'tmonier_purchase_approval.ui.no_limit'|trans }}" aria-label="{{ 'tmonier_purchase_approval.ui.approval_limit_of'|trans({'%member%': name}) }}"></td>
+                        <td>
+                            <select name="currency" form="{{ form_id }}" class="form-select form-select-sm w-auto" aria-label="{{ 'tmonier_purchase_approval.ui.currency_of'|trans({'%member%': name}) }}">
+                                {% for code in context.currencies %}
+                                    <option value="{{ code }}" {{ code == currency ? 'selected' }}>{{ code }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td class="text-end">
+                            <form method="post" id="{{ form_id }}" action="{{ path('tmonier_purchase_approval_shop_limit_update', {'id': member.id}) }}" {{ sylius_test_html_attribute('tmonier-limit-form', member.id) }}>
+                                <input type="hidden" name="_csrf_token" value="{{ csrf_token('tmonier_member_limit_' ~ member.id) }}">
+                                <button type="submit" class="btn btn-sm btn-outline-primary">{{ 'sylius.ui.save'|trans }}<span class="visually-hidden"> ({{ name }})</span></button>
+                            </form>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

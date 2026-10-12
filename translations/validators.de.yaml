@@ -1,0 +1,16 @@
+tmonier_purchase_approval:
+    approval:
+        not_pending: 'Diese Bestellung wartet nicht mehr auf eine Freigabe.'
+        not_allowed: 'Nur ein Genehmiger des Unternehmens kann über diese Bestellung entscheiden.'
+        own_order: 'Sie können Ihre eigene Bestellung weder freigeben noch ablehnen.'
+        above_limit: 'Diese Bestellung liegt über Ihrem Freigabelimit: Ein anderer Genehmiger muss sie freigeben.'
+        comment_too_long: 'Der Kommentar darf höchstens %max% Zeichen lang sein.'
+    limit:
+        not_allowed: 'Nur ein aktiver Administrator des Unternehmens kann die Limits ändern.'
+        own_limits: 'Sie können Ihre eigenen Limits nicht ändern.'
+        invalid_amount: 'Geben Sie einen positiven Betrag mit höchstens zwei Dezimalstellen ein oder lassen Sie das Feld leer.'
+        invalid_currency: 'Wählen Sie eine Währung des Shops für die Limits.'
+        member_unique: 'Dieses Mitglied hat bereits Limits.'
+    payment_entry:
+        awaiting_approval: 'Bestellung #%number% wartet auf die Freigabe Ihres Unternehmens: Sie können sie nach der Freigabe bezahlen.'
+        not_approved: 'Bestellung #%number% wurde nicht freigegeben: Sie kann nicht bezahlt werden.'

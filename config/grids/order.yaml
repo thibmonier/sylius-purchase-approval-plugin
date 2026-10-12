@@ -1,0 +1,15 @@
+sylius_grid:
+    grids:
+        # Approval state of the orders (filter); orders that needed no approval: "None".
+        sylius_admin_order:
+            filters:
+                tmonier_approval_state:
+                    type: tmonier_purchase_approval_state
+                    label: tmonier_purchase_approval.ui.approval
+                    form_options:
+                        choices:
+                            tmonier_purchase_approval.state.pending: pending
+                            tmonier_purchase_approval.state.approved: approved
+                            tmonier_purchase_approval.state.rejected: rejected
+                            tmonier_purchase_approval.state.expired: expired
+                            tmonier_purchase_approval.state.none: none

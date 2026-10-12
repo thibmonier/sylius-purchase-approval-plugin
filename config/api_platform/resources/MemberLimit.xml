@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<resources
+    xmlns="https://api-platform.com/schema/metadata/resources-3.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="https://api-platform.com/schema/metadata/resources-3.0 https://api-platform.com/schema/metadata/resources-3.0.xsd"
+>
+    <!-- Purchase limits of company members (amounts in minor units): store administrators. -->
+    <resource class="%tmonier_purchase_approval.model.member_limit.class%" shortName="CompanyMemberLimit">
+        <operations>
+            <operation name="tmonier_purchase_approval_api_admin_member_limit_get_collection" class="ApiPlatform\Metadata\GetCollection" uriTemplate="/admin/company-member-limits">
+                <normalizationContext>
+                    <values>
+                        <value name="groups">
+                            <values>
+                                <value>tmonier_purchase_approval:admin:member_limit:show</value>
+                            </values>
+                        </value>
+                    </values>
+                </normalizationContext>
+            </operation>
+            <operation name="tmonier_purchase_approval_api_admin_member_limit_get" class="ApiPlatform\Metadata\Get" uriTemplate="/admin/company-member-limits/{id}">
+                <normalizationContext>
+                    <values>
+                        <value name="groups">
+                            <values>
+                                <value>tmonier_purchase_approval:admin:member_limit:show</value>
+                            </values>
+                        </value>
+                    </values>
+                </normalizationContext>
+            </operation>
+            <operation name="tmonier_purchase_approval_api_admin_member_limit_post" class="ApiPlatform\Metadata\Post" uriTemplate="/admin/company-member-limits">
+                <denormalizationContext>
+                    <values>
+                        <value name="groups">
+                            <values>
+                                <value>tmonier_purchase_approval:admin:member_limit:create</value>
+                            </values>
+                        </value>
+                    </values>
+                </denormalizationContext>
+                <normalizationContext>
+                    <values>
+                        <value name="groups">
+                            <values>
+                                <value>tmonier_purchase_approval:admin:member_limit:show</value>
+                            </values>
+                        </value>
+                    </values>
+                </normalizationContext>
+                <validationContext>
+                    <values>
+                        <value name="groups">
+                            <values>
+                                <value>sylius</value>
+                            </values>
+                        </value>
+                    </values>
+                </validationContext>
+            </operation>
+            <operation name="tmonier_purchase_approval_api_admin_member_limit_put" class="ApiPlatform\Metadata\Put" uriTemplate="/admin/company-member-limits/{id}">
+                <denormalizationContext>
+                    <values>
+                        <value name="groups">
+                            <values>
+                                <value>tmonier_purchase_approval:admin:member_limit:update</value>
+                            </values>
+                        </value>
+                    </values>
+                </denormalizationContext>
+                <normalizationContext>
+                    <values>
+                        <value name="groups">
+                            <values>
+                                <value>tmonier_purchase_approval:admin:member_limit:show</value>
+                            </values>
+                        </value>
+                    </values>
+                </normalizationContext>
+                <validationContext>
+                    <values>
+                        <value name="groups">
+                            <values>
+                                <value>sylius</value>
+                            </values>
+                        </value>
+                    </values>
+                </validationContext>
+            </operation>
+            <operation name="tmonier_purchase_approval_api_admin_member_limit_delete" class="ApiPlatform\Metadata\Delete" uriTemplate="/admin/company-member-limits/{id}" />
+        </operations>
+    </resource>
+</resources>

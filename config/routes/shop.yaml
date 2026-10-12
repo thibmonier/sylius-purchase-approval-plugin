@@ -1,0 +1,37 @@
+# Under /{_locale}/account: the Sylius shop access control requires a signed-in customer.
+tmonier_purchase_approval_shop_approvals:
+    path: /account/company/approvals
+    methods: [GET]
+    defaults:
+        _controller: tmonier_purchase_approval.controller.shop.approval::indexAction
+
+tmonier_purchase_approval_shop_approval_show:
+    path: /account/company/approvals/{number}
+    methods: [GET]
+    requirements:
+        number: '[A-Za-z0-9_-]{1,64}'
+    defaults:
+        _controller: tmonier_purchase_approval.controller.shop.approval::showAction
+
+tmonier_purchase_approval_shop_approval_decide:
+    path: /account/company/approvals/{number}/{decision}
+    methods: [POST]
+    requirements:
+        number: '[A-Za-z0-9_-]{1,64}'
+        decision: 'approve|reject'
+    defaults:
+        _controller: tmonier_purchase_approval.controller.shop.approval::decideAction
+
+tmonier_purchase_approval_shop_limits:
+    path: /account/company/limits
+    methods: [GET]
+    defaults:
+        _controller: tmonier_purchase_approval.controller.shop.approval::limitsAction
+
+tmonier_purchase_approval_shop_limit_update:
+    path: /account/company/limits/{id}
+    methods: [POST]
+    requirements:
+        id: '\d+'
+    defaults:
+        _controller: tmonier_purchase_approval.controller.shop.approval::updateLimitAction

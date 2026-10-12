@@ -1,0 +1,13 @@
+{% extends '@SyliusCore/Email/layout.html.twig' %}
+
+{% block subject %}{{ 'tmonier_purchase_approval.email.expired.subject'|trans({'%number%': order.number}, 'messages', localeCode)|raw }}{% endblock %}
+
+{% block content %}
+    {% include '@TmonierSyliusPurchaseApprovalPlugin/email/_summary.html.twig' %}
+    <div style="text-align: center; margin-bottom: 30px;">
+        {{ 'tmonier_purchase_approval.email.expired.body'|trans({}, 'messages', localeCode) }}
+    </div>
+    {% if approval.comment is not empty %}
+        <div style="margin: 0 auto 30px; max-width: 480px; padding: 12px 16px; border-left: 3px solid #ddd; white-space: pre-line;">{{ approval.comment }}</div>
+    {% endif %}
+{% endblock %}

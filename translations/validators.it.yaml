@@ -1,0 +1,16 @@
+tmonier_purchase_approval:
+    approval:
+        not_pending: 'Questo ordine non è più in attesa di approvazione.'
+        not_allowed: 'Solo un approvatore dell''azienda può decidere su questo ordine.'
+        own_order: 'Non puoi approvare né rifiutare il tuo ordine.'
+        above_limit: 'Questo ordine supera il tuo limite di approvazione: deve approvarlo un altro approvatore.'
+        comment_too_long: 'Il commento non può superare i %max% caratteri.'
+    limit:
+        not_allowed: 'Solo un amministratore attivo dell''azienda può modificare i limiti.'
+        own_limits: 'Non puoi modificare i tuoi limiti.'
+        invalid_amount: 'Inserisci un importo positivo con al massimo due decimali o lascia vuoto.'
+        invalid_currency: 'Scegli una valuta del negozio per i limiti.'
+        member_unique: 'Questo membro ha già dei limiti.'
+    payment_entry:
+        awaiting_approval: 'L''ordine n. %number% attende l''approvazione della tua azienda: potrai pagarlo una volta approvato.'
+        not_approved: 'L''ordine n. %number% non è stato approvato: non può essere pagato.'

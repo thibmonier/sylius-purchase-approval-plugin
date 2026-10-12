@@ -1,0 +1,8 @@
+{% set context = hookable_metadata.context %}
+
+{% if context.page == 'approval' %}
+    <h1 {{ sylius_test_html_attribute('tmonier-approval-title') }}>{{ 'tmonier_purchase_approval.ui.approval_of'|trans({'%number%': context.order.number}) }}</h1>
+{% else %}
+    <h1 {{ sylius_test_html_attribute('tmonier-approval-title') }}>{{ (context.page == 'limits' ? 'tmonier_purchase_approval.ui.purchase_limits' : 'tmonier_purchase_approval.ui.approvals')|trans }}</h1>
+    <div class="text-body-secondary">{{ context.company.name }}</div>
+{% endif %}

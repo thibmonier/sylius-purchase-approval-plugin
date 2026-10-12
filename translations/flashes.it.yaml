@@ -1,0 +1,7 @@
+tmonier_purchase_approval:
+    order_approved: 'L''ordine è stato approvato.'
+    order_rejected: 'L''ordine è stato rifiutato e annullato.'
+    limits_updated: 'I limiti sono stati aggiornati.'
+    payment_entry:
+        awaiting_approval: 'L''ordine n. %number% attende l''approvazione della tua azienda: potrai pagarlo una volta approvato.'
+        not_approved: 'L''ordine n. %number% non è stato approvato: non può essere pagato.'

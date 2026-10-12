@@ -1,0 +1,6 @@
+{% extends '@SyliusShop/account/common/index.html.twig' %}
+
+{% set prefixes = ['tmonier_purchase_approval_shop.account.limits'] %}
+{% set attrs = { company, member, members, limits, currencies, page: 'limits' } %}
+
+{% block title %}{{ 'tmonier_purchase_approval.ui.purchase_limits'|trans }} | {{ parent() }}{% endblock %}

@@ -1,0 +1,53 @@
+{% set context = hookable_metadata.context %}
+
+<div class="d-flex justify-content-end mb-2">
+    {% if context.pending_only %}
+        <a href="{{ path('tmonier_purchase_approval_shop_approvals', {'all': 1}) }}" class="btn btn-sm btn-link" {{ sylius_test_html_attribute('tmonier-approvals-all') }}>{{ 'tmonier_purchase_approval.ui.show_decided'|trans }}</a>
+    {% else %}
+        <a href="{{ path('tmonier_purchase_approval_shop_approvals') }}" class="btn btn-sm btn-link">{{ 'tmonier_purchase_approval.ui.show_pending_only'|trans }}</a>
+    {% endif %}
+</div>
+
+{% if context.total == 0 %}
+    <div class="alert alert-light" {{ sylius_test_html_attribute('tmonier-approvals-empty') }}>{{ (context.pending_only ? 'tmonier_purchase_approval.ui.no_pending_approval' : 'tmonier_purchase_approval.ui.no_approval')|trans }}</div>
+{% else %}
+    <div class="table-responsive">
+        <table class="table align-middle" {{ sylius_test_html_attribute('tmonier-approvals') }}>
+            <thead>
+                <tr>
+                    <th scope="col">{{ 'sylius.ui.order'|trans }}</th>
+                    <th scope="col">{{ 'sylius.ui.date'|trans }}</th>
+                    <th scope="col">{{ 'tmonier_purchase_approval.ui.placed_by'|trans }}</th>
+                    <th scope="col" class="text-end">{{ 'sylius.ui.total'|trans }}</th>
+                    <th scope="col">{{ 'tmonier_purchase_approval.ui.approval'|trans }}</th>
+                    <th scope="col"><span class="visually-hidden">{{ 'sylius.ui.actions'|trans }}</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for approval in context.approvals %}
+                    {% set order = approval.order %}
+                    <tr {{ sylius_test_html_attribute('tmonier-approval', order.number) }}>
+                        <th scope="row" class="fw-normal">#{{ order.number }}</th>
+                        <td>{{ approval.createdAt|format_datetime('short', 'short', locale=app.request.locale) }}</td>
+                        <td>{{ order.customer.fullName|default('')|trim ?: '-' }}</td>
+                        <td class="text-end">{{ approval.total|sylius_format_money(approval.currencyCode ?? order.currencyCode, app.request.locale) }}</td>
+                        <td>{% include '@TmonierSyliusPurchaseApprovalPlugin/shared/state_badge.html.twig' %}</td>
+                        <td class="text-end">
+                            <a href="{{ path('tmonier_purchase_approval_shop_approval_show', {'number': order.number}) }}" class="btn btn-sm btn-outline-primary">{{ (approval.pending ? 'tmonier_purchase_approval.ui.review' : 'sylius.ui.show')|trans }}<span class="visually-hidden"> #{{ order.number }}</span></a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if context.pages > 1 %}
+        <nav aria-label="{{ 'tmonier_purchase_approval.ui.approvals'|trans }}">
+            <ul class="pagination">
+                {% for p in 1..context.pages %}
+                    <li class="page-item {{ p == context.current_page ? 'active' }}"><a class="page-link" href="{{ path('tmonier_purchase_approval_shop_approvals', {'page': p} + (context.pending_only ? {} : {'all': 1})) }}" {% if p == context.current_page %}aria-current="page"{% endif %}>{{ p }}</a></li>
+                {% endfor %}
+            </ul>
+        </nav>
+    {% endif %}
+{% endif %}

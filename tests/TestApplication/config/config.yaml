@@ -1,0 +1,20 @@
+imports:
+    - { resource: "@TmonierSyliusAdminOrderCreationPlugin/config/config.yaml" }
+    - { resource: "@TmonierSyliusCompanyAccountsPlugin/config/config.yaml" }
+    - { resource: "@TmonierSyliusWebhookOutboxPlugin/config/config.yaml" }
+    - { resource: "@TmonierSyliusPurchaseApprovalPlugin/config/config.yaml" }
+    - { resource: "dbal_savepoints.php" }
+    - { resource: "services.php" }
+
+# Demo data (dev and test databases): the company-accounts demo company (admin@, buyer@ and
+# approver@acme-industries.example.com / sylius), then purchase limits and pending orders.
+sylius_fixtures:
+    suites:
+        default:
+            fixtures:
+                tmonier_company_accounts:
+                    priority: -100
+                    options:
+                        orders_per_member: 1
+                tmonier_purchase_approval:
+                    priority: -110

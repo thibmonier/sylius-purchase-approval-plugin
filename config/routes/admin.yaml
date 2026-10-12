@@ -1,0 +1,8 @@
+tmonier_purchase_approval_admin_order_approval_decide:
+    path: /orders/{id}/approval/{decision}
+    methods: [POST]
+    requirements:
+        id: '\d+'
+        decision: 'approve|reject'
+    defaults:
+        _controller: tmonier_purchase_approval.controller.admin.approval_decision

@@ -1,0 +1,7 @@
+tmonier_purchase_approval:
+    order_approved: 'Die Bestellung wurde freigegeben.'
+    order_rejected: 'Die Bestellung wurde abgelehnt und storniert.'
+    limits_updated: 'Die Limits wurden aktualisiert.'
+    payment_entry:
+        awaiting_approval: 'Bestellung #%number% wartet auf die Freigabe Ihres Unternehmens: Sie können sie nach der Freigabe bezahlen.'
+        not_approved: 'Bestellung #%number% wurde nicht freigegeben: Sie kann nicht bezahlt werden.'

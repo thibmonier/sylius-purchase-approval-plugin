@@ -1,0 +1,85 @@
+sylius_twig_hooks:
+    hooks:
+        # approvals
+        'tmonier_purchase_approval_shop.account.approvals.index.content':
+            breadcrumbs:
+                template: '@TmonierSyliusPurchaseApprovalPlugin/shop/account/common/breadcrumbs.html.twig'
+                priority: 200
+
+        'tmonier_purchase_approval_shop.account.approvals.index.content.main.header':
+            title:
+                template: '@TmonierSyliusPurchaseApprovalPlugin/shop/account/common/title.html.twig'
+                priority: 100
+            navigation:
+                template: '@TmonierSyliusPurchaseApprovalPlugin/shop/account/common/navigation.html.twig'
+                priority: 0
+
+        'tmonier_purchase_approval_shop.account.approvals.index.content.main':
+            section:
+                template: '@TmonierSyliusPurchaseApprovalPlugin/shop/account/approvals/list.html.twig'
+                priority: -10
+
+        # approval
+        'tmonier_purchase_approval_shop.account.approval.index.content':
+            breadcrumbs:
+                template: '@TmonierSyliusPurchaseApprovalPlugin/shop/account/common/breadcrumbs.html.twig'
+                priority: 200
+
+        'tmonier_purchase_approval_shop.account.approval.index.content.main.header':
+            title:
+                template: '@TmonierSyliusPurchaseApprovalPlugin/shop/account/common/title.html.twig'
+                priority: 100
+            navigation:
+                template: '@TmonierSyliusPurchaseApprovalPlugin/shop/account/common/navigation.html.twig'
+                priority: 0
+
+        'tmonier_purchase_approval_shop.account.approval.index.content.main':
+            section:
+                template: '@TmonierSyliusPurchaseApprovalPlugin/shop/account/approvals/details.html.twig'
+                priority: -10
+
+        # limits
+        'tmonier_purchase_approval_shop.account.limits.index.content':
+            breadcrumbs:
+                template: '@TmonierSyliusPurchaseApprovalPlugin/shop/account/common/breadcrumbs.html.twig'
+                priority: 200
+
+        'tmonier_purchase_approval_shop.account.limits.index.content.main.header':
+            title:
+                template: '@TmonierSyliusPurchaseApprovalPlugin/shop/account/common/title.html.twig'
+                priority: 100
+            navigation:
+                template: '@TmonierSyliusPurchaseApprovalPlugin/shop/account/common/navigation.html.twig'
+                priority: 0
+
+        'tmonier_purchase_approval_shop.account.limits.index.content.main':
+            section:
+                template: '@TmonierSyliusPurchaseApprovalPlugin/shop/account/limits/list.html.twig'
+                priority: -10
+
+        # Company-accounts pages: links to the approvals (approvers) and the limits (company admins).
+        'tmonier_company_accounts_shop.account.company.show.index.content.main.header':
+            tmonier_approval_navigation:
+                template: '@TmonierSyliusPurchaseApprovalPlugin/shop/account/common/navigation.html.twig'
+                priority: -10
+
+        'tmonier_company_accounts_shop.account.company.members.index.content.main.header':
+            tmonier_approval_navigation:
+                template: '@TmonierSyliusPurchaseApprovalPlugin/shop/account/common/navigation.html.twig'
+                priority: -10
+
+        'tmonier_company_accounts_shop.account.company.orders.index.content.main.header':
+            tmonier_approval_navigation:
+                template: '@TmonierSyliusPurchaseApprovalPlugin/shop/account/common/navigation.html.twig'
+                priority: -10
+
+        'tmonier_company_accounts_shop.account.company.order.index.content.main.header':
+            tmonier_approval_navigation:
+                template: '@TmonierSyliusPurchaseApprovalPlugin/shop/account/common/navigation.html.twig'
+                priority: -10
+
+        # Customer order page: approval of the order (buyer).
+        'sylius_shop.account.order.show.content.main.header':
+            tmonier_approval:
+                template: '@TmonierSyliusPurchaseApprovalPlugin/shop/account/order/approval.html.twig'
+                priority: -10

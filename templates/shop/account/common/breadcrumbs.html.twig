@@ -1,0 +1,23 @@
+{% from '@SyliusShop/shared/breadcrumbs.html.twig' import breadcrumbs as breadcrumbs %}
+
+{% set context = hookable_metadata.context %}
+{% set items = [
+    { label: 'sylius.ui.home'|trans, path: path('sylius_shop_homepage') },
+    { label: 'sylius.ui.my_account'|trans, path: path('sylius_shop_account_dashboard') },
+] %}
+{% if context.page == 'limits' %}
+    {% set items = items|merge([{ label: 'tmonier_purchase_approval.ui.purchase_limits'|trans, active: true }]) %}
+{% elseif context.page == 'approval' %}
+    {% if is_granted('APPROVAL_LIST', context.company) %}
+        {% set items = items|merge([{ label: 'tmonier_purchase_approval.ui.approvals'|trans, path: path('tmonier_purchase_approval_shop_approvals') }]) %}
+    {% else %}
+        {% set items = items|merge([{ label: 'tmonier_purchase_approval.ui.my_orders'|trans, path: path('sylius_shop_account_order_index') }]) %}
+    {% endif %}
+    {% set items = items|merge([{ label: '#' ~ context.order.number, active: true }]) %}
+{% else %}
+    {% set items = items|merge([{ label: 'tmonier_purchase_approval.ui.approvals'|trans, active: true }]) %}
+{% endif %}
+
+<div class="col-12">
+    {{ breadcrumbs(items) }}
+</div>

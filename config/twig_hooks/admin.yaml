@@ -1,0 +1,7 @@
+sylius_twig_hooks:
+    hooks:
+        # Order page: approval of the order, with approve / reject for the store.
+        'sylius_admin.order.show.content.sections#right':
+            tmonier_approval:
+                template: '@TmonierSyliusPurchaseApprovalPlugin/admin/order/approval.html.twig'
+                priority: 150

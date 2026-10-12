@@ -1,0 +1,16 @@
+tmonier_purchase_approval:
+    approval:
+        not_pending: 'Deze bestelling wacht niet meer op goedkeuring.'
+        not_allowed: 'Alleen een goedkeurder van het bedrijf kan over deze bestelling beslissen.'
+        own_order: 'U kunt uw eigen bestelling niet goedkeuren of afwijzen.'
+        above_limit: 'Deze bestelling ligt boven uw goedkeuringslimiet: een andere goedkeurder moet ze goedkeuren.'
+        comment_too_long: 'De opmerking mag niet langer zijn dan %max% tekens.'
+    limit:
+        not_allowed: 'Alleen een actieve beheerder van het bedrijf kan de limieten wijzigen.'
+        own_limits: 'U kunt uw eigen limieten niet wijzigen.'
+        invalid_amount: 'Voer een positief bedrag in met maximaal twee decimalen, of laat het leeg.'
+        invalid_currency: 'Kies een valuta van de winkel voor de limieten.'
+        member_unique: 'Dit lid heeft al limieten.'
+    payment_entry:
+        awaiting_approval: 'Bestelling #%number% wacht op de goedkeuring van uw bedrijf: u kunt betalen zodra ze is goedgekeurd.'
+        not_approved: 'Bestelling #%number% is niet goedgekeurd: ze kan niet worden betaald.'

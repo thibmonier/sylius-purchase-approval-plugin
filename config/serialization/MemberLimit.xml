@@ -1,0 +1,34 @@
+<?xml version="1.0" ?>
+
+<serializer xmlns="http://symfony.com/schema/dic/serializer-mapping"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="http://symfony.com/schema/dic/serializer-mapping https://symfony.com/schema/dic/serializer-mapping/serializer-mapping-1.0.xsd"
+>
+    <class name="Tmonier\SyliusPurchaseApprovalPlugin\Entity\MemberLimit">
+        <attribute name="id">
+            <group>tmonier_purchase_approval:admin:member_limit:show</group>
+        </attribute>
+        <attribute name="member">
+            <group>tmonier_purchase_approval:admin:member_limit:show</group>
+            <group>tmonier_purchase_approval:admin:member_limit:create</group>
+        </attribute>
+        <attribute name="orderLimit">
+            <group>tmonier_purchase_approval:admin:member_limit:show</group>
+            <group>tmonier_purchase_approval:admin:member_limit:create</group>
+            <group>tmonier_purchase_approval:admin:member_limit:update</group>
+        </attribute>
+        <attribute name="approvalLimit">
+            <group>tmonier_purchase_approval:admin:member_limit:show</group>
+            <group>tmonier_purchase_approval:admin:member_limit:create</group>
+            <group>tmonier_purchase_approval:admin:member_limit:update</group>
+        </attribute>
+        <attribute name="currencyCode">
+            <group>tmonier_purchase_approval:admin:member_limit:show</group>
+            <group>tmonier_purchase_approval:admin:member_limit:create</group>
+            <group>tmonier_purchase_approval:admin:member_limit:update</group>
+        </attribute>
+        <attribute name="updatedAt">
+            <group>tmonier_purchase_approval:admin:member_limit:show</group>
+        </attribute>
+    </class>
+</serializer>

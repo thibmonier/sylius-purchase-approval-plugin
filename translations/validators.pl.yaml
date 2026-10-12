@@ -1,0 +1,16 @@
+tmonier_purchase_approval:
+    approval:
+        not_pending: 'To zamówienie nie czeka już na zatwierdzenie.'
+        not_allowed: 'Tylko zatwierdzający w firmie może zdecydować o tym zamówieniu.'
+        own_order: 'Nie możesz zatwierdzić ani odrzucić własnego zamówienia.'
+        above_limit: 'To zamówienie przekracza Twój limit zatwierdzania: musi je zatwierdzić inny zatwierdzający.'
+        comment_too_long: 'Komentarz nie może być dłuższy niż %max% znaków.'
+    limit:
+        not_allowed: 'Tylko aktywny administrator firmy może zmieniać limity.'
+        own_limits: 'Nie możesz zmienić własnych limitów.'
+        invalid_amount: 'Wpisz kwotę dodatnią z maksymalnie dwoma miejscami po przecinku lub pozostaw puste.'
+        invalid_currency: 'Wybierz walutę sklepu dla limitów.'
+        member_unique: 'Ten członek ma już limity.'
+    payment_entry:
+        awaiting_approval: 'Zamówienie nr %number% czeka na zatwierdzenie przez Twoją firmę: zapłacisz po jego zatwierdzeniu.'
+        not_approved: 'Zamówienie nr %number% nie zostało zatwierdzone: nie można go opłacić.'

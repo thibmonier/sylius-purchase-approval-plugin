@@ -1,0 +1,14 @@
+# Import this file from your application's config/routes:
+#
+# tmonier_sylius_purchase_approval:
+#     resource: "@TmonierSyliusPurchaseApprovalPlugin/config/routes.yaml"
+
+tmonier_purchase_approval_admin:
+    resource: "@TmonierSyliusPurchaseApprovalPlugin/config/routes/admin.yaml"
+    prefix: '/%sylius_admin.path_name%'
+
+tmonier_purchase_approval_shop:
+    resource: "@TmonierSyliusPurchaseApprovalPlugin/config/routes/shop.yaml"
+    prefix: /{_locale}
+    requirements:
+        _locale: ^[A-Za-z]{2,4}(_([A-Za-z]{4}|[0-9]{3}))?(_([A-Za-z]{2}|[0-9]{3}))?$

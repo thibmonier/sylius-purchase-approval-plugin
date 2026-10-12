@@ -1,0 +1,7 @@
+tmonier_purchase_approval:
+    order_approved: 'Zamówienie zostało zatwierdzone.'
+    order_rejected: 'Zamówienie zostało odrzucone i anulowane.'
+    limits_updated: 'Limity zostały zaktualizowane.'
+    payment_entry:
+        awaiting_approval: 'Zamówienie nr %number% czeka na zatwierdzenie przez Twoją firmę: zapłacisz po jego zatwierdzeniu.'
+        not_approved: 'Zamówienie nr %number% nie zostało zatwierdzone: nie można go opłacić.'

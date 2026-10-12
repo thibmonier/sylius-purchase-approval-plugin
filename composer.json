@@ -1,0 +1,100 @@
+{
+    "name": "tmonier/sylius-purchase-approval-plugin",
+    "type": "sylius-plugin",
+    "description": "Purchase approval for Sylius 2 B2B company accounts: order and approval limits per member, pending orders held until a company approver approves them (no payment, shipment or invoice before), acknowledgement e-mail, expiry, shop, admin and API",
+    "keywords": [
+        "sylius",
+        "sylius-plugin",
+        "b2b",
+        "purchase-approval",
+        "order-approval",
+        "approval-workflow",
+        "company-accounts",
+        "spending-limit"
+    ],
+    "license": "MIT",
+    "require": {
+        "php": "^8.2",
+        "sylius/sylius": "^2.2.9 || ^2.3",
+        "tmonier/sylius-company-accounts-plugin": "^1.0",
+        "tmonier/sylius-order-hold-plugin": "^1.0"
+    },
+    "require-dev": {
+        "phpstan/phpstan": "^2.1",
+        "phpstan/phpstan-doctrine": "^2.0",
+        "phpstan/phpstan-webmozart-assert": "^2.0",
+        "phpunit/phpunit": "^10.5",
+        "sylius-labs/coding-standard": "^4.4",
+        "sylius/invoicing-plugin": "^2.0",
+        "sylius/test-application": "^2.0.0@alpha",
+        "symfony/browser-kit": "^6.4 || ^7.4 || ^8.0",
+        "symfony/css-selector": "^6.4 || ^7.4 || ^8.0",
+        "symfony/debug-bundle": "^6.4 || ^7.4 || ^8.0",
+        "symfony/dom-crawler": "^6.4 || ^7.4 || ^8.0",
+        "symfony/dotenv": "^6.4 || ^7.4 || ^8.0",
+        "symfony/http-client": "^6.4 || ^7.4 || ^8.0",
+        "symfony/intl": "^6.4 || ^7.4 || ^8.0",
+        "symfony/runtime": "^6.4 || ^7.4 || ^8.0",
+        "symfony/web-profiler-bundle": "^6.4 || ^7.4 || ^8.0",
+        "symfony/webpack-encore-bundle": "^2.2",
+        "tmonier/sylius-admin-order-creation-plugin": "^1.0",
+        "tmonier/sylius-webhook-outbox-plugin": "^1.0"
+    },
+    "suggest": {
+        "sylius/invoicing-plugin": "Invoices are generated when an order is approved, not when it is placed",
+        "tmonier/sylius-webhook-outbox-plugin": "order.approved, order.approval_rejected and order.approval_expired webhooks"
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": false,
+            "php-http/discovery": false,
+            "phpstan/extension-installer": true,
+            "symfony/flex": true,
+            "symfony/runtime": true
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-main": "1.0-dev"
+        },
+        "symfony": {
+            "require": "^7.4"
+        },
+        "public-dir": "vendor/sylius/test-application/public"
+    },
+    "autoload": {
+        "psr-4": {
+            "Tmonier\\SyliusPurchaseApprovalPlugin\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\Tmonier\\SyliusPurchaseApprovalPlugin\\": [
+                "tests/",
+                "tests/TestApplication/src/"
+            ]
+        }
+    },
+    "scripts": {
+        "database-reset": [
+            "vendor/bin/console doctrine:database:drop --force --if-exists",
+            "vendor/bin/console doctrine:database:create",
+            "vendor/bin/console doctrine:migration:migrate -n",
+            "vendor/bin/console sylius:fixtures:load -n"
+        ],
+        "frontend-clear": [
+            "cd vendor/sylius/test-application && yarn install && yarn build",
+            "vendor/bin/console assets:install"
+        ],
+        "test-app-init": [
+            "@database-reset",
+            "@frontend-clear"
+        ]
+    },
+    "authors": [
+        {
+            "name": "Thibaut Monier"
+        }
+    ]
+}

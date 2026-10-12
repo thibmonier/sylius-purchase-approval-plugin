@@ -1,0 +1,7 @@
+<div style="text-align: center; margin-bottom: 30px;">
+    {{ 'sylius.email.order_confirmation.your_order_number'|trans({}, null, localeCode) }}
+    <div style="margin: 10px 0;">
+        <span style="border: 1px solid #eee; padding: 10px; color: #1abb9c; font-size: 28px;">{{ order.number }}</span>
+    </div>
+    {{ 'tmonier_purchase_approval.email.order_total'|trans({'%total%': approval.total|sylius_format_money(approval.currencyCode ?? order.currencyCode, localeCode)}, 'messages', localeCode) }}
+</div>

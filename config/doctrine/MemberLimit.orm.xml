@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping">
+
+    <mapped-superclass name="Tmonier\SyliusPurchaseApprovalPlugin\Entity\MemberLimit" table="tmonier_purchase_approval_member_limit">
+        <id name="id" column="id" type="integer">
+            <generator strategy="AUTO" />
+        </id>
+
+        <field name="orderLimit" column="order_limit" type="integer" nullable="true" />
+        <field name="approvalLimit" column="approval_limit" type="integer" nullable="true" />
+        <field name="currencyCode" column="currency_code" type="string" length="3" nullable="true" />
+        <field name="updatedAt" column="updated_at" type="datetime_immutable" nullable="true" />
+
+        <one-to-one field="member" target-entity="Tmonier\SyliusCompanyAccountsPlugin\Entity\CompanyMemberInterface">
+            <join-column name="member_id" referenced-column-name="id" nullable="false" unique="true" on-delete="CASCADE" />
+        </one-to-one>
+    </mapped-superclass>
+
+</doctrine-mapping>

@@ -1,0 +1,16 @@
+tmonier_purchase_approval:
+    approval:
+        not_pending: 'Cette commande n''attend plus d''approbation.'
+        not_allowed: 'Seul un approbateur de l''entreprise peut décider de cette commande.'
+        own_order: 'Vous ne pouvez pas approuver ni refuser votre propre commande.'
+        above_limit: 'Cette commande dépasse votre plafond d''approbation : un autre approbateur doit l''approuver.'
+        comment_too_long: 'Le commentaire ne peut pas dépasser %max% caractères.'
+    limit:
+        not_allowed: 'Seul un administrateur actif de l''entreprise peut modifier les plafonds.'
+        own_limits: 'Vous ne pouvez pas modifier vos propres plafonds.'
+        invalid_amount: 'Saisissez un montant positif avec au plus deux décimales, ou laissez vide.'
+        invalid_currency: 'Choisissez une devise de la boutique pour les plafonds.'
+        member_unique: 'Ce membre a déjà des plafonds.'
+    payment_entry:
+        awaiting_approval: 'La commande n° %number% attend l''approbation de votre entreprise : vous pourrez la payer une fois approuvée.'
+        not_approved: 'La commande n° %number% n''a pas été approuvée : elle ne peut pas être payée.'

@@ -1,0 +1,44 @@
+{% set order = hookable_metadata.context.resource %}
+{% set approval = tmonier_order_approval(order) %}
+{% if approval is not null %}
+    {% set currency = approval.currencyCode ?? order.currencyCode %}
+    <div class="card mb-3" {{ sylius_test_html_attribute('tmonier-admin-order-approval', approval.state) }}>
+        <div class="card-header">
+            <div class="card-title">{{ 'tmonier_purchase_approval.ui.approval'|trans }}</div>
+            <div class="card-actions">{% include '@TmonierSyliusPurchaseApprovalPlugin/shared/state_badge.html.twig' %}</div>
+        </div>
+        <div class="card-body">
+            <dl class="row mb-0">
+                <dt class="col-6">{{ 'tmonier_purchase_approval.ui.company'|trans }}</dt>
+                <dd class="col-6">{{ approval.company.name|default('-') }}</dd>
+                <dt class="col-6">{{ 'tmonier_purchase_approval.ui.order_limit'|trans }}</dt>
+                <dd class="col-6">{{ approval.orderLimit is null ? 'tmonier_purchase_approval.ui.limit_other_currency'|trans : approval.orderLimit|sylius_format_money(currency, app.request.locale) }}</dd>
+                <dt class="col-6">{{ 'tmonier_purchase_approval.ui.requested_at'|trans }}</dt>
+                <dd class="col-6">{{ approval.createdAt|format_datetime('medium', 'short', locale=app.request.locale) }}</dd>
+                {% if not approval.pending %}
+                    <dt class="col-6">{{ 'tmonier_purchase_approval.ui.decided_by'|trans }}</dt>
+                    <dd class="col-6">{{ approval.deciderType == 'system' ? 'tmonier_purchase_approval.ui.decided_by_system'|trans : (approval.deciderName ?? '-') }}{% if approval.deciderType == 'administrator' %} ({{ 'tmonier_purchase_approval.ui.store'|trans }}){% endif %}</dd>
+                    <dt class="col-6">{{ 'tmonier_purchase_approval.ui.decided_at'|trans }}</dt>
+                    <dd class="col-6">{{ approval.decidedAt ? approval.decidedAt|format_datetime('medium', 'short', locale=app.request.locale) : '-' }}</dd>
+                {% endif %}
+                {% if approval.comment is not empty %}
+                    <dt class="col-12">{{ 'tmonier_purchase_approval.ui.comment'|trans }}</dt>
+                    <dd class="col-12" style="white-space: pre-line">{{ approval.comment }}</dd>
+                {% endif %}
+            </dl>
+        </div>
+        {% if approval.pending %}
+            <div class="card-footer">
+                <form method="post" {{ sylius_test_html_attribute('tmonier-admin-approval-decision') }}>
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('tmonier_admin_approval_' ~ order.id) }}">
+                    <label class="form-label" for="tmonier-admin-approval-comment">{{ 'tmonier_purchase_approval.ui.comment_optional'|trans }}</label>
+                    <textarea class="form-control mb-2" style="height: auto" id="tmonier-admin-approval-comment" name="comment" rows="2" maxlength="1000"></textarea>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-success" formaction="{{ path('tmonier_purchase_approval_admin_order_approval_decide', {'id': order.id, 'decision': 'approve'}) }}" {{ sylius_test_html_attribute('tmonier-admin-approve') }}>{{ 'tmonier_purchase_approval.ui.approve'|trans }}</button>
+                        <button type="submit" class="btn btn-outline-danger" formaction="{{ path('tmonier_purchase_approval_admin_order_approval_decide', {'id': order.id, 'decision': 'reject'}) }}" {{ sylius_test_html_attribute('tmonier-admin-reject') }}>{{ 'tmonier_purchase_approval.ui.reject'|trans }}</button>
+                    </div>
+                </form>
+            </div>
+        {% endif %}
+    </div>
+{% endif %}
