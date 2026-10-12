@@ -1,2 +1,2 @@
-{% set state_classes = {'pending': 'text-bg-warning', 'approved': 'text-bg-success', 'rejected': 'text-bg-danger', 'expired': 'text-bg-secondary'} %}
+{% set state_classes = {'pending': 'text-bg-warning', 'approved': 'text-bg-success', 'rejected': 'text-bg-danger', 'expired': 'text-bg-secondary', 'cancelled': 'text-bg-secondary'} %}
 <span class="badge {{ state_classes[approval.state]|default('text-bg-light') }}" {{ sylius_test_html_attribute('tmonier-approval-state', approval.state) }}>{{ ('tmonier_purchase_approval.state.' ~ approval.state)|trans }}</span>

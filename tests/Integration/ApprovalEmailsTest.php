@@ -11,6 +11,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Mime\Email;
+use Tests\Tmonier\SyliusPurchaseApprovalPlugin\AsyncMessagesTrait;
 use Tmonier\SyliusCompanyAccountsPlugin\Entity\CompanyMemberInterface;
 use Tmonier\SyliusPurchaseApprovalPlugin\Approval\ApprovalDecisionMaker;
 use Tmonier\SyliusPurchaseApprovalPlugin\Approval\Decider;
@@ -24,6 +25,7 @@ use Tmonier\SyliusPurchaseApprovalPlugin\Repository\OrderApprovalRepositoryInter
 final class ApprovalEmailsTest extends KernelTestCase
 {
     use IntegrationTestTrait;
+    use AsyncMessagesTrait;
 
     public function testTheShopConfirmationBecomesAnAcknowledgement(): void
     {
@@ -39,10 +41,25 @@ final class ApprovalEmailsTest extends KernelTestCase
     {
         $order = $this->catalog()->orderAgainstLimit($this->catalog()->member($this->catalog()->company()), -1);
 
-        // What the API dispatches after CompleteOrder (handled synchronously in the test application).
+        // What the API dispatches after CompleteOrder, consumed by the worker.
         $this->service('sylius.command_bus', MessageBusInterface::class)->dispatch(new SendOrderConfirmation((string) $order->getTokenValue()));
+        self::assertSame([], $this->subjectsTo($order), 'Asynchronous.');
+        self::assertSame(1, $this->runWorker());
 
         self::assertSame([$this->acknowledgementSubject($order)], $this->subjectsTo($order));
+    }
+
+    public function testALateAsynchronousConfirmationIsNotSentTwice(): void
+    {
+        $company = $this->catalog()->company();
+        $order = $this->catalog()->orderAgainstLimit($this->catalog()->member($company), -1);
+        $this->service('sylius.command_bus', MessageBusInterface::class)->dispatch(new SendOrderConfirmation((string) $order->getTokenValue()));
+
+        // The worker is late: the approver decides first.
+        $this->decisionMaker()->approve($this->approvalOf($order), Decider::member($this->catalog()->member($company, null, CompanyMemberInterface::ROLE_APPROVER)));
+        self::assertSame(1, $this->runWorker());
+
+        self::assertSame([$this->confirmationSubject($order)], $this->subjectsTo($order));
     }
 
     public function testOrdersWithinTheLimitGetTheRegularConfirmation(): void
@@ -94,6 +111,7 @@ final class ApprovalEmailsTest extends KernelTestCase
         self::assertStringContainsString('Please split the order.', (string) $emails[0]->getHtmlBody());
         // A late confirmation (asynchronous API path) is not sent for a rejected order.
         $this->service('sylius.command_bus', MessageBusInterface::class)->dispatch(new SendOrderConfirmation((string) $order->getTokenValue()));
+        $this->runWorker();
         self::assertCount(1, $this->messagesTo($order));
     }
 

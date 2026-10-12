@@ -24,6 +24,12 @@ interface OrderApprovalRepositoryInterface extends RepositoryInterface
     /** Approvals of the company, pending first, then the most recent decisions. */
     public function createListQueryBuilderByCompany(CompanyInterface $company, bool $pendingOnly): QueryBuilder;
 
+    /**
+     * Records, without flushing the unit of work, that the confirmation went out: a late
+     * asynchronous confirmation of the same order is then dropped.
+     */
+    public function markConfirmationSent(OrderApprovalInterface $approval, \DateTimeImmutable $date): void;
+
     /** All approvals for the store, most recent first, optionally in one state. */
     public function createAdminListQueryBuilder(?string $state): QueryBuilder;
 

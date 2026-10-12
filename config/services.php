@@ -18,6 +18,7 @@ use Tmonier\SyliusPurchaseApprovalPlugin\Controller\Admin\ApprovalDecisionContro
 use Tmonier\SyliusPurchaseApprovalPlugin\Controller\Shop\ApprovalController;
 use Tmonier\SyliusPurchaseApprovalPlugin\Event\OrderApprovalEvent;
 use Tmonier\SyliusPurchaseApprovalPlugin\EventListener\OrderApprovalRequestListener;
+use Tmonier\SyliusPurchaseApprovalPlugin\EventListener\OrderCancellationListener;
 use Tmonier\SyliusPurchaseApprovalPlugin\EventListener\PaymentCompletionAlertListener;
 use Tmonier\SyliusPurchaseApprovalPlugin\EventListener\ShipmentApprovalGuardListener;
 use Tmonier\SyliusPurchaseApprovalPlugin\Fixture\PurchaseApprovalFixture;
@@ -89,6 +90,11 @@ return static function (ContainerConfigurator $container): void {
         ->set('tmonier_purchase_approval.listener.shipment_guard', ShipmentApprovalGuardListener::class)
         ->args([service('tmonier_purchase_approval.repository.order_approval')])
         ->tag('kernel.event_listener', ['event' => 'workflow.sylius_shipment.guard.ship'])
+    ;
+    $services
+        ->set('tmonier_purchase_approval.listener.order_cancellation', OrderCancellationListener::class)
+        ->args([service('tmonier_purchase_approval.repository.order_approval'), service('sylius_abstraction.state_machine')])
+        ->tag('kernel.event_listener', ['event' => 'workflow.sylius_order.completed.cancel'])
     ;
     $services
         ->set('tmonier_purchase_approval.listener.payment_completion_alert', PaymentCompletionAlertListener::class)

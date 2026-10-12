@@ -36,6 +36,8 @@ class OrderApproval implements OrderApprovalInterface
 
     protected ?\DateTimeImmutable $decidedAt = null;
 
+    protected ?\DateTimeImmutable $confirmationSentAt = null;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -174,5 +176,15 @@ class OrderApproval implements OrderApprovalInterface
     public function setDecidedAt(?\DateTimeImmutable $decidedAt): void
     {
         $this->decidedAt = $decidedAt;
+    }
+
+    public function getConfirmationSentAt(): ?\DateTimeImmutable
+    {
+        return $this->confirmationSentAt;
+    }
+
+    public function setConfirmationSentAt(?\DateTimeImmutable $confirmationSentAt): void
+    {
+        $this->confirmationSentAt = $confirmationSentAt;
     }
 }

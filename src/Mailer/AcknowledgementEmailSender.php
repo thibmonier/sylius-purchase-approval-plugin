@@ -14,7 +14,8 @@ use Tmonier\SyliusPurchaseApprovalPlugin\Repository\OrderApprovalRepositoryInter
  * confirmation becomes an acknowledgement of receipt ("awaiting approval"). Both confirmation
  * paths go through it: the shop listener of `sylius.order.post_complete` and the API
  * `SendOrderConfirmation` message handler (possibly asynchronous). The confirmation is sent
- * once the order is approved.
+ * once the order is approved, and only once: an asynchronous confirmation consumed after the
+ * approval (worker late or down) is dropped, the buyer already has the confirmation.
  */
 final class AcknowledgementEmailSender implements SenderInterface
 {
@@ -31,13 +32,17 @@ final class AcknowledgementEmailSender implements SenderInterface
         $order = $data['order'] ?? null;
         if (CoreEmails::ORDER_CONFIRMATION === $code && $order instanceof OrderInterface) {
             $approval = $this->approvalRepository->findOneByOrder($order);
-            if (null !== $approval && !$approval->isApproved()) {
-                if (!$approval->isPending()) {
-                    // Rejected or expired before the confirmation went out: the buyer gets that e-mail instead.
+            if (null !== $approval) {
+                if ($approval->isPending()) {
+                    $code = Emails::ACKNOWLEDGEMENT;
+                    $data['approval'] = $approval;
+                } elseif (!$approval->isApproved() || null !== $approval->getConfirmationSentAt()) {
+                    // Rejected, expired or cancelled (the buyer gets that e-mail instead), or
+                    // already confirmed at the approval.
                     return;
+                } else {
+                    $this->approvalRepository->markConfirmationSent($approval, new \DateTimeImmutable());
                 }
-                $code = Emails::ACKNOWLEDGEMENT;
-                $data['approval'] = $approval;
             }
         }
 

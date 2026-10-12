@@ -22,6 +22,8 @@ final class TmonierSyliusPurchaseApprovalExtension extends AbstractResourceExten
 
     private const OUTBOX_PARAMETER = 'tmonier_purchase_approval.webhook_outbox_bridge';
 
+    private const ADMIN_ORDER_CREATION_PARAMETER = 'tmonier_purchase_approval.admin_order_creation_bridge';
+
     public function load(array $configs, ContainerBuilder $container): void
     {
         /** @var array{approver_roles: list<string>, expire_after_days: int, driver: string, resources: array<string, mixed>} $config */
@@ -40,6 +42,9 @@ final class TmonierSyliusPurchaseApprovalExtension extends AbstractResourceExten
         }
         if (true === $this->flag($container, self::OUTBOX_PARAMETER)) {
             $loader->load('services/webhook_outbox.php');
+        }
+        if (true === $this->flag($container, self::ADMIN_ORDER_CREATION_PARAMETER)) {
+            $loader->load('services/admin_order_creation.php');
         }
     }
 
@@ -64,6 +69,11 @@ final class TmonierSyliusPurchaseApprovalExtension extends AbstractResourceExten
         $container->setParameter(
             self::OUTBOX_PARAMETER,
             $container->hasExtension('tmonier_sylius_webhook_outbox') && interface_exists(\Tmonier\SyliusWebhookOutboxPlugin\Capture\ChangeDetectorInterface::class),
+        );
+
+        $container->setParameter(
+            self::ADMIN_ORDER_CREATION_PARAMETER,
+            $container->hasExtension('tmonier_sylius_admin_order_creation') && interface_exists(\Tmonier\SyliusAdminOrderCreationPlugin\Mailer\PaymentLinkEmailManagerInterface::class),
         );
 
         $container->prependExtensionConfig('doctrine', [
@@ -91,6 +101,7 @@ final class TmonierSyliusPurchaseApprovalExtension extends AbstractResourceExten
                         ApprovalDecisionMaker::TRANSITION_APPROVE => ['from' => OrderApprovalInterface::STATE_PENDING, 'to' => OrderApprovalInterface::STATE_APPROVED],
                         ApprovalDecisionMaker::TRANSITION_REJECT => ['from' => OrderApprovalInterface::STATE_PENDING, 'to' => OrderApprovalInterface::STATE_REJECTED],
                         ApprovalDecisionMaker::TRANSITION_EXPIRE => ['from' => OrderApprovalInterface::STATE_PENDING, 'to' => OrderApprovalInterface::STATE_EXPIRED],
+                        ApprovalDecisionMaker::TRANSITION_CANCEL => ['from' => OrderApprovalInterface::STATE_PENDING, 'to' => OrderApprovalInterface::STATE_CANCELLED],
                     ],
                 ],
             ],

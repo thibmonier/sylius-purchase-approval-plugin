@@ -38,9 +38,9 @@ final class ExtensionTest extends TestCase
         self::assertIsArray($workflows);
         $workflow = $workflows['tmonier_order_approval'] ?? null;
         self::assertIsArray($workflow);
-        self::assertSame(['pending', 'approved', 'rejected', 'expired'], $workflow['places'] ?? null);
+        self::assertSame(['pending', 'approved', 'rejected', 'expired', 'cancelled'], $workflow['places'] ?? null);
         self::assertIsArray($workflow['transitions'] ?? null);
-        self::assertSame(['approve', 'reject', 'expire'], array_keys($workflow['transitions']));
+        self::assertSame(['approve', 'reject', 'expire', 'cancel'], array_keys($workflow['transitions']));
     }
 
     public function testBridgesAreLoadedOnlyWithTheirBundles(): void

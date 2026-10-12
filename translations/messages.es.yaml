@@ -35,13 +35,16 @@ tmonier_purchase_approval:
         reject: 'Rechazar'
         company: 'Empresa'
         my_orders: 'Mis pedidos'
+        closed_by_cancellation: 'Cerrada: el pedido se canceló'
     state:
         pending: 'Pendiente de aprobación'
         approved: 'Aprobado'
         rejected: 'Rechazado'
         expired: 'Caducado'
+        cancelled: 'Pedido cancelado'
         none: 'No necesaria'
     order_page:
+        cancelled: 'Este pedido se canceló antes de ser aprobado.'
         pending: 'Este pedido espera la aprobación de su empresa. Podrá pagarlo una vez aprobado.'
         approved: 'Este pedido fue aprobado por su empresa.'
         rejected: 'Este pedido fue rechazado por su empresa y se ha cancelado.'

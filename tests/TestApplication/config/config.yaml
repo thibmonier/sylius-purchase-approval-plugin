@@ -18,3 +18,13 @@ sylius_fixtures:
                         orders_per_member: 1
                 tmonier_purchase_approval:
                     priority: -110
+
+# Tests only: the API order confirmation is asynchronous, as on a production setup with a
+# worker (tests consume the in-memory transport themselves).
+when@test:
+    framework:
+        messenger:
+            transports:
+                tmonier_test_async: 'in-memory://'
+            routing:
+                'Sylius\Bundle\ApiBundle\Command\Checkout\SendOrderConfirmation': tmonier_test_async

@@ -35,13 +35,16 @@ tmonier_purchase_approval:
         reject: 'Afwijzen'
         company: 'Bedrijf'
         my_orders: 'Mijn bestellingen'
+        closed_by_cancellation: 'Gesloten: de bestelling is geannuleerd'
     state:
         pending: 'Wacht op goedkeuring'
         approved: 'Goedgekeurd'
         rejected: 'Afgewezen'
         expired: 'Verlopen'
+        cancelled: 'Bestelling geannuleerd'
         none: 'Niet nodig'
     order_page:
+        cancelled: 'Deze bestelling is geannuleerd voordat ze werd goedgekeurd.'
         pending: 'Deze bestelling wacht op de goedkeuring van uw bedrijf. U kunt betalen zodra ze is goedgekeurd.'
         approved: 'Deze bestelling is goedgekeurd door uw bedrijf.'
         rejected: 'Deze bestelling is afgewezen door uw bedrijf en geannuleerd.'

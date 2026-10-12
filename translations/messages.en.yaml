@@ -35,13 +35,16 @@ tmonier_purchase_approval:
         reject: 'Reject'
         company: 'Company'
         my_orders: 'My orders'
+        closed_by_cancellation: 'Closed: the order was cancelled'
     state:
         pending: 'Awaiting approval'
         approved: 'Approved'
         rejected: 'Rejected'
         expired: 'Expired'
+        cancelled: 'Order cancelled'
         none: 'None needed'
     order_page:
+        cancelled: 'This order was cancelled before it was approved.'
         pending: 'This order is waiting for the approval of your company. You will be able to pay once it is approved.'
         approved: 'This order was approved by your company.'
         rejected: 'This order was rejected by your company and has been cancelled.'

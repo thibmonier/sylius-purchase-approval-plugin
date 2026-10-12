@@ -13,4 +13,8 @@ return static function (ContainerConfigurator $container): void {
         ->alias('tmonier_purchase_approval.test.approval_hold', 'tmonier_purchase_approval.order_hold.approval_hold')
         ->public()
     ;
+    $container->services()
+        ->alias('tmonier_purchase_approval.test.payment_link', 'tmonier_admin_order.mailer.payment_link')
+        ->public()
+    ;
 };

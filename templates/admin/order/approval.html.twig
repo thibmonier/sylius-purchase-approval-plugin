@@ -17,7 +17,7 @@
                 <dd class="col-6">{{ approval.createdAt|format_datetime('medium', 'short', locale=app.request.locale) }}</dd>
                 {% if not approval.pending %}
                     <dt class="col-6">{{ 'tmonier_purchase_approval.ui.decided_by'|trans }}</dt>
-                    <dd class="col-6">{{ approval.deciderType == 'system' ? 'tmonier_purchase_approval.ui.decided_by_system'|trans : (approval.deciderName ?? '-') }}{% if approval.deciderType == 'administrator' %} ({{ 'tmonier_purchase_approval.ui.store'|trans }}){% endif %}</dd>
+                    <dd class="col-6">{{ approval.deciderType == 'system' ? (approval.state == 'cancelled' ? 'tmonier_purchase_approval.ui.closed_by_cancellation' : 'tmonier_purchase_approval.ui.decided_by_system')|trans : (approval.deciderName ?? '-') }}{% if approval.deciderType == 'administrator' %} ({{ 'tmonier_purchase_approval.ui.store'|trans }}){% endif %}</dd>
                     <dt class="col-6">{{ 'tmonier_purchase_approval.ui.decided_at'|trans }}</dt>
                     <dd class="col-6">{{ approval.decidedAt ? approval.decidedAt|format_datetime('medium', 'short', locale=app.request.locale) : '-' }}</dd>
                 {% endif %}

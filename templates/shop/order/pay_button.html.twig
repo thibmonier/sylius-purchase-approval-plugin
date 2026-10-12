@@ -1,0 +1,7 @@
+{# Replaces the core "Pay" button of the order payment page: no payment before the approval. #}
+{% set approval = tmonier_order_approval(hookable_metadata.context.order|default(null)) %}
+{% if approval is null or approval.approved %}
+    {% include '@SyliusShop/order/show/content/form/pay_button.html.twig' %}
+{% else %}
+    <div class="alert alert-warning" role="status" {{ sylius_test_html_attribute('tmonier-order-approval', approval.state) }}>{{ ('tmonier_purchase_approval.order_page.' ~ approval.state)|trans }}</div>
+{% endif %}

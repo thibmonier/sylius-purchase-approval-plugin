@@ -35,13 +35,16 @@ tmonier_purchase_approval:
         reject: 'Rifiuta'
         company: 'Azienda'
         my_orders: 'I miei ordini'
+        closed_by_cancellation: 'Chiusa: l''ordine è stato annullato'
     state:
         pending: 'In attesa di approvazione'
         approved: 'Approvato'
         rejected: 'Rifiutato'
         expired: 'Scaduto'
+        cancelled: 'Ordine annullato'
         none: 'Non necessaria'
     order_page:
+        cancelled: 'Questo ordine è stato annullato prima di essere approvato.'
         pending: 'Questo ordine è in attesa dell''approvazione della tua azienda. Potrai pagarlo una volta approvato.'
         approved: 'Questo ordine è stato approvato dalla tua azienda.'
         rejected: 'Questo ordine è stato rifiutato dalla tua azienda ed è stato annullato.'

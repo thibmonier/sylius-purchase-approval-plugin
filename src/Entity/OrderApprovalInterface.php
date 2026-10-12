@@ -23,7 +23,10 @@ interface OrderApprovalInterface extends ResourceInterface
 
     public const STATE_EXPIRED = 'expired';
 
-    public const STATES = [self::STATE_PENDING, self::STATE_APPROVED, self::STATE_REJECTED, self::STATE_EXPIRED];
+    /** The order was cancelled while it waited (by the store, the API or another plugin). */
+    public const STATE_CANCELLED = 'cancelled';
+
+    public const STATES = [self::STATE_PENDING, self::STATE_APPROVED, self::STATE_REJECTED, self::STATE_EXPIRED, self::STATE_CANCELLED];
 
     /** Approved by a member of the company. */
     public const DECIDED_BY_MEMBER = 'member';
@@ -31,7 +34,7 @@ interface OrderApprovalInterface extends ResourceInterface
     /** Decided by a store administrator. */
     public const DECIDED_BY_ADMINISTRATOR = 'administrator';
 
-    /** Expired by `tmonier:approval:expire`. */
+    /** Expired by `tmonier:approval:expire`, or closed because the order was cancelled. */
     public const DECIDED_BY_SYSTEM = 'system';
 
     public function getId(): ?int;
@@ -91,4 +94,9 @@ interface OrderApprovalInterface extends ResourceInterface
     public function getDecidedAt(): ?\DateTimeImmutable;
 
     public function setDecidedAt(?\DateTimeImmutable $decidedAt): void;
+
+    /** When the order confirmation went out after the approval (sent once). */
+    public function getConfirmationSentAt(): ?\DateTimeImmutable;
+
+    public function setConfirmationSentAt(?\DateTimeImmutable $confirmationSentAt): void;
 }

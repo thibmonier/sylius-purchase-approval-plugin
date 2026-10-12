@@ -83,3 +83,14 @@ sylius_twig_hooks:
             tmonier_approval:
                 template: '@TmonierSyliusPurchaseApprovalPlugin/shop/account/order/approval.html.twig'
                 priority: -10
+
+        # No "Pay" button while the order waits for its approval (the pay route is blocked anyway).
+        'sylius_shop.account.order.show.content.main.header.buttons':
+            pay:
+                template: '@TmonierSyliusPurchaseApprovalPlugin/shop/account/order/pay.html.twig'
+                priority: 0
+
+        'sylius_shop.order.show.content.form':
+            pay_button:
+                template: '@TmonierSyliusPurchaseApprovalPlugin/shop/order/pay_button.html.twig'
+                priority: 0

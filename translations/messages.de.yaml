@@ -35,13 +35,16 @@ tmonier_purchase_approval:
         reject: 'Ablehnen'
         company: 'Unternehmen'
         my_orders: 'Meine Bestellungen'
+        closed_by_cancellation: 'Geschlossen: Die Bestellung wurde storniert'
     state:
         pending: 'Wartet auf Freigabe'
         approved: 'Freigegeben'
         rejected: 'Abgelehnt'
         expired: 'Abgelaufen'
+        cancelled: 'Bestellung storniert'
         none: 'Nicht erforderlich'
     order_page:
+        cancelled: 'Diese Bestellung wurde vor der Freigabe storniert.'
         pending: 'Diese Bestellung wartet auf die Freigabe Ihres Unternehmens. Sie können sie nach der Freigabe bezahlen.'
         approved: 'Diese Bestellung wurde von Ihrem Unternehmen freigegeben.'
         rejected: 'Diese Bestellung wurde von Ihrem Unternehmen abgelehnt und storniert.'

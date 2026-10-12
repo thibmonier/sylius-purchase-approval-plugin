@@ -20,6 +20,7 @@
         <field name="comment" column="comment" type="text" nullable="true" />
         <field name="createdAt" column="created_at" type="datetime_immutable" />
         <field name="decidedAt" column="decided_at" type="datetime_immutable" nullable="true" />
+        <field name="confirmationSentAt" column="confirmation_sent_at" type="datetime_immutable" nullable="true" />
 
         <one-to-one field="order" target-entity="Sylius\Component\Order\Model\OrderInterface">
             <join-column name="order_id" referenced-column-name="id" nullable="false" unique="true" on-delete="CASCADE" />

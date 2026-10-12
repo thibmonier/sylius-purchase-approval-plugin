@@ -81,6 +81,19 @@ class OrderApprovalRepository extends EntityRepository implements OrderApprovalR
         return $queryBuilder;
     }
 
+    public function markConfirmationSent(OrderApprovalInterface $approval, \DateTimeImmutable $date): void
+    {
+        $approval->setConfirmationSentAt($date);
+        if (null !== $approval->getId()) {
+            $this->getEntityManager()->getConnection()->update(
+                $this->getClassMetadata()->getTableName(),
+                ['confirmation_sent_at' => $date],
+                ['id' => $approval->getId()],
+                ['confirmation_sent_at' => \Doctrine\DBAL\Types\Types::DATETIME_IMMUTABLE],
+            );
+        }
+    }
+
     public function createAdminListQueryBuilder(?string $state): QueryBuilder
     {
         $queryBuilder = $this->createQueryBuilder('o')

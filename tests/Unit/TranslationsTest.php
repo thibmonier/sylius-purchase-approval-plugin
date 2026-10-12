@@ -81,7 +81,7 @@ final class TranslationsTest extends TestCase
             $files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($root . '/' . $directory, \FilesystemIterator::SKIP_DOTS));
             foreach ($files as $file) {
                 // Service ids (tmonier_purchase_approval.repository...) and event names are not labels.
-                if (!$file instanceof \SplFileInfo || !in_array($file->getExtension(), ['php', 'twig', 'yaml', 'xml'], true) || in_array($file->getFilename(), ['services.php', 'webhook_outbox.php', 'invoicing.php'], true)) {
+                if (!$file instanceof \SplFileInfo || !in_array($file->getExtension(), ['php', 'twig', 'yaml', 'xml'], true) || in_array($file->getFilename(), ['services.php', 'webhook_outbox.php', 'invoicing.php', 'admin_order_creation.php'], true)) {
                     continue;
                 }
                 preg_match_all('/tmonier_purchase_approval\.(?:order_approved|order_rejected|limits_updated|ui|form|state|order_page|email|webhook|approval|limit|payment_entry)(?:\.[a-z_]*[a-z_])?/', (string) file_get_contents($file->getPathname()), $matches);

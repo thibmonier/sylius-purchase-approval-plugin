@@ -15,4 +15,5 @@ sylius_grid:
                             tmonier_purchase_approval.state.approved: approved
                             tmonier_purchase_approval.state.rejected: rejected
                             tmonier_purchase_approval.state.expired: expired
+                            tmonier_purchase_approval.state.cancelled: cancelled
                             tmonier_purchase_approval.state.none: none

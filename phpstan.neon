@@ -24,3 +24,4 @@ parameters:
             paths:
                 - src/EventListener/ShipmentApprovalGuardListener.php
                 - src/EventListener/PaymentCompletionAlertListener.php
+                - src/EventListener/OrderCancellationListener.php

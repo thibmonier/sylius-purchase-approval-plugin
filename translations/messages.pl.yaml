@@ -35,13 +35,16 @@ tmonier_purchase_approval:
         reject: 'Odrzuć'
         company: 'Firma'
         my_orders: 'Moje zamówienia'
+        closed_by_cancellation: 'Zamknięte: zamówienie anulowano'
     state:
         pending: 'Czeka na zatwierdzenie'
         approved: 'Zatwierdzone'
         rejected: 'Odrzucone'
         expired: 'Wygasło'
+        cancelled: 'Zamówienie anulowane'
         none: 'Niewymagane'
     order_page:
+        cancelled: 'To zamówienie zostało anulowane przed zatwierdzeniem.'
         pending: 'To zamówienie czeka na zatwierdzenie przez Twoją firmę. Zapłacisz po jego zatwierdzeniu.'
         approved: 'To zamówienie zostało zatwierdzone przez Twoją firmę.'
         rejected: 'To zamówienie zostało odrzucone przez Twoją firmę i anulowane.'

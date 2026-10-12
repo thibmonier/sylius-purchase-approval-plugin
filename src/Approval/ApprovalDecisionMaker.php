@@ -7,8 +7,11 @@ namespace Tmonier\SyliusPurchaseApprovalPlugin\Approval;
 use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManagerInterface;
 use Sylius\Abstraction\StateMachine\StateMachineInterface;
+use Sylius\Component\Core\Model\CustomerInterface;
+use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Order\OrderTransitions;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Tmonier\SyliusCompanyAccountsPlugin\Entity\CompanyMemberInterface;
 use Tmonier\SyliusPurchaseApprovalPlugin\Entity\OrderApprovalInterface;
 use Tmonier\SyliusPurchaseApprovalPlugin\Event\OrderApprovalEvent;
 
@@ -27,6 +30,8 @@ final class ApprovalDecisionMaker
     public const TRANSITION_REJECT = 'reject';
 
     public const TRANSITION_EXPIRE = 'expire';
+
+    public const TRANSITION_CANCEL = 'cancel';
 
     public const COMMENT_MAX_LENGTH = 1000;
 
@@ -56,6 +61,19 @@ final class ApprovalDecisionMaker
         return $this->decide($approval, Decider::system(), self::TRANSITION_EXPIRE, null);
     }
 
+    /** The member as it is in the database now (re-read; deleted meanwhile: null). */
+    private function managedMember(CompanyMemberInterface $member): ?CompanyMemberInterface
+    {
+        if ($this->entityManager->contains($member)) {
+            $this->entityManager->refresh($member);
+
+            return $member;
+        }
+        $found = null === $member->getId() ? null : $this->entityManager->find($this->entityManager->getClassMetadata($member::class)->getName(), $member->getId());
+
+        return $found instanceof CompanyMemberInterface ? $found : null;
+    }
+
     private function decide(OrderApprovalInterface $approval, Decider $decider, string $transition, ?string $comment): ?string
     {
         $comment = null === $comment ? null : mb_substr(trim($comment), 0, self::COMMENT_MAX_LENGTH);
@@ -63,28 +81,35 @@ final class ApprovalDecisionMaker
         /** @var string|null $error */
         $error = $this->entityManager->wrapInTransaction(function () use ($approval, $decider, $transition, $comment): ?string {
             $this->entityManager->refresh($approval, LockMode::PESSIMISTIC_WRITE);
+            $deciderCustomer = null;
             if (null !== $decider->member) {
-                $this->entityManager->refresh($decider->member);
+                $member = $this->managedMember($decider->member);
+                if (null === $member) {
+                    return ApprovalPolicy::ERROR_NOT_ALLOWED;
+                }
                 $error = self::TRANSITION_APPROVE === $transition
-                    ? $this->policy->checkApprove($decider->member, $approval)
-                    : $this->policy->checkReject($decider->member, $approval);
+                    ? $this->policy->checkApprove($member, $approval)
+                    : $this->policy->checkReject($member, $approval);
                 if (null !== $error) {
                     return $error;
                 }
+                $customer = $member->getCustomer();
+                $deciderCustomer = $customer instanceof CustomerInterface ? $customer : null;
             }
-            if (!$approval->isPending() || !$this->stateMachine->can($approval, self::GRAPH, $transition)) {
+            // An order cancelled meanwhile (store, API, another plugin) is closed, never approved.
+            $order = $approval->getOrder();
+            if (!$approval->isPending() || OrderInterface::STATE_NEW !== $order?->getState() || !$this->stateMachine->can($approval, self::GRAPH, $transition)) {
                 return ApprovalPolicy::ERROR_NOT_PENDING;
             }
 
             $this->stateMachine->apply($approval, self::GRAPH, $transition);
             $approval->setDecidedAt(new \DateTimeImmutable());
             $approval->setDeciderType($decider->type);
-            $approval->setDecidedBy($decider->customer);
+            $approval->setDecidedBy($deciderCustomer);
             $approval->setDeciderName($decider->name);
             $approval->setComment('' === $comment ? null : $comment);
 
-            $order = $approval->getOrder();
-            if (self::TRANSITION_APPROVE !== $transition && null !== $order && $this->stateMachine->can($order, OrderTransitions::GRAPH, OrderTransitions::TRANSITION_CANCEL)) {
+            if (self::TRANSITION_APPROVE !== $transition && $this->stateMachine->can($order, OrderTransitions::GRAPH, OrderTransitions::TRANSITION_CANCEL)) {
                 $this->stateMachine->apply($order, OrderTransitions::GRAPH, OrderTransitions::TRANSITION_CANCEL);
             }
 
