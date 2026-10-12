@@ -56,7 +56,7 @@ flush fails.
 ### 3.3 Decision
 
 `ApprovalDecisionMaker`: transaction, `PESSIMISTIC_WRITE` refresh of the approval (and of the
-deciding member), `ApprovalPolicy` for members (active, role in `approver_roles`, same company,
+deciding member), refusal unless the approval is pending and its order still `new`, `ApprovalPolicy` for members (active, role in `approver_roles`, same company,
 not the buyer, approval limit for approvals), workflow transition, decision fields; on reject /
 expire the core `sylius_order.cancel` (when possible). Events after the commit. Store
 administrators use `Decider::administrator()` and are not bound by the policy.
@@ -70,7 +70,10 @@ administrators use `Decider::administrator()` and are not bound by the policy.
   `since(decidedAt)` (the 5-day unpaid delay starts at the approval); rejected / expired → none
   (already cancelled).
 
-No guard on `sylius_order.cancel` (memo §5.8). A guard on `sylius_shipment.ship`
+No guard on `sylius_order.cancel` (memo §5.8); `OrderCancellationListener`
+(`workflow.sylius_order.completed.cancel`) closes a pending approval (`cancelled`, system) when
+the order is cancelled outside the plugin. Pay buttons of the customer order page and of the
+order payment page are replaced while the order waits. A guard on `sylius_shipment.ship`
 (`ShipmentApprovalGuardListener`). Payments: no guard (it would not stop the PSP);
 `PaymentCompletionAlertListener` logs a warning when a payment completes before the approval.
 
@@ -78,7 +81,8 @@ No guard on `sylius_order.cancel` (memo §5.8). A guard on `sylius_shipment.ship
 
 `AcknowledgementEmailSender` decorates `sylius.email_sender`: `order_confirmation` of an order
 waiting for approval becomes `tmonier_purchase_approval_acknowledgement`; of a rejected or
-expired order it is dropped (late asynchronous message). One decorator covers the shop listener
+expired order it is dropped (late asynchronous message); for an approved order it passes once
+(`confirmationSentAt`), so a late asynchronous confirmation after the approval is dropped. One decorator covers the shop listener
 and the Messenger handler. `ApprovalEmailListener`: approvers notified on request (not the
 buyer), core confirmation on approval, rejection / expiry e-mail with the comment.
 
@@ -87,6 +91,8 @@ buyer), core confirmation on approval, rejection / expiry e-mail with the commen
 - sylius/invoicing-plugin: `ApprovalAwareInvoiceCreator` decorates
   `sylius_invoicing.creator.invoice` (skips orders not approved, also the mass generation);
   `InvoiceOnApprovalListener` dispatches the plugin's `OrderPlaced` event at approval.
+- tmonier/sylius-admin-order-creation-plugin: `ApprovalAwarePaymentLinkEmailManager` decorates
+  `tmonier_admin_order.mailer.payment_link` (no payment link while the order waits).
 - tmonier/sylius-webhook-outbox-plugin: `ApprovalChangeDetector` (unit of work, same
   transaction) and the event types. Payload: the core order payload plus approval state, company
   code and dates; never the free-text comment.
@@ -126,7 +132,11 @@ buyer), core confirmation on approval, rejection / expiry e-mail with the commen
 12. **Visibility**: the buyer sees the approval of their order (state, decider name, comment);
     approvers see the company's approvals with buyer names, never e-mails or phones.
 13. **Payments captured during checkout** are not reversed: logged for the merchant.
-14. A company deleted with pending approvals: the approval keeps the order (company set to
+14. **Cancelled outside the plugin**: the approval is closed (`cancelled`), no e-mail (the
+    store cancelled it), no outbox approval event (the core `order.cancelled` applies).
+15. **Events before an outer commit** (API `doctrine_transaction`, staff orders): documented,
+    not deferred (no commit event in DBAL; the test suite runs in a transaction).
+16. A company deleted with pending approvals: the approval keeps the order (company set to
     null); only the store can decide.
 
 ## 5. Not verified
