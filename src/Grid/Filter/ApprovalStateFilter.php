@@ -10,12 +10,12 @@ use Sylius\Component\Grid\Filtering\FilterInterface;
 use Tmonier\SyliusPurchaseApprovalPlugin\Entity\OrderApprovalInterface;
 
 /** Orders grid: orders whose approval is in a state, or orders that needed none (`none`). */
-final class ApprovalStateFilter implements FilterInterface
+final readonly class ApprovalStateFilter implements FilterInterface
 {
     public const NONE = 'none';
 
     /** @param class-string<OrderApprovalInterface> $approvalClass */
-    public function __construct(private readonly string $approvalClass)
+    public function __construct(private string $approvalClass)
     {
     }
 

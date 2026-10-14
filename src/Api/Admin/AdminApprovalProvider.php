@@ -14,11 +14,11 @@ use Tmonier\SyliusPurchaseApprovalPlugin\Entity\OrderApprovalInterface;
 use Tmonier\SyliusPurchaseApprovalPlugin\Repository\OrderApprovalRepositoryInterface;
 
 /** @implements ProviderInterface<AdminApprovalView> */
-final class AdminApprovalProvider implements ProviderInterface
+final readonly class AdminApprovalProvider implements ProviderInterface
 {
     private const PER_PAGE = 30;
 
-    public function __construct(private readonly OrderApprovalRepositoryInterface $approvalRepository)
+    public function __construct(private OrderApprovalRepositoryInterface $approvalRepository)
     {
     }
 
@@ -50,7 +50,7 @@ final class AdminApprovalProvider implements ProviderInterface
     {
         $number = $uriVariables['orderNumber'] ?? null;
         $approval = is_string($number) ? $this->approvalRepository->findOneByOrderNumber($number) : null;
-        if (null === $approval) {
+        if (!$approval instanceof \Tmonier\SyliusPurchaseApprovalPlugin\Entity\OrderApprovalInterface) {
             throw new NotFoundHttpException('Approval not found.');
         }
 

@@ -37,13 +37,13 @@ final class TmonierSyliusPurchaseApprovalExtension extends AbstractResourceExten
         $loader->load('services.php');
 
         // Optional bridges, decided at prepend time (when the other extensions are known).
-        if (true === $this->flag($container, self::INVOICING_PARAMETER)) {
+        if ($this->flag($container, self::INVOICING_PARAMETER)) {
             $loader->load('services/invoicing.php');
         }
-        if (true === $this->flag($container, self::OUTBOX_PARAMETER)) {
+        if ($this->flag($container, self::OUTBOX_PARAMETER)) {
             $loader->load('services/webhook_outbox.php');
         }
-        if (true === $this->flag($container, self::ADMIN_ORDER_CREATION_PARAMETER)) {
+        if ($this->flag($container, self::ADMIN_ORDER_CREATION_PARAMETER)) {
             $loader->load('services/admin_order_creation.php');
         }
     }
@@ -130,7 +130,7 @@ final class TmonierSyliusPurchaseApprovalExtension extends AbstractResourceExten
 
         if ($container->hasExtension('api_platform')) {
             $container->prependExtensionConfig('api_platform', [
-                'mapping' => ['paths' => [\dirname(__DIR__, 2) . '/config/api_platform', \dirname(__DIR__) . '/Api']],
+                'mapping' => ['paths' => [\dirname(__DIR__, 2) . '/config/api_platform', __DIR__ . '/../Api']],
             ]);
         }
 

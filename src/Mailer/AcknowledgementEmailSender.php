@@ -18,11 +18,11 @@ use Tmonier\SyliusPurchaseApprovalPlugin\Repository\OrderApprovalRepositoryInter
  * filtered on the Messenger path only (ApprovalAwareOrderConfirmationHandler): a confirmation
  * sent on purpose (code, admin tools) always goes out.
  */
-final class AcknowledgementEmailSender implements SenderInterface
+final readonly class AcknowledgementEmailSender implements SenderInterface
 {
     public function __construct(
-        private readonly SenderInterface $decorated,
-        private readonly OrderApprovalRepositoryInterface $approvalRepository,
+        private SenderInterface $decorated,
+        private OrderApprovalRepositoryInterface $approvalRepository,
     ) {
     }
 
@@ -32,7 +32,7 @@ final class AcknowledgementEmailSender implements SenderInterface
         $extra = array_slice(func_get_args(), 5);
         $order = $data['order'] ?? null;
         $approval = CoreEmails::ORDER_CONFIRMATION === $code && $order instanceof OrderInterface ? $this->approvalRepository->findOneByOrder($order) : null;
-        if (null !== $approval && $approval->isPending()) {
+        if ($approval instanceof \Tmonier\SyliusPurchaseApprovalPlugin\Entity\OrderApprovalInterface && $approval->isPending()) {
             $code = Emails::ACKNOWLEDGEMENT;
             $data['approval'] = $approval;
         }
@@ -40,7 +40,7 @@ final class AcknowledgementEmailSender implements SenderInterface
         $this->decorated->send($code, $recipients, $data, $attachments, $replyTo, ...$extra);
 
         // Recorded once sent: a failed send leaves a late asynchronous confirmation free to go.
-        if (null !== $approval && $approval->isApproved() && null === $approval->getConfirmationSentAt()) {
+        if ($approval instanceof \Tmonier\SyliusPurchaseApprovalPlugin\Entity\OrderApprovalInterface && $approval->isApproved() && !$approval->getConfirmationSentAt() instanceof \DateTimeImmutable) {
             $this->approvalRepository->markConfirmationSent($approval, new \DateTimeImmutable());
         }
     }

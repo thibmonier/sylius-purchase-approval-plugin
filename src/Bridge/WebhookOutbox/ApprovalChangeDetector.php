@@ -19,7 +19,7 @@ use Tmonier\SyliusWebhookOutboxPlugin\Payload\OrderPayloadNormalizer;
  * order payload plus the approval state and dates; no comment (free text, may hold personal
  * data).
  */
-final class ApprovalChangeDetector implements ChangeDetectorInterface
+final readonly class ApprovalChangeDetector implements ChangeDetectorInterface
 {
     private const TYPES = [
         OrderApprovalInterface::STATE_APPROVED => ApprovalEventTypeProvider::ORDER_APPROVED,
@@ -27,7 +27,7 @@ final class ApprovalChangeDetector implements ChangeDetectorInterface
         OrderApprovalInterface::STATE_EXPIRED => ApprovalEventTypeProvider::ORDER_APPROVAL_EXPIRED,
     ];
 
-    public function __construct(private readonly OrderPayloadNormalizer $normalizer)
+    public function __construct(private OrderPayloadNormalizer $normalizer)
     {
     }
 
@@ -71,7 +71,7 @@ final class ApprovalChangeDetector implements ChangeDetectorInterface
             $order->getChannel()?->getCode(),
             'order',
             LazyValue::idOf($order),
-            null === $customer ? null : LazyValue::idOf($customer),
+            $customer instanceof \Sylius\Component\Customer\Model\CustomerInterface ? LazyValue::idOf($customer) : null,
         );
     }
 }

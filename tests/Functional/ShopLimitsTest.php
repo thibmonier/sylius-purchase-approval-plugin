@@ -28,7 +28,7 @@ final class ShopLimitsTest extends WebTestCase
         ];
         foreach ($matrix as $label => [$customer, $expected]) {
             $this->logout();
-            if (null !== $customer) {
+            if ($customer instanceof \Sylius\Component\Core\Model\CustomerInterface) {
                 $this->loginShopUser($customer);
             }
             $this->client->request('GET', $this->shopUrl('/account/company/limits'));

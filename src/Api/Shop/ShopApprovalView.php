@@ -23,16 +23,16 @@ use Tmonier\SyliusPurchaseApprovalPlugin\Entity\OrderApprovalInterface;
             uriTemplate: '/shop/company/approvals',
             description: 'Approvals of the company, pending first (approvers). `?state=pending` lists the pending ones only.',
             security: "is_granted('ROLE_USER')",
-            provider: ShopApprovalProvider::class,
             name: 'tmonier_purchase_approval_shop_approvals_get',
+            provider: ShopApprovalProvider::class,
         ),
         new Get(
             uriTemplate: '/shop/company/approvals/{orderNumber}',
             requirements: ['orderNumber' => '[A-Za-z0-9_-]{1,64}'],
             description: 'An approval: approvers of the company, or the buyer of the order.',
             security: "is_granted('ROLE_USER')",
-            provider: ShopApprovalProvider::class,
             name: 'tmonier_purchase_approval_shop_approval_get',
+            provider: ShopApprovalProvider::class,
         ),
         new Post(
             uriTemplate: '/shop/company/approvals/{orderNumber}/approve',
@@ -42,8 +42,8 @@ use Tmonier\SyliusPurchaseApprovalPlugin\Entity\OrderApprovalInterface;
             security: "is_granted('ROLE_USER')",
             input: ApprovalDecisionInput::class,
             read: false,
-            processor: ShopApprovalDecisionProcessor::class,
             name: 'tmonier_purchase_approval_shop_approval_approve',
+            processor: ShopApprovalDecisionProcessor::class,
         ),
         new Post(
             uriTemplate: '/shop/company/approvals/{orderNumber}/reject',
@@ -53,33 +53,33 @@ use Tmonier\SyliusPurchaseApprovalPlugin\Entity\OrderApprovalInterface;
             security: "is_granted('ROLE_USER')",
             input: ApprovalDecisionInput::class,
             read: false,
-            processor: ShopApprovalDecisionProcessor::class,
             name: 'tmonier_purchase_approval_shop_approval_reject',
+            processor: ShopApprovalDecisionProcessor::class,
         ),
     ],
 )]
-final class ShopApprovalView
+final readonly class ShopApprovalView
 {
     public function __construct(
         #[ApiProperty(identifier: true)]
-        public readonly string $orderNumber,
-        public readonly string $state,
+        public string $orderNumber,
+        public string $state,
         /** Order total in minor units of the currency. */
-        public readonly int $total,
-        public readonly ?string $currencyCode,
+        public int $total,
+        public ?string $currencyCode,
         /** The buyer's order limit when the order was placed (null: limit in another currency). */
-        public readonly ?int $orderLimit,
-        public readonly ?string $buyerFirstName,
-        public readonly ?string $buyerLastName,
-        public readonly \DateTimeImmutable $requestedAt,
-        public readonly ?\DateTimeImmutable $decidedAt,
+        public ?int $orderLimit,
+        public ?string $buyerFirstName,
+        public ?string $buyerLastName,
+        public \DateTimeImmutable $requestedAt,
+        public ?\DateTimeImmutable $decidedAt,
         /** member, administrator or system. */
-        public readonly ?string $decidedBy,
-        public readonly ?string $deciderName,
-        public readonly ?string $comment,
+        public ?string $decidedBy,
+        public ?string $deciderName,
+        public ?string $comment,
         /** The signed-in customer may approve / reject it now. */
-        public readonly bool $canApprove,
-        public readonly bool $canReject,
+        public bool $canApprove,
+        public bool $canReject,
     ) {
     }
 

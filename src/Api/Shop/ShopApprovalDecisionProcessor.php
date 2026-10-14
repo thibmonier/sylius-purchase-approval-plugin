@@ -18,14 +18,14 @@ use Tmonier\SyliusPurchaseApprovalPlugin\Approval\ApprovalPolicy;
 use Tmonier\SyliusPurchaseApprovalPlugin\Approval\Decider;
 
 /** @implements ProcessorInterface<ApprovalDecisionInput, ShopApprovalView> */
-final class ShopApprovalDecisionProcessor implements ProcessorInterface
+final readonly class ShopApprovalDecisionProcessor implements ProcessorInterface
 {
     public function __construct(
-        private readonly ShopApprovalProvider $provider,
-        private readonly CurrentMemberResolverInterface $currentMemberResolver,
-        private readonly ApprovalDecisionMaker $decisionMaker,
-        private readonly TranslatorInterface $translator,
-        private readonly LocaleContextInterface $localeContext,
+        private ShopApprovalProvider $provider,
+        private CurrentMemberResolverInterface $currentMemberResolver,
+        private ApprovalDecisionMaker $decisionMaker,
+        private TranslatorInterface $translator,
+        private LocaleContextInterface $localeContext,
     ) {
     }
 
@@ -33,7 +33,7 @@ final class ShopApprovalDecisionProcessor implements ProcessorInterface
     {
         $approval = $this->provider->find($uriVariables);
         $member = $this->currentMemberResolver->getMember();
-        if (null === $member) {
+        if (!$member instanceof \Tmonier\SyliusCompanyAccountsPlugin\Entity\CompanyMemberInterface) {
             throw new AccessDeniedHttpException('Access denied.');
         }
         $comment = $data->comment;

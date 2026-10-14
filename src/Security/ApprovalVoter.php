@@ -34,14 +34,14 @@ final class ApprovalVoter extends Voter
         if ($subject instanceof OrderApprovalInterface && ApprovalPermissions::APPROVAL_VIEW === $attribute) {
             $customer = $this->currentMemberResolver->getCustomer($token);
             $buyer = $subject->getOrder()?->getCustomer();
-            if (null !== $customer && null !== $buyer && $customer->getId() === $buyer->getId()) {
+            if ($customer instanceof \Sylius\Component\Core\Model\CustomerInterface && $buyer instanceof \Sylius\Component\Customer\Model\CustomerInterface && $customer->getId() === $buyer->getId()) {
                 return true;
             }
         }
 
         $member = $this->currentMemberResolver->getMember($token);
         $company = $subject instanceof OrderApprovalInterface ? $subject->getCompany() : $subject;
-        if (null === $member || null === $company || null === $company->getId() || $member->getCompany()?->getId() !== $company->getId() || !$member->isActive()) {
+        if (!$member instanceof \Tmonier\SyliusCompanyAccountsPlugin\Entity\CompanyMemberInterface || null === $company || null === $company->getId() || $member->getCompany()?->getId() !== $company->getId() || !$member->isActive()) {
             return false;
         }
 

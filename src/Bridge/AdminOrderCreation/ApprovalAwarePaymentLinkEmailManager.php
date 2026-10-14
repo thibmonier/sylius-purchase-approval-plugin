@@ -13,11 +13,11 @@ use Tmonier\SyliusPurchaseApprovalPlugin\Repository\OrderApprovalRepositoryInter
  * that waits for its approval (the pay page would refuse it). The link can be sent once the
  * order is approved.
  */
-final class ApprovalAwarePaymentLinkEmailManager implements PaymentLinkEmailManagerInterface
+final readonly class ApprovalAwarePaymentLinkEmailManager implements PaymentLinkEmailManagerInterface
 {
     public function __construct(
-        private readonly PaymentLinkEmailManagerInterface $decorated,
-        private readonly OrderApprovalRepositoryInterface $approvalRepository,
+        private PaymentLinkEmailManagerInterface $decorated,
+        private OrderApprovalRepositoryInterface $approvalRepository,
     ) {
     }
 
@@ -25,7 +25,7 @@ final class ApprovalAwarePaymentLinkEmailManager implements PaymentLinkEmailMana
     {
         $approval = $this->approvalRepository->findOneByOrder($order);
 
-        return (null === $approval || $approval->isApproved()) && $this->decorated->canSend($order);
+        return (!$approval instanceof \Tmonier\SyliusPurchaseApprovalPlugin\Entity\OrderApprovalInterface || $approval->isApproved()) && $this->decorated->canSend($order);
     }
 
     public function send(OrderInterface $order): void

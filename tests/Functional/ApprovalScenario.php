@@ -14,25 +14,25 @@ use Tmonier\SyliusCompanyAccountsPlugin\Entity\CompanyMemberInterface;
  * Company A with an admin, a buyer whose order waits for approval, a colleague buyer, an
  * approver and a disabled approver; company B with an approver; a customer in no company.
  */
-final class ApprovalScenario
+final readonly class ApprovalScenario
 {
-    public readonly CompanyInterface $companyA;
+    public CompanyInterface $companyA;
 
-    public readonly CompanyMemberInterface $adminA;
+    public CompanyMemberInterface $adminA;
 
-    public readonly CompanyMemberInterface $buyerA;
+    public CompanyMemberInterface $buyerA;
 
-    public readonly CompanyMemberInterface $colleagueA;
+    public CompanyMemberInterface $colleagueA;
 
-    public readonly CompanyMemberInterface $approverA;
+    public CompanyMemberInterface $approverA;
 
-    public readonly CompanyMemberInterface $disabledApproverA;
+    public CompanyMemberInterface $disabledApproverA;
 
-    public readonly CompanyMemberInterface $approverB;
+    public CompanyMemberInterface $approverB;
 
-    public readonly CustomerInterface $nonMember;
+    public CustomerInterface $nonMember;
 
-    public readonly OrderInterface $pendingOrder;
+    public OrderInterface $pendingOrder;
 
     public function __construct(TestCatalog $catalog)
     {

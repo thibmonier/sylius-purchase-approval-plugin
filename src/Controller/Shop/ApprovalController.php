@@ -85,7 +85,7 @@ final class ApprovalController extends AbstractController
         ]);
     }
 
-    public function decideAction(Request $request, string $number, string $decision): Response
+    public function decideAction(Request $request, string $number, string $decision): \Symfony\Component\HttpFoundation\RedirectResponse
     {
         $approval = $this->visibleApproval($number);
         if (!$this->isGranted(ApprovalPermissions::APPROVAL_DECIDE, $approval)) {
@@ -95,7 +95,7 @@ final class ApprovalController extends AbstractController
             throw $this->createAccessDeniedException('Invalid CSRF token.');
         }
         $member = $this->currentMemberResolver->getMember();
-        if (null === $member) {
+        if (!$member instanceof \Tmonier\SyliusCompanyAccountsPlugin\Entity\CompanyMemberInterface) {
             throw $this->createAccessDeniedException();
         }
         $comment = (string) $request->request->get('comment', '');
@@ -130,11 +130,11 @@ final class ApprovalController extends AbstractController
         ]);
     }
 
-    public function updateLimitAction(Request $request, int $id): Response
+    public function updateLimitAction(Request $request, int $id): \Symfony\Component\HttpFoundation\RedirectResponse
     {
         [$member, $company] = $this->membership(ApprovalPermissions::LIMITS_MANAGE);
         $target = $this->memberRepository->findOneByIdAndCompany($id, $company);
-        if (null === $target) {
+        if (!$target instanceof \Tmonier\SyliusCompanyAccountsPlugin\Entity\CompanyMemberInterface) {
             throw $this->createNotFoundException('Member not found.');
         }
         if (!$this->isCsrfTokenValid('tmonier_member_limit_' . $id, (string) $request->request->get('_csrf_token'))) {
@@ -163,7 +163,7 @@ final class ApprovalController extends AbstractController
     {
         $member = $this->currentMemberResolver->getMember();
         $company = $member?->getCompany();
-        if (null === $member || null === $company) {
+        if (!$member instanceof \Tmonier\SyliusCompanyAccountsPlugin\Entity\CompanyMemberInterface || !$company instanceof \Tmonier\SyliusCompanyAccountsPlugin\Entity\CompanyInterface) {
             throw $this->createNotFoundException('No company.');
         }
         if (!$this->isGranted($attribute, $company)) {
@@ -177,7 +177,7 @@ final class ApprovalController extends AbstractController
     private function visibleApproval(string $number): OrderApprovalInterface
     {
         $approval = $this->approvalRepository->findOneByOrderNumber($number);
-        if (null === $approval || !$this->isGranted(ApprovalPermissions::APPROVAL_VIEW, $approval)) {
+        if (!$approval instanceof \Tmonier\SyliusPurchaseApprovalPlugin\Entity\OrderApprovalInterface || !$this->isGranted(ApprovalPermissions::APPROVAL_VIEW, $approval)) {
             throw $this->createNotFoundException('Approval not found.');
         }
 

@@ -10,13 +10,13 @@ use Tmonier\SyliusCompanyAccountsPlugin\Entity\CompanyMemberInterface;
 use Tmonier\SyliusPurchaseApprovalPlugin\Entity\OrderApprovalInterface;
 
 /** Who takes a decision: a company member (bound by ApprovalPolicy), an administrator or the system. */
-final class Decider
+final readonly class Decider
 {
     private function __construct(
-        public readonly string $type,
-        public readonly ?CompanyMemberInterface $member,
-        public readonly ?CustomerInterface $customer,
-        public readonly ?string $name,
+        public string $type,
+        public ?CompanyMemberInterface $member,
+        public ?CustomerInterface $customer,
+        public ?string $name,
     ) {
     }
 
@@ -24,14 +24,14 @@ final class Decider
     {
         $customer = $member->getCustomer();
         $customer = $customer instanceof CustomerInterface ? $customer : null;
-        $name = null === $customer ? null : trim($customer->getFullName());
+        $name = $customer instanceof \Sylius\Component\Core\Model\CustomerInterface ? trim($customer->getFullName()) : null;
 
         return new self(OrderApprovalInterface::DECIDED_BY_MEMBER, $member, $customer, '' === $name ? null : $name);
     }
 
     public static function administrator(?AdminUserInterface $adminUser): self
     {
-        $name = null === $adminUser ? '' : trim(sprintf('%s %s', (string) $adminUser->getFirstName(), (string) $adminUser->getLastName()));
+        $name = $adminUser instanceof \Sylius\Component\Core\Model\AdminUserInterface ? trim(sprintf('%s %s', (string) $adminUser->getFirstName(), (string) $adminUser->getLastName())) : '';
         if ('' === $name) {
             $name = $adminUser?->getUsername();
         }

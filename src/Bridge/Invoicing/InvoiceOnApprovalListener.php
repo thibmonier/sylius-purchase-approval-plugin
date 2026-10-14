@@ -9,9 +9,9 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Tmonier\SyliusPurchaseApprovalPlugin\Event\OrderApprovalEvent;
 
 /** The approval is the moment the order is really placed for invoicing: same event as the plugin. */
-final class InvoiceOnApprovalListener
+final readonly class InvoiceOnApprovalListener
 {
-    public function __construct(private readonly MessageBusInterface $eventBus)
+    public function __construct(private MessageBusInterface $eventBus)
     {
     }
 

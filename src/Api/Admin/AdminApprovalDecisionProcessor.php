@@ -15,13 +15,13 @@ use Tmonier\SyliusPurchaseApprovalPlugin\Approval\ApprovalDecisionMaker;
 use Tmonier\SyliusPurchaseApprovalPlugin\Approval\Decider;
 
 /** @implements ProcessorInterface<ApprovalDecisionInput, AdminApprovalView> */
-final class AdminApprovalDecisionProcessor implements ProcessorInterface
+final readonly class AdminApprovalDecisionProcessor implements ProcessorInterface
 {
     public function __construct(
-        private readonly AdminApprovalProvider $provider,
-        private readonly ApprovalDecisionMaker $decisionMaker,
-        private readonly TokenStorageInterface $tokenStorage,
-        private readonly TranslatorInterface $translator,
+        private AdminApprovalProvider $provider,
+        private ApprovalDecisionMaker $decisionMaker,
+        private TokenStorageInterface $tokenStorage,
+        private TranslatorInterface $translator,
     ) {
     }
 

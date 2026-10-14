@@ -14,11 +14,11 @@ use Tmonier\SyliusPurchaseApprovalPlugin\Repository\OrderApprovalRepositoryInter
  * Guard of `sylius_shipment.ship`: an order is not shipped before it is approved (admin "Ship"
  * button, API, any code using the state machine).
  */
-final class ShipmentApprovalGuardListener
+final readonly class ShipmentApprovalGuardListener
 {
     public const BLOCKER_CODE = 'tmonier_purchase_approval.not_approved';
 
-    public function __construct(private readonly OrderApprovalRepositoryInterface $approvalRepository)
+    public function __construct(private OrderApprovalRepositoryInterface $approvalRepository)
     {
     }
 
@@ -33,7 +33,7 @@ final class ShipmentApprovalGuardListener
             return;
         }
         $approval = $this->approvalRepository->findOneByOrder($order);
-        if (null !== $approval && !$approval->isApproved()) {
+        if ($approval instanceof \Tmonier\SyliusPurchaseApprovalPlugin\Entity\OrderApprovalInterface && !$approval->isApproved()) {
             $event->addTransitionBlocker(new TransitionBlocker('The order is not approved.', self::BLOCKER_CODE));
         }
     }

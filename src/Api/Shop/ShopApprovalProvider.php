@@ -24,13 +24,13 @@ use Tmonier\SyliusPurchaseApprovalPlugin\Security\ApprovalPermissions;
  *
  * @implements ProviderInterface<ShopApprovalView>
  */
-final class ShopApprovalProvider implements ProviderInterface
+final readonly class ShopApprovalProvider implements ProviderInterface
 {
     public function __construct(
-        private readonly CurrentMemberResolverInterface $currentMemberResolver,
-        private readonly OrderApprovalRepositoryInterface $approvalRepository,
-        private readonly AuthorizationCheckerInterface $authorizationChecker,
-        private readonly ApprovalPolicy $policy,
+        private CurrentMemberResolverInterface $currentMemberResolver,
+        private OrderApprovalRepositoryInterface $approvalRepository,
+        private AuthorizationCheckerInterface $authorizationChecker,
+        private ApprovalPolicy $policy,
     ) {
     }
 
@@ -40,7 +40,7 @@ final class ShopApprovalProvider implements ProviderInterface
         if ($operation instanceof CollectionOperationInterface) {
             $member = $this->currentMemberResolver->getMember();
             $company = $member?->getCompany();
-            if (null === $company) {
+            if (!$company instanceof \Tmonier\SyliusCompanyAccountsPlugin\Entity\CompanyInterface) {
                 throw new NotFoundHttpException('No company.');
             }
             if (!$this->authorizationChecker->isGranted(ApprovalPermissions::APPROVAL_LIST, $company)) {
@@ -69,7 +69,7 @@ final class ShopApprovalProvider implements ProviderInterface
     {
         $number = $uriVariables['orderNumber'] ?? null;
         $approval = is_string($number) ? $this->approvalRepository->findOneByOrderNumber($number) : null;
-        if (null === $approval || !$this->authorizationChecker->isGranted(ApprovalPermissions::APPROVAL_VIEW, $approval)) {
+        if (!$approval instanceof \Tmonier\SyliusPurchaseApprovalPlugin\Entity\OrderApprovalInterface || !$this->authorizationChecker->isGranted(ApprovalPermissions::APPROVAL_VIEW, $approval)) {
             throw new NotFoundHttpException('Approval not found.');
         }
 
@@ -82,8 +82,8 @@ final class ShopApprovalProvider implements ProviderInterface
 
         return ShopApprovalView::fromApproval(
             $approval,
-            null !== $member && null === $this->policy->checkApprove($member, $approval),
-            null !== $member && null === $this->policy->checkReject($member, $approval),
+            $member instanceof \Tmonier\SyliusCompanyAccountsPlugin\Entity\CompanyMemberInterface && null === $this->policy->checkApprove($member, $approval),
+            $member instanceof \Tmonier\SyliusCompanyAccountsPlugin\Entity\CompanyMemberInterface && null === $this->policy->checkReject($member, $approval),
         );
     }
 }
