@@ -61,7 +61,7 @@ final class ApprovalEmailsTest extends KernelTestCase
         $this->decisionMaker()->approve($this->approvalOf($order), Decider::member($this->catalog()->member($company, null, CompanyMemberInterface::ROLE_APPROVER)));
         self::assertSame(1, $this->runWorker());
 
-        self::assertSame([$this->confirmationSubject($order)], $this->subjectsTo($order));
+        self::assertSame([$this->confirmationSubject()], $this->subjectsTo($order));
     }
 
     public function testOrdersWithinTheLimitGetTheRegularConfirmation(): void
@@ -70,7 +70,7 @@ final class ApprovalEmailsTest extends KernelTestCase
 
         $this->service('event_dispatcher', EventDispatcherInterface::class)->dispatch(new GenericEvent($order), 'sylius.order.post_complete');
 
-        self::assertSame([$this->confirmationSubject($order)], $this->subjectsTo($order));
+        self::assertSame([$this->confirmationSubject()], $this->subjectsTo($order));
     }
 
     public function testApproversAreNotifiedAndTheBuyerConfirmedOnceApproved(): void
@@ -88,7 +88,7 @@ final class ApprovalEmailsTest extends KernelTestCase
         self::assertNotNull($colleague->getId());
 
         $this->decisionMaker()->approve($this->approvalOf($order), Decider::member($approver));
-        self::assertSame([$this->confirmationSubject($order)], $this->subjectsTo($order));
+        self::assertSame([$this->confirmationSubject()], $this->subjectsTo($order));
     }
 
     public function testAConfirmationSentOnPurposeAfterTheApprovalGoesOut(): void
@@ -101,7 +101,7 @@ final class ApprovalEmailsTest extends KernelTestCase
         $this->service('sylius.command_bus', MessageBusInterface::class)->dispatch(new ResendOrderConfirmationEmail((string) $order->getTokenValue()));
 
         self::assertCount(3, $this->messagesTo($order));
-        self::assertSame([$this->confirmationSubject($order), $this->confirmationSubject($order)], array_slice($this->subjectsTo($order), 0, 2));
+        self::assertSame([$this->confirmationSubject(), $this->confirmationSubject()], array_slice($this->subjectsTo($order), 0, 2));
     }
 
     public function testAnApproverPlacingAnOrderIsNotAskedToApproveIt(): void
@@ -135,7 +135,7 @@ final class ApprovalEmailsTest extends KernelTestCase
         return sprintf('Order #%s received, awaiting approval', (string) $order->getNumber());
     }
 
-    private function confirmationSubject(OrderInterface $order): string
+    private function confirmationSubject(): string
     {
         return 'Order confirmation';
     }
@@ -157,7 +157,7 @@ final class ApprovalEmailsTest extends KernelTestCase
     /** @return list<Email> */
     private function messages(): array
     {
-        return array_values(array_filter(self::getMailerMessages(), static fn ($message): bool => $message instanceof Email));
+        return array_values(array_filter(self::getMailerMessages(), static fn (\Symfony\Component\Mime\RawMessage $message): bool => $message instanceof Email));
     }
 
     private function approvalOf(OrderInterface $order): OrderApprovalInterface

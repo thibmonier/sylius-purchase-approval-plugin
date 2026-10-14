@@ -234,7 +234,7 @@ final class TestCatalog
         $order->setChannel($channel);
         $order->setLocaleCode($this->localeCode());
         $order->setCurrencyCode((string) $channel->getBaseCurrency()?->getCode());
-        if ($asGuest || $byStaff || null === $customer->getUser()) {
+        if ($asGuest || $byStaff || !$customer->getUser() instanceof \Sylius\Component\User\Model\UserInterface) {
             $order->setCustomer($customer);
         } else {
             $order->setCustomerWithAuthorization($customer);
@@ -344,7 +344,7 @@ final class TestCatalog
     /** A flat-rate shipping method of the channel shipping to the US (zone created by the test). */
     private function shippingMethod(): ShippingMethodInterface
     {
-        if (null !== $this->shippingMethod) {
+        if ($this->shippingMethod instanceof \Sylius\Component\Core\Model\ShippingMethodInterface) {
             return $this->shippingMethod = $this->managed($this->shippingMethod);
         }
 
@@ -394,7 +394,7 @@ final class TestCatalog
 
     private function paymentMethod(): PaymentMethodInterface
     {
-        if (null !== $this->paymentMethod) {
+        if ($this->paymentMethod instanceof \Sylius\Component\Core\Model\PaymentMethodInterface) {
             return $this->paymentMethod = $this->managed($this->paymentMethod);
         }
 
@@ -419,7 +419,7 @@ final class TestCatalog
     /** An enabled, untracked variant of a new product sold in the channel. */
     private function variant(): ProductVariantInterface
     {
-        if (null !== $this->variant) {
+        if ($this->variant instanceof \Sylius\Component\Core\Model\ProductVariantInterface) {
             return $this->variant = $this->managed($this->variant);
         }
 

@@ -60,11 +60,11 @@ final class OrderApprovalRequestListener implements ResetInterface
         }
 
         foreach ($completing as $order) {
-            if (null !== $this->approvalRepository->findOneByOrder($order)) {
+            if ($this->approvalRepository->findOneByOrder($order) instanceof \Tmonier\SyliusPurchaseApprovalPlugin\Entity\OrderApprovalInterface) {
                 continue;
             }
             $requirement = $this->requirementChecker->getRequirement($order);
-            if (null === $requirement) {
+            if (!$requirement instanceof \Tmonier\SyliusPurchaseApprovalPlugin\Approval\ApprovalRequirement) {
                 continue;
             }
 

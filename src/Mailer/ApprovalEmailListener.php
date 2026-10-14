@@ -18,13 +18,13 @@ use Tmonier\SyliusPurchaseApprovalPlugin\Event\OrderApprovalEvent;
  * - approved: the regular order confirmation to the buyer;
  * - rejected / expired: the buyer, with the comment of the decision.
  */
-final class ApprovalEmailListener
+final readonly class ApprovalEmailListener
 {
     public function __construct(
-        private readonly SenderInterface $sender,
-        private readonly OrderEmailManagerInterface $orderEmailManager,
-        private readonly CompanyMemberRepositoryInterface $memberRepository,
-        private readonly ApprovalPolicy $policy,
+        private SenderInterface $sender,
+        private OrderEmailManagerInterface $orderEmailManager,
+        private CompanyMemberRepositoryInterface $memberRepository,
+        private ApprovalPolicy $policy,
     ) {
     }
 
@@ -33,7 +33,7 @@ final class ApprovalEmailListener
         $approval = $event->getApproval();
         $order = $approval->getOrder();
         $company = $approval->getCompany();
-        if (!$order instanceof OrderInterface || null === $company) {
+        if (!$order instanceof OrderInterface || !$company instanceof \Tmonier\SyliusCompanyAccountsPlugin\Entity\CompanyInterface) {
             return;
         }
         $buyerId = $order->getCustomer()?->getId();
@@ -70,8 +70,8 @@ final class ApprovalEmailListener
     {
         $approval = $event->getApproval();
         $order = $approval->getOrder();
-        $email = null === $order ? null : $this->buyerEmail($order);
-        if (null === $order || null === $email) {
+        $email = $order instanceof \Sylius\Component\Core\Model\OrderInterface ? $this->buyerEmail($order) : null;
+        if (!$order instanceof \Sylius\Component\Core\Model\OrderInterface || null === $email) {
             return;
         }
         $this->sender->send($code, [$email], $this->data($order) + ['approval' => $approval]);

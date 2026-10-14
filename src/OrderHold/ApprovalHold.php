@@ -19,18 +19,18 @@ use Tmonier\SyliusPurchaseApprovalPlugin\Repository\OrderApprovalRepositoryInter
  * - `sylius:cancel-unpaid-orders` leaves pending orders alone and, once approved, lets the
  *   unpaid-orders expiration period run from the approval date, not from the checkout.
  */
-final class ApprovalHold implements PaymentEntryBlockerInterface, UnpaidOrderCancellationExclusionInterface
+final readonly class ApprovalHold implements PaymentEntryBlockerInterface, UnpaidOrderCancellationExclusionInterface
 {
     public const SOURCE = 'tmonier_purchase_approval';
 
-    public function __construct(private readonly OrderApprovalRepositoryInterface $approvalRepository)
+    public function __construct(private OrderApprovalRepositoryInterface $approvalRepository)
     {
     }
 
     public function getBlock(OrderInterface $order): ?PaymentEntryBlock
     {
         $approval = $this->approvalRepository->findOneByOrder($order);
-        if (null === $approval || $approval->isApproved()) {
+        if (!$approval instanceof \Tmonier\SyliusPurchaseApprovalPlugin\Entity\OrderApprovalInterface || $approval->isApproved()) {
             return null;
         }
 
@@ -45,9 +45,9 @@ final class ApprovalHold implements PaymentEntryBlockerInterface, UnpaidOrderCan
         $approval = $this->approvalRepository->findOneByOrder($order);
 
         return match (true) {
-            null === $approval => null,
+            !$approval instanceof \Tmonier\SyliusPurchaseApprovalPlugin\Entity\OrderApprovalInterface => null,
             $approval->isPending() => UnpaidOrderHold::indefinitely(self::SOURCE),
-            OrderApprovalInterface::STATE_APPROVED === $approval->getState() && null !== $approval->getDecidedAt() => UnpaidOrderHold::since($approval->getDecidedAt(), self::SOURCE),
+            OrderApprovalInterface::STATE_APPROVED === $approval->getState() && $approval->getDecidedAt() instanceof \DateTimeImmutable => UnpaidOrderHold::since($approval->getDecidedAt(), self::SOURCE),
             default => null,
         };
     }

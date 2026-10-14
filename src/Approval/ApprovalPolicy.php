@@ -13,7 +13,7 @@ use Tmonier\SyliusPurchaseApprovalPlugin\Repository\MemberLimitRepositoryInterfa
  * approver role, never for an order of their own (no self-approval), and, to approve, within
  * their approval limit (same currency as the order). Store administrators are not bound.
  */
-final class ApprovalPolicy
+final readonly class ApprovalPolicy
 {
     public const ERROR_NOT_PENDING = 'tmonier_purchase_approval.approval.not_pending';
 
@@ -25,8 +25,8 @@ final class ApprovalPolicy
 
     /** @param list<string> $approverRoles */
     public function __construct(
-        private readonly MemberLimitRepositoryInterface $limitRepository,
-        private readonly array $approverRoles,
+        private MemberLimitRepositoryInterface $limitRepository,
+        private array $approverRoles,
     ) {
     }
 
@@ -45,7 +45,7 @@ final class ApprovalPolicy
         }
         $limit = $this->limitRepository->findOneByMember($member);
         $approvalLimit = $limit?->getApprovalLimit();
-        if (null === $limit || null === $approvalLimit) {
+        if (!$limit instanceof \Tmonier\SyliusPurchaseApprovalPlugin\Entity\MemberLimitInterface || null === $approvalLimit) {
             return null;
         }
 
@@ -58,7 +58,7 @@ final class ApprovalPolicy
     public function checkReject(CompanyMemberInterface $member, OrderApprovalInterface $approval): ?string
     {
         $company = $approval->getCompany();
-        if (!$this->isApprover($member) || null === $company || $member->getCompany()?->getId() !== $company->getId()) {
+        if (!$this->isApprover($member) || !$company instanceof \Tmonier\SyliusCompanyAccountsPlugin\Entity\CompanyInterface || $member->getCompany()?->getId() !== $company->getId()) {
             return self::ERROR_NOT_ALLOWED;
         }
         if (!$approval->isPending()) {
@@ -66,7 +66,7 @@ final class ApprovalPolicy
         }
         $buyer = $approval->getOrder()?->getCustomer();
         $self = $member->getCustomer();
-        if (null !== $buyer && null !== $self && $buyer->getId() === $self->getId()) {
+        if ($buyer instanceof \Sylius\Component\Customer\Model\CustomerInterface && $self instanceof \Sylius\Component\Core\Model\CustomerInterface && $buyer->getId() === $self->getId()) {
             return self::ERROR_OWN_ORDER;
         }
 

@@ -15,16 +15,16 @@ use Tmonier\SyliusPurchaseApprovalPlugin\Repository\OrderApprovalRepositoryInter
  * approved order (sent at the approval, `confirmationSentAt`), or the rejection / expiry /
  * cancellation instead. A pending order gets the acknowledgement (AcknowledgementEmailSender).
  */
-final class ApprovalAwareOrderConfirmationHandler
+final readonly class ApprovalAwareOrderConfirmationHandler
 {
     /**
      * @param callable(SendOrderConfirmation): void        $decorated
      * @param OrderRepositoryInterface<OrderInterface> $orderRepository
      */
     public function __construct(
-        private readonly mixed $decorated,
-        private readonly OrderRepositoryInterface $orderRepository,
-        private readonly OrderApprovalRepositoryInterface $approvalRepository,
+        private mixed $decorated,
+        private OrderRepositoryInterface $orderRepository,
+        private OrderApprovalRepositoryInterface $approvalRepository,
     ) {
     }
 
@@ -32,7 +32,7 @@ final class ApprovalAwareOrderConfirmationHandler
     {
         $order = $this->orderRepository->findOneByTokenValue($message->orderToken);
         $approval = $order instanceof OrderInterface ? $this->approvalRepository->findOneByOrder($order) : null;
-        if (null !== $approval && !$approval->isPending() && (!$approval->isApproved() || null !== $approval->getConfirmationSentAt())) {
+        if ($approval instanceof \Tmonier\SyliusPurchaseApprovalPlugin\Entity\OrderApprovalInterface && !$approval->isPending() && (!$approval->isApproved() || $approval->getConfirmationSentAt() instanceof \DateTimeImmutable)) {
             return;
         }
 

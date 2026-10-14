@@ -102,7 +102,7 @@ final class PurchaseApprovalExtension extends AbstractExtension implements Reset
     public function refusal(OrderApprovalInterface $approval, string $decision = 'approve'): ?string
     {
         $member = $this->currentMemberResolver->getMember();
-        if (null === $member) {
+        if (!$member instanceof \Tmonier\SyliusCompanyAccountsPlugin\Entity\CompanyMemberInterface) {
             return ApprovalPolicy::ERROR_NOT_ALLOWED;
         }
 

@@ -17,11 +17,11 @@ use Tmonier\SyliusPurchaseApprovalPlugin\Repository\OrderApprovalRepositoryInter
  * silently), so the entry points are blocked instead (order-hold kernel) and this is logged
  * for the merchant to refund or approve.
  */
-final class PaymentCompletionAlertListener
+final readonly class PaymentCompletionAlertListener
 {
     public function __construct(
-        private readonly OrderApprovalRepositoryInterface $approvalRepository,
-        private readonly LoggerInterface $logger,
+        private OrderApprovalRepositoryInterface $approvalRepository,
+        private LoggerInterface $logger,
     ) {
     }
 
@@ -36,7 +36,7 @@ final class PaymentCompletionAlertListener
             return;
         }
         $approval = $this->approvalRepository->findOneByOrder($order);
-        if (null !== $approval && !$approval->isApproved()) {
+        if ($approval instanceof \Tmonier\SyliusPurchaseApprovalPlugin\Entity\OrderApprovalInterface && !$approval->isApproved()) {
             $this->logger->warning('Payment {payment} of order {order} completed while the order is {state}: refund it or approve the order.', [
                 'payment' => $payment->getId(),
                 'order' => $order->getNumber(),

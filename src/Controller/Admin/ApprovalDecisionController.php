@@ -9,7 +9,6 @@ use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Repository\OrderRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Tmonier\SyliusPurchaseApprovalPlugin\Approval\ApprovalDecisionMaker;
 use Tmonier\SyliusPurchaseApprovalPlugin\Approval\Decider;
@@ -31,11 +30,11 @@ final class ApprovalDecisionController extends AbstractController
     ) {
     }
 
-    public function __invoke(Request $request, int $id, string $decision): Response
+    public function __invoke(Request $request, int $id, string $decision): \Symfony\Component\HttpFoundation\RedirectResponse
     {
         $order = $this->orderRepository->find($id);
         $approval = $order instanceof OrderInterface ? $this->approvalRepository->findOneByOrder($order) : null;
-        if (null === $approval) {
+        if (!$approval instanceof \Tmonier\SyliusPurchaseApprovalPlugin\Entity\OrderApprovalInterface) {
             throw $this->createNotFoundException('Approval not found.');
         }
         if (!$this->isCsrfTokenValid('tmonier_admin_approval_' . $id, (string) $request->request->get('_csrf_token'))) {

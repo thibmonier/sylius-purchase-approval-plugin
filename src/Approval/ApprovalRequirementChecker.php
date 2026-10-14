@@ -16,12 +16,12 @@ use Tmonier\SyliusPurchaseApprovalPlugin\Repository\MemberLimitRepositoryInterfa
  * checkout) whose order limit it exceeds. A limit in another currency than the order cannot
  * be compared: the order needs an approval. No limit configured: no approval.
  */
-final class ApprovalRequirementChecker
+final readonly class ApprovalRequirementChecker
 {
     public function __construct(
-        private readonly CompanyMemberRepositoryInterface $memberRepository,
-        private readonly MemberLimitRepositoryInterface $limitRepository,
-        private readonly CompanyOrderEligibilityCheckerInterface $eligibilityChecker,
+        private CompanyMemberRepositoryInterface $memberRepository,
+        private MemberLimitRepositoryInterface $limitRepository,
+        private CompanyOrderEligibilityCheckerInterface $eligibilityChecker,
     ) {
     }
 
@@ -32,12 +32,12 @@ final class ApprovalRequirementChecker
             return null;
         }
         $member = $this->memberRepository->findOneByCustomer($customer);
-        if (null === $member || !$member->isActive() || !$this->eligibilityChecker->isEligible($order)) {
+        if (!$member instanceof \Tmonier\SyliusCompanyAccountsPlugin\Entity\CompanyMemberInterface || !$member->isActive() || !$this->eligibilityChecker->isEligible($order)) {
             return null;
         }
         $limit = $this->limitRepository->findOneByMember($member);
         $orderLimit = $limit?->getOrderLimit();
-        if (null === $limit || null === $orderLimit) {
+        if (!$limit instanceof \Tmonier\SyliusPurchaseApprovalPlugin\Entity\MemberLimitInterface || null === $orderLimit) {
             return null;
         }
         if ($limit->getCurrencyCode() !== $order->getCurrencyCode()) {

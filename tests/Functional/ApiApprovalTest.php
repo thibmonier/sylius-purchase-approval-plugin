@@ -47,7 +47,7 @@ final class ApiApprovalTest extends WebTestCase
     {
         $s = new ApprovalScenario($this->catalog());
         $base = '/api/v2/shop/company/approvals/' . $s->pendingOrder->getNumber();
-        $post = fn (string $path, ?\Sylius\Component\Core\Model\CustomerInterface $as, array $body = []) => $this->client->request('POST', $path, server: $this->shopApiHeaders($as), content: json_encode($body, \JSON_THROW_ON_ERROR));
+        $post = fn (string $path, ?\Sylius\Component\Core\Model\CustomerInterface $as, array $body = []): \Symfony\Component\DomCrawler\Crawler => $this->client->request('POST', $path, server: $this->shopApiHeaders($as), content: json_encode($body, \JSON_THROW_ON_ERROR));
 
         $post($base . '/approve', ApprovalScenario::customerOf($s->buyerA));
         self::assertResponseStatusCodeSame(403, 'The buyer.');

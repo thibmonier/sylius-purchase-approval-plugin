@@ -31,7 +31,7 @@ final class CheckoutEntryPointsTest extends WebTestCase
         self::assertResponseIsSuccessful();
         $this->client->submit($crawler->filter('form[action$="/checkout/complete"]')->form());
 
-        self::assertSame([sprintf('Order #%s received, awaiting approval', (string) $this->numberOf($cart))], $this->subjectsTo($cart));
+        self::assertSame([sprintf('Order #%s received, awaiting approval', $this->numberOf($cart))], $this->subjectsTo($cart));
         self::assertSame(OrderApprovalInterface::STATE_PENDING, $this->approvalOf($cart)->getState());
         // Sylius sends the customer to the pay page: refused, thank-you page with the reason.
         $this->client->followRedirect();
@@ -50,7 +50,7 @@ final class CheckoutEntryPointsTest extends WebTestCase
         self::assertResponseIsSuccessful();
         self::assertSame(OrderApprovalInterface::STATE_PENDING, $this->approvalOf($cart)->getState());
         self::assertSame(1, $this->runWorker());
-        self::assertSame([sprintf('Order #%s received, awaiting approval', (string) $this->numberOf($cart))], $this->subjectsTo($cart));
+        self::assertSame([sprintf('Order #%s received, awaiting approval', $this->numberOf($cart))], $this->subjectsTo($cart));
 
         $payment = $this->reload($cart)->getLastPayment(PaymentInterface::STATE_NEW);
         self::assertInstanceOf(PaymentInterface::class, $payment);

@@ -84,7 +84,7 @@ final class CompanyMemberLimitsTypeExtension extends AbstractTypeExtension
             ->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event): void {
                 $member = $event->getData();
                 $limit = $member instanceof CompanyMemberInterface ? $this->limitRepository->findOneByMember($member) : null;
-                if (null === $limit) {
+                if (!$limit instanceof \Tmonier\SyliusPurchaseApprovalPlugin\Entity\MemberLimitInterface) {
                     return;
                 }
                 $form = $event->getForm();
@@ -103,9 +103,9 @@ final class CompanyMemberLimitsTypeExtension extends AbstractTypeExtension
         if (!$member instanceof CompanyMemberInterface) {
             return;
         }
-        $orderLimit = LimitAmount::parse(self::text($form->get('approvalOrderLimit')));
-        $approvalLimit = LimitAmount::parse(self::text($form->get('approvalApprovalLimit')));
-        $currency = self::text($form->get('approvalCurrency'));
+        $orderLimit = LimitAmount::parse($this->text($form->get('approvalOrderLimit')));
+        $approvalLimit = LimitAmount::parse($this->text($form->get('approvalApprovalLimit')));
+        $currency = $this->text($form->get('approvalCurrency'));
         foreach (['approvalOrderLimit' => $orderLimit, 'approvalApprovalLimit' => $approvalLimit] as $field => $value) {
             if (false === $value) {
                 $form->get($field)->addError(new FormError($this->translator->trans(MemberLimitUpdater::ERROR_INVALID_AMOUNT, [], 'validators')));
@@ -120,13 +120,13 @@ final class CompanyMemberLimitsTypeExtension extends AbstractTypeExtension
 
         $limit = $this->limitRepository->findOneByMember($member);
         if (null === $orderLimit && null === $approvalLimit) {
-            if (null !== $limit) {
+            if ($limit instanceof \Tmonier\SyliusPurchaseApprovalPlugin\Entity\MemberLimitInterface) {
                 $this->entityManager->remove($limit);
             }
 
             return;
         }
-        if (null === $limit) {
+        if (!$limit instanceof \Tmonier\SyliusPurchaseApprovalPlugin\Entity\MemberLimitInterface) {
             $limit = $this->limitFactory->createNew();
             $limit->setMember($member);
             $this->entityManager->persist($limit);
@@ -137,7 +137,7 @@ final class CompanyMemberLimitsTypeExtension extends AbstractTypeExtension
         $limit->setUpdatedAt(new \DateTimeImmutable());
     }
 
-    private static function text(FormInterface $field): ?string
+    private function text(FormInterface $field): ?string
     {
         $data = $field->getData();
 

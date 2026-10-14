@@ -19,15 +19,15 @@ use Tmonier\SyliusPurchaseApprovalPlugin\Entity\OrderApprovalInterface;
             uriTemplate: '/admin/order-approvals',
             description: 'Order approvals, most recent first. `?state=pending|approved|rejected|expired` filters them.',
             security: "is_granted('ROLE_API_ACCESS')",
-            provider: AdminApprovalProvider::class,
             name: 'tmonier_purchase_approval_admin_approvals_get',
+            provider: AdminApprovalProvider::class,
         ),
         new Get(
             uriTemplate: '/admin/order-approvals/{orderNumber}',
             requirements: ['orderNumber' => '[A-Za-z0-9_-]{1,64}'],
             security: "is_granted('ROLE_API_ACCESS')",
-            provider: AdminApprovalProvider::class,
             name: 'tmonier_purchase_approval_admin_approval_get',
+            provider: AdminApprovalProvider::class,
         ),
         new Post(
             uriTemplate: '/admin/order-approvals/{orderNumber}/approve',
@@ -37,8 +37,8 @@ use Tmonier\SyliusPurchaseApprovalPlugin\Entity\OrderApprovalInterface;
             security: "is_granted('ROLE_API_ACCESS')",
             input: ApprovalDecisionInput::class,
             read: false,
-            processor: AdminApprovalDecisionProcessor::class,
             name: 'tmonier_purchase_approval_admin_approval_approve',
+            processor: AdminApprovalDecisionProcessor::class,
         ),
         new Post(
             uriTemplate: '/admin/order-approvals/{orderNumber}/reject',
@@ -48,27 +48,27 @@ use Tmonier\SyliusPurchaseApprovalPlugin\Entity\OrderApprovalInterface;
             security: "is_granted('ROLE_API_ACCESS')",
             input: ApprovalDecisionInput::class,
             read: false,
-            processor: AdminApprovalDecisionProcessor::class,
             name: 'tmonier_purchase_approval_admin_approval_reject',
+            processor: AdminApprovalDecisionProcessor::class,
         ),
     ],
 )]
-final class AdminApprovalView
+final readonly class AdminApprovalView
 {
     public function __construct(
         #[ApiProperty(identifier: true)]
-        public readonly string $orderNumber,
-        public readonly ?int $orderId,
-        public readonly ?string $companyCode,
-        public readonly string $state,
-        public readonly int $total,
-        public readonly ?string $currencyCode,
-        public readonly ?int $orderLimit,
-        public readonly \DateTimeImmutable $requestedAt,
-        public readonly ?\DateTimeImmutable $decidedAt,
-        public readonly ?string $decidedBy,
-        public readonly ?string $deciderName,
-        public readonly ?string $comment,
+        public string $orderNumber,
+        public ?int $orderId,
+        public ?string $companyCode,
+        public string $state,
+        public int $total,
+        public ?string $currencyCode,
+        public ?int $orderLimit,
+        public \DateTimeImmutable $requestedAt,
+        public ?\DateTimeImmutable $decidedAt,
+        public ?string $decidedBy,
+        public ?string $deciderName,
+        public ?string $comment,
     ) {
     }
 

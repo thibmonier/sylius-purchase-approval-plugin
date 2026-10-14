@@ -33,7 +33,7 @@ final class AdminApprovalTest extends WebTestCase
         $approval = $this->approvalOf($this->idOf($s->pendingOrder));
         self::assertSame(OrderApprovalInterface::DECIDED_BY_ADMINISTRATOR, $approval->getDeciderType());
         self::assertNotNull($approval->getDeciderName());
-        self::assertStringContainsString((string) ($admin->getFirstName() ?? $admin->getUsername()), (string) $approval->getDeciderName());
+        self::assertStringContainsString((string) ($admin->getFirstName() ?? $admin->getUsername()), $approval->getDeciderName());
         self::assertSame('Confirmed by phone', $approval->getComment());
 
         // An invalid token is refused.

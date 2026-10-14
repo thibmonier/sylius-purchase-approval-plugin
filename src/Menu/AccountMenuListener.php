@@ -10,18 +10,18 @@ use Tmonier\SyliusCompanyAccountsPlugin\Member\CurrentMemberResolverInterface;
 use Tmonier\SyliusPurchaseApprovalPlugin\Security\ApprovalPermissions;
 
 /** Account menu: "Approvals" for approvers, "Purchase limits" for company admins. */
-final class AccountMenuListener
+final readonly class AccountMenuListener
 {
     public function __construct(
-        private readonly CurrentMemberResolverInterface $currentMemberResolver,
-        private readonly AuthorizationCheckerInterface $authorizationChecker,
+        private CurrentMemberResolverInterface $currentMemberResolver,
+        private AuthorizationCheckerInterface $authorizationChecker,
     ) {
     }
 
     public function __invoke(MenuBuilderEvent $event): void
     {
         $company = $this->currentMemberResolver->getMember()?->getCompany();
-        if (null === $company) {
+        if (!$company instanceof \Tmonier\SyliusCompanyAccountsPlugin\Entity\CompanyInterface) {
             return;
         }
 

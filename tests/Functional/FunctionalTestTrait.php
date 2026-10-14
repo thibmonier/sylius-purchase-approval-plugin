@@ -69,7 +69,7 @@ trait FunctionalTestTrait
     private function shopApiHeaders(?CustomerInterface $as = null, string $contentType = 'application/ld+json'): array
     {
         $headers = ['CONTENT_TYPE' => $contentType, 'HTTP_ACCEPT' => 'application/ld+json'];
-        if (null !== $as) {
+        if ($as instanceof \Sylius\Component\Core\Model\CustomerInterface) {
             $user = $as->getUser();
             self::assertInstanceOf(ShopUserInterface::class, $user);
             $headers['HTTP_AUTHORIZATION'] = 'Bearer ' . $this->jwtManager()->create($user);

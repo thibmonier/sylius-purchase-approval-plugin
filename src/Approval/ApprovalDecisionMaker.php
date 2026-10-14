@@ -21,7 +21,7 @@ use Tmonier\SyliusPurchaseApprovalPlugin\Event\OrderApprovalEvent;
  * both win (the second one gets "not pending"). A rejected or expired order is cancelled with
  * the core `sylius_order.cancel` transition (stock and promotion usage are released).
  */
-final class ApprovalDecisionMaker
+final readonly class ApprovalDecisionMaker
 {
     public const GRAPH = 'tmonier_order_approval';
 
@@ -36,10 +36,10 @@ final class ApprovalDecisionMaker
     public const COMMENT_MAX_LENGTH = 1000;
 
     public function __construct(
-        private readonly EntityManagerInterface $entityManager,
-        private readonly StateMachineInterface $stateMachine,
-        private readonly ApprovalPolicy $policy,
-        private readonly EventDispatcherInterface $eventDispatcher,
+        private EntityManagerInterface $entityManager,
+        private StateMachineInterface $stateMachine,
+        private ApprovalPolicy $policy,
+        private EventDispatcherInterface $eventDispatcher,
     ) {
     }
 
@@ -86,7 +86,7 @@ final class ApprovalDecisionMaker
         $closed = $this->entityManager->wrapInTransaction(function () use ($approval): bool {
             $this->entityManager->refresh($approval, LockMode::PESSIMISTIC_WRITE);
             $order = $approval->getOrder();
-            if (!$approval->isPending() || null === $order || OrderInterface::STATE_NEW === $order->getState() || !$this->stateMachine->can($approval, self::GRAPH, self::TRANSITION_CANCEL)) {
+            if (!$approval->isPending() || !$order instanceof \Sylius\Component\Core\Model\OrderInterface || OrderInterface::STATE_NEW === $order->getState() || !$this->stateMachine->can($approval, self::GRAPH, self::TRANSITION_CANCEL)) {
                 return false;
             }
             $this->stateMachine->apply($approval, self::GRAPH, self::TRANSITION_CANCEL);
@@ -109,9 +109,9 @@ final class ApprovalDecisionMaker
         $error = $this->entityManager->wrapInTransaction(function () use ($approval, $decider, $transition, $comment): ?string {
             $this->entityManager->refresh($approval, LockMode::PESSIMISTIC_WRITE);
             $deciderCustomer = null;
-            if (null !== $decider->member) {
+            if ($decider->member instanceof \Tmonier\SyliusCompanyAccountsPlugin\Entity\CompanyMemberInterface) {
                 $member = $this->managedMember($decider->member);
-                if (null === $member) {
+                if (!$member instanceof \Tmonier\SyliusCompanyAccountsPlugin\Entity\CompanyMemberInterface) {
                     return ApprovalPolicy::ERROR_NOT_ALLOWED;
                 }
                 $error = self::TRANSITION_APPROVE === $transition

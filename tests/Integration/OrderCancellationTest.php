@@ -37,7 +37,7 @@ final class OrderCancellationTest extends KernelTestCase
         self::assertNotNull($approval->getDecidedAt());
         self::assertSame(ApprovalPolicy::ERROR_NOT_PENDING, $this->decisionMaker()->approve($approval, Decider::member($approver)));
         self::assertSame(ApprovalPolicy::ERROR_NOT_PENDING, $this->decisionMaker()->approve($approval, Decider::administrator(null)));
-        self::assertSame([], array_filter(self::getMailerMessages(), static fn ($email): bool => $email instanceof Email && 'Order confirmation' === $email->getSubject()));
+        self::assertSame([], array_filter(self::getMailerMessages(), static fn (\Symfony\Component\Mime\RawMessage $email): bool => $email instanceof Email && 'Order confirmation' === $email->getSubject()));
     }
 
     public function testAnOrderNoLongerNewIsNeverApproved(): void

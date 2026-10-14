@@ -13,18 +13,18 @@ use Tmonier\SyliusPurchaseApprovalPlugin\Repository\OrderApprovalRepositoryInter
  * a rejected or expired one never gets one, so no credit note is needed. Also covers the mass
  * invoice generation command.
  */
-final class ApprovalAwareInvoiceCreator implements InvoiceCreatorInterface
+final readonly class ApprovalAwareInvoiceCreator implements InvoiceCreatorInterface
 {
     public function __construct(
-        private readonly InvoiceCreatorInterface $decorated,
-        private readonly OrderApprovalRepositoryInterface $approvalRepository,
+        private InvoiceCreatorInterface $decorated,
+        private OrderApprovalRepositoryInterface $approvalRepository,
     ) {
     }
 
     public function __invoke(string $orderNumber, \DateTimeInterface $dateTime): void
     {
         $approval = $this->approvalRepository->findOneByOrderNumber($orderNumber);
-        if (null !== $approval && !$approval->isApproved()) {
+        if ($approval instanceof \Tmonier\SyliusPurchaseApprovalPlugin\Entity\OrderApprovalInterface && !$approval->isApproved()) {
             return;
         }
 

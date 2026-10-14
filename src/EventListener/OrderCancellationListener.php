@@ -17,11 +17,11 @@ use Tmonier\SyliusPurchaseApprovalPlugin\Repository\OrderApprovalRepositoryInter
  * flush, so it is no longer listed, approved, expired or e-mailed about. No guard on the
  * cancellation itself (order-hold kernel rule).
  */
-final class OrderCancellationListener
+final readonly class OrderCancellationListener
 {
     public function __construct(
-        private readonly OrderApprovalRepositoryInterface $approvalRepository,
-        private readonly StateMachineInterface $stateMachine,
+        private OrderApprovalRepositoryInterface $approvalRepository,
+        private StateMachineInterface $stateMachine,
     ) {
     }
 
@@ -32,7 +32,7 @@ final class OrderCancellationListener
             return;
         }
         $approval = $this->approvalRepository->findOneByOrder($order);
-        if (null === $approval || !$approval->isPending() || !$this->stateMachine->can($approval, ApprovalDecisionMaker::GRAPH, ApprovalDecisionMaker::TRANSITION_CANCEL)) {
+        if (!$approval instanceof \Tmonier\SyliusPurchaseApprovalPlugin\Entity\OrderApprovalInterface || !$approval->isPending() || !$this->stateMachine->can($approval, ApprovalDecisionMaker::GRAPH, ApprovalDecisionMaker::TRANSITION_CANCEL)) {
             return;
         }
 
