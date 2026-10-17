@@ -10,8 +10,8 @@ validateur de son entreprise avant de pouvoir être payées, expédiées ou fact
 
 Construit sur [tmonier/sylius-company-accounts-plugin](https://github.com/thibmonier/sylius-company-accounts-plugin)
 (entreprises, membres, rôles) et sur le noyau de [tmonier/sylius-order-hold-plugin](https://github.com/thibmonier/sylius-order-hold-plugin)
-(commandes maintenues impayées sans être annulées, points d'entrée de paiement bloqués). Une alternative
-MIT, native pour Sylius 2.2 / 2.3, pour les marchands sans Sylius Plus.
+(commandes maintenues impayées sans être annulées, points d'entrée de paiement bloqués). Sous licence MIT,
+natif pour Sylius 2.2 / 2.3.
 
 ## Fonctionnalités
 

@@ -10,8 +10,8 @@ approver of their company before they can be paid, shipped or invoiced.**
 
 Built on [tmonier/sylius-company-accounts-plugin](https://github.com/thibmonier/sylius-company-accounts-plugin)
 (companies, members, roles) and the [tmonier/sylius-order-hold-plugin](https://github.com/thibmonier/sylius-order-hold-plugin)
-kernel (orders kept unpaid without being cancelled, payment entry points blocked). An MIT
-alternative, native to Sylius 2.2 / 2.3, for merchants without Sylius Plus.
+kernel (orders kept unpaid without being cancelled, payment entry points blocked). MIT-licensed,
+native to Sylius 2.2 / 2.3.
 
 ## Features
 
