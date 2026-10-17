@@ -1,5 +1,7 @@
 # Sylius Purchase Approval Plugin
 
+> Français : [README.fr.md](README.fr.md) <!-- vitrine:lang -->
+
 [![Build](https://github.com/thibmonier/sylius-purchase-approval-plugin/actions/workflows/build.yaml/badge.svg)](https://github.com/thibmonier/sylius-purchase-approval-plugin/actions/workflows/build.yaml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
@@ -8,8 +10,8 @@ approver of their company before they can be paid, shipped or invoiced.**
 
 Built on [tmonier/sylius-company-accounts-plugin](https://github.com/thibmonier/sylius-company-accounts-plugin)
 (companies, members, roles) and the [tmonier/sylius-order-hold-plugin](https://github.com/thibmonier/sylius-order-hold-plugin)
-kernel (orders kept unpaid without being cancelled, payment entry points blocked). An MIT
-alternative, native to Sylius 2.2 / 2.3, for merchants without Sylius Plus.
+kernel (orders kept unpaid without being cancelled, payment entry points blocked). MIT-licensed,
+native to Sylius 2.2 / 2.3.
 
 ## Features
 
@@ -231,6 +233,14 @@ vendor/bin/phpunit
 vendor/bin/phpstan analyse
 vendor/bin/ecs check
 ```
+
+<!-- vitrine:demo-b2b:start -->
+## B2B demo
+
+This plugin is used in the [Sylius B2B demo](https://github.com/thibmonier/sylius-b2b-demo): a Sylius 2.3 shop with fictitious sample data where the B2B plugins work together. The source code, setup and fixtures of the demo are in that repository.
+
+The demo is an example, not a production setup.
+<!-- vitrine:demo-b2b:end -->
 
 ## License
 
