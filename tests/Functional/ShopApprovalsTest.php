@@ -175,7 +175,12 @@ final class ShopApprovalsTest extends WebTestCase
         foreach (['/account/company/approvals', '/account/company/approvals/' . $s->pendingOrder->getNumber()] as $path) {
             $crawler = $this->client->request('GET', $this->shopUrl($path));
             $tabs = $crawler->filter('[data-test-tmonier-company-navigation] .nav-link');
-            self::assertSame([$this->shopUrl('/account/company'), $this->shopUrl('/account/company/members'), $this->shopUrl('/account/company/orders'), $this->shopUrl('/account/company/approvals')], $tabs->each(static fn ($tab): string => (string) $tab->attr('href')), $path);
+            $hrefs = $tabs->each(static fn ($tab): string => (string) $tab->attr('href'));
+            // The company tabs come from the company accounts plugin, whose minor versions may add some (1.2 added
+            // addresses): the tabs it always had stay in place and the approvals tab closes the list.
+            self::assertSame([$this->shopUrl('/account/company'), $this->shopUrl('/account/company/members'), $this->shopUrl('/account/company/orders')], array_slice($hrefs, 0, 3), $path);
+            self::assertSame($this->shopUrl('/account/company/approvals'), end($hrefs), $path);
+            self::assertCount(1, array_keys($hrefs, $this->shopUrl('/account/company/approvals'), true), $path);
             self::assertSame('page', $crawler->filter('[data-test-tmonier-approvals-link]')->attr('aria-current'), $path);
         }
 
