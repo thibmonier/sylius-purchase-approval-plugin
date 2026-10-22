@@ -35,6 +35,12 @@ via l'API Schema).
 
 ## Captures d'écran
 
+![Entrée Approbations de l'en-tête, avec le nombre d'approbations à décider](docs/images/shop-header-approvals-desktop-fr.jpg)
+
+![Panneau d'aperçu : les 5 approbations les plus anciennes à décider, ouvert depuis l'en-tête](docs/images/shop-header-preview-desktop-fr.jpg)
+
+![Le même panneau dans le menu du compte sur mobile](docs/images/shop-header-preview-mobile-fr.jpg)
+
 ![Commandes en attente de validation sur la page Approbations du validateur](docs/images/shop-approvals.jpg)
 
 ![Décision de validation : valider ou refuser avec un commentaire pour l'acheteur](docs/images/shop-approval-decision.jpg)

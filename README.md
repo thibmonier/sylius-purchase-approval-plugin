@@ -35,6 +35,12 @@ migration).
 
 ## Screenshots
 
+![Approvals entry in the header, with the number of approvals to decide](docs/images/shop-header-approvals-desktop-en.jpg)
+
+![Preview panel: the 5 oldest approvals to decide, opened from the header entry](docs/images/shop-header-preview-desktop-en.jpg)
+
+![The same panel in the mobile account menu](docs/images/shop-header-preview-mobile-en.jpg)
+
 ![Orders awaiting approval on the approver's Approvals page](docs/images/shop-approvals.jpg)
 
 ![Approval decision: approve or reject with a comment for the buyer](docs/images/shop-approval-decision.jpg)
