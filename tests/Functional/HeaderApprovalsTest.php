@@ -31,7 +31,7 @@ final class HeaderApprovalsTest extends WebTestCase
     public function testTheEntryStaysWithoutBadgeWhenNothingWaits(): void
     {
         $s = new ApprovalScenario($this->catalog());
-        // Their own order is the only pending one for the approver of company B.
+        // Nothing is pending in company B.
         $this->loginShopUser(ApprovalScenario::customerOf($s->approverB));
 
         $crawler = $this->client->request('GET', $this->shopUrl('/'));
@@ -99,6 +99,8 @@ final class HeaderApprovalsTest extends WebTestCase
 
     public function testTheBadgeIsCappedAtNinetyNinePlus(): void
     {
+        // A request first: the router context then holds the locale the shop URLs need.
+        $this->client->request('GET', $this->shopUrl('/'));
         $twig = self::getContainer()->get('twig');
         self::assertInstanceOf(\Twig\Environment::class, $twig);
         $render = static fn (int $count): string => $twig->render('@TmonierSyliusPurchaseApprovalPlugin/shop/header/_entry.html.twig', ['count' => $count, 'layout' => 'desktop']);
