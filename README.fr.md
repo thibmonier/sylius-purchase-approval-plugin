@@ -19,6 +19,7 @@ natif pour Sylius 2.2 / 2.3.
 |---|---|
 | Plafonner ce que chaque acheteur peut commander seul | **Plafond de commande** par membre de l'entreprise (montant et devise, table dédiée liée au membre). Une commande au-dessus de ce plafond, ou dans une autre devise que celle du plafond, attend une validation. Pas de plafond : pas de validation, la boutique fonctionne comme avant. |
 | Laisser l'entreprise décider | Page **Approbations** dans le compte client pour les validateurs : d'abord les commandes de l'entreprise en attente, puis les décisions ; détail de la commande avec articles et totaux ; **validation ou refus avec un commentaire**. Une seule étape, **jamais sur sa propre commande**, dans la limite du **plafond de validation** du validateur. |
+| Voir ce qui attend, sur toutes les pages | **Entrée « Approbations » dans l'en-tête de la boutique**, à côté de « Mon compte » (ordinateur et menu mobile), pour les membres qui peuvent valider : une pastille avec le nombre d'approbations en attente **qu'ils peuvent décider** (ni leurs propres commandes, ni celles au-delà de leur plafond de validation ; « 99+ » au-delà de 99), annoncé en texte aux lecteurs d'écran (« 3 approbations en attente », « Aucune approbation en attente »). Une seule requête `COUNT` par page, aucune pour un visiteur ou un acheteur. L'entrée mène à la liste filtrée sur ce que le membre décide (`?decidable=1`). `header_badge: false` la désactive. |
 | Laisser l'entreprise fixer ses règles | Page **Plafonds d'achat** pour les administrateurs de l'entreprise (un formulaire par collègue ; personne ne modifie ses propres plafonds). Les administrateurs de la boutique les définissent sur le formulaire du membre dans le back-office ou via l'API. |
 | Aucun paiement, expédition ni facture avant la validation | La validation en attente est créée **dans le flush qui finalise le tunnel de commande**. Grâce au noyau order-hold, la page de paiement, les routes de capture Payum et les demandes de paiement de l'API boutique sont bloquées tant qu'elle n'est pas accordée (message flash / 422 ; les boutons Payer des pages de commande sont remplacés par l'avis de validation), et `sylius:cancel-unpaid-orders` laisse les commandes en attente tranquilles ; **une fois la validation accordée, le délai des commandes impayées court à partir de la date de validation**. Une garde bloque `sylius_shipment.ship`. Avec [sylius/invoicing-plugin](https://github.com/Sylius/InvoicingPlugin), la facture est générée à la validation, jamais pour une commande refusée (aucun avoir nécessaire). |
 | Informer les personnes concernées | **Accusé de réception** à la place de la confirmation de commande tant que la commande attend, sur les deux chemins de confirmation (tunnel de commande de la boutique et API, y compris asynchrone) ; la **confirmation** habituelle **une fois la validation accordée**, envoyée une seule fois ; les validateurs de l'entreprise sont avertis d'une nouvelle demande ; l'acheteur est informé d'un refus ou d'une expiration, avec le commentaire. |
@@ -115,6 +116,8 @@ tmonier_sylius_purchase_approval:
     approver_roles: [approver]
     # Pending approvals older than this are expired by tmonier:approval:expire (orders cancelled).
     expire_after_days: 14
+    # "Approvals" entry with the pending count in the shop header (members who can approve only).
+    header_badge: true
 ```
 
 Les modèles (`resources.order_approval`, `resources.member_limit`) peuvent être surchargés comme toute
@@ -179,6 +182,7 @@ la permission est refusée.
 | Hook | Contenu |
 |---|---|
 | `tmonier_purchase_approval_shop.account.{approvals,approval,limits}.index.content.main` → `section` | Corps des pages |
+| `sylius_shop.base.header.content.security.logged_in_user.desktop` et `….mobile.menu` → `tmonier_approvals` | Entrée « Approbations » avec le nombre en attente dans l'en-tête (priorité 50, entre « Mon compte » et « Se déconnecter ») |
 | `tmonier_company_accounts.shop.account.company.tabs` → `tmonier_approvals`, `tmonier_purchase_limits` | Onglets Approbations et Plafonds d'achat de « Mon entreprise » (hook d'onglets de company-accounts 1.1) |
 | `tmonier_purchase_approval_shop.account.{approvals,approval,limits}.index.content.main.header` → `navigation` | La barre d'onglets de company-accounts sur les pages de validation (`active_tab` : `approvals`, `limits`) |
 | `sylius_shop.account.order.show.content.main.header` → `tmonier_approval` | Avis de validation sur la page de commande du client |
@@ -199,7 +203,7 @@ Services : `ApprovalPolicy` (règles), `ApprovalDecisionMaker` (décisions),
 - Les outils de facturation autres que sylius/invoicing-plugin ne sont pas reliés : s'ils facturent au
   moment du tunnel de commande, une commande refusée ensuite nécessite un avoir.
 - Les plafonds sont des montants par commande, dans une seule devise par membre.
-- Les administrateurs de l'entreprise ne voient pas les validations à moins que leur rôle ne figure dans `approver_roles`.
+- Les administrateurs de l'entreprise ne voient pas les validations, ni l'entrée de l'en-tête, à moins que leur rôle ne figure dans `approver_roles` (`approver_roles: [approver, admin]` en fait des validateurs : ils décident comme n'importe quel validateur, jamais sur leurs propres commandes et dans la limite de leur propre plafond de validation).
 - L'événement `requested` et les e-mails aux validateurs sont envoyés après le flush, et non après une
   transaction englobante ouverte par l'appelant : l'API du tunnel de commande (middleware Messenger `doctrine_transaction`)
   et admin-order-creation valident juste après ; si cette transaction englobante était annulée, les validateurs

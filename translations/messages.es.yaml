@@ -20,6 +20,8 @@ tmonier_purchase_approval:
         review: 'Revisar'
         show_decided: 'Mostrar también las aprobaciones resueltas'
         show_pending_only: 'Solo aprobaciones pendientes'
+        show_all_pending: 'Mostrar todas las aprobaciones pendientes'
+        no_decidable_approval: 'Ninguna aprobación pendiente espera su decisión.'
         no_pending_approval: 'Ningún pedido espera aprobación.'
         no_approval: 'Ningún pedido de la empresa ha necesitado aprobación todavía.'
         decided_by: 'Decidida por'
@@ -36,6 +38,10 @@ tmonier_purchase_approval:
         company: 'Empresa'
         my_orders: 'Mis pedidos'
         closed_by_cancellation: 'Cerrada: el pedido se canceló'
+    header:
+        none: 'Ninguna aprobación pendiente'
+        pending: '{1} %count% aprobación pendiente|]1,Inf[ %count% aprobaciones pendientes'
+        many: 'Más de 99 aprobaciones pendientes'
     state:
         pending: 'Pendiente de aprobación'
         approved: 'Aprobado'

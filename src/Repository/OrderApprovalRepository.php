@@ -8,6 +8,8 @@ use Doctrine\ORM\QueryBuilder;
 use Sylius\Bundle\ResourceBundle\Doctrine\ORM\EntityRepository;
 use Sylius\Component\Core\Model\OrderInterface;
 use Tmonier\SyliusCompanyAccountsPlugin\Entity\CompanyInterface;
+use Tmonier\SyliusCompanyAccountsPlugin\Entity\CompanyMemberInterface;
+use Tmonier\SyliusPurchaseApprovalPlugin\Entity\MemberLimitInterface;
 use Tmonier\SyliusPurchaseApprovalPlugin\Entity\OrderApprovalInterface;
 
 class OrderApprovalRepository extends EntityRepository implements OrderApprovalRepositoryInterface
@@ -145,6 +147,23 @@ class OrderApprovalRepository extends EntityRepository implements OrderApprovalR
         ;
     }
 
+    public function createPendingDecidableByQueryBuilder(CompanyMemberInterface $member, ?MemberLimitInterface $limit): QueryBuilder
+    {
+        return $this->decidableBy($this->createQueryBuilder('o')->addSelect('ord', 'customer'), $member, $limit)
+            ->leftJoin('ord.customer', 'customer')
+            ->addOrderBy('o.createdAt', 'DESC')
+            ->addOrderBy('o.id', 'DESC')
+        ;
+    }
+
+    public function countPendingDecidableBy(CompanyMemberInterface $member, ?MemberLimitInterface $limit): int
+    {
+        return (int) $this->decidableBy($this->createQueryBuilder('o')->select('COUNT(o.id)'), $member, $limit)
+            ->getQuery()
+            ->getSingleScalarResult()
+        ;
+    }
+
     public function findPendingIdsOfClosedOrders(int $limit): array
     {
         /** @var list<int|string> $ids */
@@ -180,5 +199,31 @@ class OrderApprovalRepository extends EntityRepository implements OrderApprovalR
         ;
 
         return array_map(static fn (int|string $id): int => (int) $id, $ids);
+    }
+
+    /** The rules of ApprovalPolicy::checkApprove(), in SQL. */
+    private function decidableBy(QueryBuilder $queryBuilder, CompanyMemberInterface $member, ?MemberLimitInterface $limit): QueryBuilder
+    {
+        $queryBuilder
+            ->innerJoin('o.order', 'ord')
+            ->andWhere('o.company = :company')
+            ->andWhere('o.state = :pending')
+            ->setParameter('company', $member->getCompany())
+            ->setParameter('pending', OrderApprovalInterface::STATE_PENDING)
+        ;
+        $customer = $member->getCustomer();
+        if ($customer instanceof \Sylius\Component\Core\Model\CustomerInterface) {
+            $queryBuilder->andWhere('ord.customer IS NULL OR ord.customer <> :customer')->setParameter('customer', $customer);
+        }
+        $approvalLimit = $limit?->getApprovalLimit();
+        if (null !== $approvalLimit) {
+            $queryBuilder
+                ->andWhere('o.currencyCode = :currency AND o.total <= :approvalLimit')
+                ->setParameter('currency', $limit->getCurrencyCode())
+                ->setParameter('approvalLimit', $approvalLimit)
+            ;
+        }
+
+        return $queryBuilder;
     }
 }

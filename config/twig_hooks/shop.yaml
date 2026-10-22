@@ -67,6 +67,18 @@ sylius_twig_hooks:
                 template: '@TmonierSyliusPurchaseApprovalPlugin/shop/account/company_tabs/limits.html.twig'
                 priority: -10
 
+        # Header, signed-in customers who can approve: "Approvals" with the number of orders waiting
+        # for them, between "My account" (priority 100) and "Log out" (0). Disabled by header_badge.
+        'sylius_shop.base.header.content.security.logged_in_user.desktop':
+            tmonier_approvals:
+                template: '@TmonierSyliusPurchaseApprovalPlugin/shop/header/desktop.html.twig'
+                priority: 50
+
+        'sylius_shop.base.header.content.security.logged_in_user.mobile.menu':
+            tmonier_approvals:
+                template: '@TmonierSyliusPurchaseApprovalPlugin/shop/header/mobile.html.twig'
+                priority: 50
+
         # Customer order page: approval of the order (buyer).
         'sylius_shop.account.order.show.content.main.header':
             tmonier_approval:

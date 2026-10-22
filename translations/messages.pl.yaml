@@ -20,6 +20,8 @@ tmonier_purchase_approval:
         review: 'Sprawdź'
         show_decided: 'Pokaż także rozpatrzone zatwierdzenia'
         show_pending_only: 'Tylko oczekujące zatwierdzenia'
+        show_all_pending: 'Pokaż wszystkie oczekujące zatwierdzenia'
+        no_decidable_approval: 'Żadne z oczekujących zatwierdzeń nie czeka na Twoją decyzję.'
         no_pending_approval: 'Żadne zamówienie nie czeka na zatwierdzenie.'
         no_approval: 'Żadne zamówienie firmy nie wymagało jeszcze zatwierdzenia.'
         decided_by: 'Zdecydował(a)'
@@ -36,6 +38,10 @@ tmonier_purchase_approval:
         company: 'Firma'
         my_orders: 'Moje zamówienia'
         closed_by_cancellation: 'Zamknięte: zamówienie anulowano'
+    header:
+        none: 'Brak oczekujących zatwierdzeń'
+        pending: '{1} %count% zatwierdzenie oczekuje|]1,Inf[ %count% zatwierdzeń oczekuje'
+        many: 'Ponad 99 zatwierdzeń oczekuje'
     state:
         pending: 'Czeka na zatwierdzenie'
         approved: 'Zatwierdzone'

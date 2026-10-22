@@ -19,6 +19,7 @@ native to Sylius 2.2 / 2.3.
 |---|---|
 | Cap what each buyer may order alone | **Order limit** per company member (amount and currency, own table linked to the member). An order above it, or in another currency than the limit, waits for an approval. No limit: no approval, the store works as before. |
 | Let the company decide | **Approvals** page in the customer account for approvers: pending orders of the company first, then decisions; order detail with items and totals; **approve or reject with a comment**. One step, **never on one's own order**, within the approver's **approval limit**. |
+| See what waits, on every page | **"Approvals" entry in the shop header**, next to "My account" (desktop and mobile menu), for members who can approve: a badge with the number of pending approvals **they can decide** (not their own orders, not above their approval limit; "99+" beyond 99), announced as text for screen readers ("3 approvals pending", "No approval pending"). One `COUNT` query per page, none for visitors and buyers. It leads to the list filtered on what the member decides (`?decidable=1`). `header_badge: false` turns it off. |
 | Let the company set its rules | **Purchase limits** page for company admins (one form per colleague; nobody changes their own limits). Store administrators set them on the member form of the back office or through the API. |
 | No payment, shipment or invoice before the approval | The pending approval is created **in the flush that completes the checkout**. Through the order-hold kernel, the pay page, the Payum capture routes and the shop API payment requests are blocked until it is approved (flash / 422 message; the Pay buttons of the order pages are replaced by the approval notice), and `sylius:cancel-unpaid-orders` leaves pending orders alone; **once approved, the unpaid-orders delay starts from the approval date**. A guard stops `sylius_shipment.ship`. With [sylius/invoicing-plugin](https://github.com/Sylius/InvoicingPlugin), the invoice is generated at approval, never for a rejected order (no credit note needed). |
 | Tell people what happens | **Acknowledgement of receipt** instead of the order confirmation while the order waits, on both confirmation paths (shop checkout and API, also asynchronous); the regular **confirmation once approved**, sent once; the approvers of the company are notified of a new request; the buyer is told of a rejection or an expiry, with the comment. |
@@ -115,6 +116,8 @@ tmonier_sylius_purchase_approval:
     approver_roles: [approver]
     # Pending approvals older than this are expired by tmonier:approval:expire (orders cancelled).
     expire_after_days: 14
+    # "Approvals" entry with the pending count in the shop header (members who can approve only).
+    header_badge: true
 ```
 
 The models (`resources.order_approval`, `resources.member_limit`) can be overridden like any
@@ -179,6 +182,7 @@ the permission is refused.
 | Hook | Content |
 |---|---|
 | `tmonier_purchase_approval_shop.account.{approvals,approval,limits}.index.content.main` → `section` | Body of the pages |
+| `sylius_shop.base.header.content.security.logged_in_user.desktop` and `….mobile.menu` → `tmonier_approvals` | "Approvals" entry with the pending count in the header (priority 50, between "My account" and "Log out") |
 | `tmonier_company_accounts.shop.account.company.tabs` → `tmonier_approvals`, `tmonier_purchase_limits` | Approvals and Purchase limits tabs of "My company" (company-accounts 1.1 tabs hook) |
 | `tmonier_purchase_approval_shop.account.{approvals,approval,limits}.index.content.main.header` → `navigation` | The company-accounts tab bar on the approval pages (`active_tab`: `approvals`, `limits`) |
 | `sylius_shop.account.order.show.content.main.header` → `tmonier_approval` | Approval notice on the customer order page |
@@ -199,7 +203,7 @@ Services: `ApprovalPolicy` (rules), `ApprovalDecisionMaker` (decisions),
 - Invoicing tools other than sylius/invoicing-plugin are not bridged: if they invoice at
   checkout, an order rejected later needs a credit note.
 - Limits are amounts per order, in one currency per member.
-- Company admins do not see the approvals unless their role is in `approver_roles`.
+- Company admins do not see the approvals, nor the header entry, unless their role is in `approver_roles` (`approver_roles: [approver, admin]` makes them approvers: they decide like any approver, never on their own orders and within their own approval limit).
 - The `requested` event and the e-mails to the approvers are sent after the flush, not after an
   outer transaction opened by the caller: the API checkout (Messenger `doctrine_transaction`
   middleware) and admin-order-creation commit just after; if that outer transaction rolled

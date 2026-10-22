@@ -1,0 +1,26 @@
+{#
+    "Approvals" entry of the shop header. Variables: count (pending approvals the member may
+    decide, 0 and up) and layout (desktop | mobile). The count is announced as text; the badge
+    only repeats it visually.
+#}
+{% set label = count == 0
+    ? 'tmonier_purchase_approval.header.none'|trans
+    : (count > 99 ? 'tmonier_purchase_approval.header.many'|trans : 'tmonier_purchase_approval.header.pending'|trans({'%count%': count})) %}
+{% set href = path('tmonier_purchase_approval_shop_approvals', {'decidable': 1}) %}
+{% set content %}
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9 11l3 3l8-8"/><path d="M20 12v6a2 2 0 0 1-2 2h-12a2 2 0 0 1-2-2v-12a2 2 0 0 1 2-2h9"/></svg>
+    <span>{{ 'tmonier_purchase_approval.ui.approvals'|trans }}</span>
+    {% if count > 0 %}<span class="badge text-bg-warning" aria-hidden="true" {{ sylius_test_html_attribute('tmonier-header-approvals-badge') }}>{{ count > 99 ? '99+' : count }}</span>{% endif %}
+    <span class="visually-hidden">{{ label }}</span>
+{% endset %}
+
+{% if layout == 'mobile' %}
+    <li data-test-tmonier-header-approvals="mobile">
+        <a href="{{ href }}" class="dropdown-item d-flex align-items-center gap-2 py-3">{{ content }}</a>
+    </li>
+{% else %}
+    <div class="d-flex align-items-center" data-test-tmonier-header-approvals="desktop">
+        <small aria-hidden="true" role="presentation" class="text-black px-1">|</small>
+        <a href="{{ href }}" class="link-reset d-inline-flex align-items-center gap-1 px-1 py-3 my-n3">{{ content }}</a>
+    </div>
+{% endif %}

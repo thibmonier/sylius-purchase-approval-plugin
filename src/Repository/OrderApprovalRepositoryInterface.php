@@ -8,6 +8,8 @@ use Doctrine\ORM\QueryBuilder;
 use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Resource\Doctrine\Persistence\RepositoryInterface;
 use Tmonier\SyliusCompanyAccountsPlugin\Entity\CompanyInterface;
+use Tmonier\SyliusCompanyAccountsPlugin\Entity\CompanyMemberInterface;
+use Tmonier\SyliusPurchaseApprovalPlugin\Entity\MemberLimitInterface;
 use Tmonier\SyliusPurchaseApprovalPlugin\Entity\OrderApprovalInterface;
 
 /** @extends RepositoryInterface<OrderApprovalInterface> */
@@ -43,6 +45,16 @@ interface OrderApprovalRepositoryInterface extends RepositoryInterface
     public function createAdminListQueryBuilder(?string $state): QueryBuilder;
 
     public function countPendingByCompany(CompanyInterface $company): int;
+
+    /**
+     * Pending approvals of the member's company that the member may approve (ApprovalPolicy):
+     * not their own orders, none above their approval limit (same currency as the order).
+     * Most recent first.
+     */
+    public function createPendingDecidableByQueryBuilder(CompanyMemberInterface $member, ?MemberLimitInterface $limit): QueryBuilder;
+
+    /** Same approvals as createPendingDecidableByQueryBuilder(), with one light COUNT query. */
+    public function countPendingDecidableBy(CompanyMemberInterface $member, ?MemberLimitInterface $limit): int;
 
     /**
      * Ids of the approvals still pending whose order is no longer new (cancelled by a path that

@@ -1,0 +1,4 @@
+{% set count = tmonier_header_approvals() %}
+{% if count is not null %}
+    {% include '@TmonierSyliusPurchaseApprovalPlugin/shop/header/_entry.html.twig' with {'count': count, 'layout': 'desktop'} only %}
+{% endif %}

@@ -20,6 +20,8 @@ tmonier_purchase_approval:
         review: 'Esamina'
         show_decided: 'Mostra anche le approvazioni decise'
         show_pending_only: 'Solo approvazioni in attesa'
+        show_all_pending: 'Mostra tutte le approvazioni in sospeso'
+        no_decidable_approval: 'Nessuna approvazione in sospeso attende la sua decisione.'
         no_pending_approval: 'Nessun ordine è in attesa di approvazione.'
         no_approval: 'Nessun ordine dell''azienda ha ancora richiesto un''approvazione.'
         decided_by: 'Decisa da'
@@ -36,6 +38,10 @@ tmonier_purchase_approval:
         company: 'Azienda'
         my_orders: 'I miei ordini'
         closed_by_cancellation: 'Chiusa: l''ordine è stato annullato'
+    header:
+        none: 'Nessuna approvazione in sospeso'
+        pending: '{1} %count% approvazione in sospeso|]1,Inf[ %count% approvazioni in sospeso'
+        many: 'Più di 99 approvazioni in sospeso'
     state:
         pending: 'In attesa di approvazione'
         approved: 'Approvato'

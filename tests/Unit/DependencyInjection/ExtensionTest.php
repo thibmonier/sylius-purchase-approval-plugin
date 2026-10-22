@@ -16,11 +16,20 @@ final class ExtensionTest extends TestCase
 {
     public function testDefaults(): void
     {
-        /** @var array{approver_roles: list<string>, expire_after_days: int} $config */
+        /** @var array{approver_roles: list<string>, expire_after_days: int, header_badge: bool} $config */
         $config = (new Processor())->processConfiguration(new Configuration(), []);
 
         self::assertSame(['approver'], $config['approver_roles']);
         self::assertSame(14, $config['expire_after_days']);
+        self::assertTrue($config['header_badge']);
+    }
+
+    public function testTheHeaderEntryCanBeDisabledAndAdminsCanBeApprovers(): void
+    {
+        $container = $this->container([], ['header_badge' => false, 'approver_roles' => ['approver', 'admin']]);
+
+        self::assertFalse($container->getParameter('tmonier_purchase_approval.header_badge'));
+        self::assertSame(['approver', 'admin'], $container->getParameter('tmonier_purchase_approval.approver_roles'));
     }
 
     public function testUnknownRolesAreRefused(): void
@@ -54,8 +63,11 @@ final class ExtensionTest extends TestCase
         self::assertArrayHasKey('tmonier_webhook.change_detector', $with->getDefinition('tmonier_purchase_approval.webhook.change_detector')->getTags());
     }
 
-    /** @param list<string> $otherExtensions */
-    private function container(array $otherExtensions): ContainerBuilder
+    /**
+     * @param list<string> $otherExtensions
+     * @param array<string, mixed> $config
+     */
+    private function container(array $otherExtensions, array $config = []): ContainerBuilder
     {
         $container = new ContainerBuilder();
         $container->setParameter('kernel.debug', false);
@@ -78,7 +90,7 @@ final class ExtensionTest extends TestCase
         $extension = new TmonierSyliusPurchaseApprovalExtension();
         $container->registerExtension($extension);
         $extension->prepend($container);
-        $extension->load([], $container);
+        $extension->load([$config], $container);
 
         return $container;
     }
