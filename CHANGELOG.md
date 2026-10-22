@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.3.0] - Unreleased
+## [1.3.0] - 2026-10-22
 
 - Shop header: a click on the "Approvals" entry opens a panel with the 5 oldest approvals the
   member may decide (the ones that expire first): order number, buyer, amount, how long they have
