@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.3.0] - Unreleased
+
+- Shop header: a click on the "Approvals" entry opens a panel with the 5 oldest approvals the
+  member may decide (the ones that expire first): order number, buyer, amount, how long they have
+  waited, "Expires in N days" when the expiry is within 3 days (`expire_after_days`), and a
+  "See all (N)" link to the full list. The panel is fetched at the first click
+  (`GET /account/company/approvals-preview`: one query for the rows, buyers and orders joined, plus
+  the count), never with the page; it only navigates, decisions stay on the order page.
+- Accessibility: the entry becomes a button with `aria-expanded`, the panel follows it in the tab
+  order, Escape closes it and returns the focus to the button; without JavaScript the entry stays
+  a link to the list.
+- Same permission and same scope as the list (`APPROVAL_LIST`, the member's company, not their own
+  orders, within their approval limit): 403 for members who do not approve.
+- Translations of the new labels in en, fr, de, es, it, nl and pl.
+- CI: PHP 8.5 (Sylius 2.3, Symfony 8) in the matrix, actions pinned by commit SHA,
+  `permissions: contents: read`, Dependabot for GitHub Actions.
+
 ## 1.2.0 - 2026-10-22
 
 - Shop header: an "Approvals" entry next to "My account" (desktop and mobile account menu) for
