@@ -1,0 +1,124 @@
+{#
+    Progressive enhancement of the header entries: without JavaScript they stay links to the list.
+    With it, each becomes a button (aria-expanded) that opens a panel, fetched at the first click.
+    Escape closes it and gives the focus back to the button. Plain inline script: no asset build.
+#}
+<script>
+(function () {
+    'use strict';
+    if (window.tmonierApprovalsPanel) {
+        window.tmonierApprovalsPanel();
+        return;
+    }
+
+    function enhance(entry) {
+        if (entry.hasAttribute('data-tmonier-preview-ready')) {
+            return;
+        }
+        var link = entry.querySelector('a[href]');
+        if (!link) {
+            return;
+        }
+        entry.setAttribute('data-tmonier-preview-ready', '');
+        var layout = entry.getAttribute('data-tmonier-preview-layout');
+        var panelId = 'tmonier-approvals-panel-' + layout;
+        var button = document.createElement('button');
+        button.type = 'button';
+        button.className = link.className + ' bg-transparent border-0';
+        button.style.font = 'inherit';
+        button.style.color = 'inherit';
+        button.setAttribute('aria-expanded', 'false');
+        button.setAttribute('aria-controls', panelId);
+        button.innerHTML = link.innerHTML;
+        var panel = document.createElement('div');
+        panel.id = panelId;
+        panel.hidden = true;
+        panel.setAttribute('role', 'region');
+        panel.setAttribute('aria-label', entry.getAttribute('data-tmonier-preview-label'));
+        panel.className = layout === 'desktop'
+            ? 'position-absolute end-0 top-100 bg-white border rounded shadow'
+            : 'bg-white border-top';
+        panel.style.zIndex = '1050';
+        if (layout === 'desktop') {
+            panel.style.minWidth = '20rem';
+            panel.style.maxWidth = '90vw';
+        }
+        var loaded = false;
+        var loading = false;
+
+        function setOpen(open) {
+            panel.hidden = !open;
+            button.setAttribute('aria-expanded', open ? 'true' : 'false');
+        }
+
+        function load() {
+            if (loaded || loading) {
+                return;
+            }
+            loading = true;
+            panel.setAttribute('aria-busy', 'true');
+            panel.textContent = entry.getAttribute('data-tmonier-preview-loading');
+            panel.className += ' px-3 py-3';
+            fetch(entry.getAttribute('data-tmonier-preview-url'), {credentials: 'same-origin', headers: {'X-Requested-With': 'XMLHttpRequest'}})
+                .then(function (response) {
+                    if (!response.ok) {
+                        throw new Error('preview');
+                    }
+                    return response.text();
+                })
+                .then(function (html) {
+                    panel.className = panel.className.replace(' px-3 py-3', '');
+                    panel.innerHTML = html;
+                    loaded = true;
+                })
+                .catch(function () {
+                    // The link of the entry still leads to the list.
+                    window.location.assign(link.getAttribute('href'));
+                })
+                .then(function () {
+                    loading = false;
+                    panel.removeAttribute('aria-busy');
+                });
+        }
+
+        button.addEventListener('click', function () {
+            var open = panel.hidden;
+            setOpen(open);
+            if (open) {
+                load();
+            }
+        });
+        entry.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape' && !panel.hidden) {
+                setOpen(false);
+                button.focus();
+            }
+        });
+        entry.addEventListener('focusout', function (event) {
+            if (event.relatedTarget && !entry.contains(event.relatedTarget)) {
+                setOpen(false);
+            }
+        });
+        document.addEventListener('click', function (event) {
+            if (!panel.hidden && !entry.contains(event.target)) {
+                setOpen(false);
+            }
+        });
+
+        link.replaceWith(button);
+        button.insertAdjacentElement('afterend', panel);
+    }
+
+    function init() {
+        document.querySelectorAll('[data-tmonier-preview-url]').forEach(enhance);
+    }
+
+    window.tmonierApprovalsPanel = init;
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+    document.addEventListener('turbo:load', init);
+})();
+</script>

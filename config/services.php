@@ -14,6 +14,7 @@ use Tmonier\SyliusPurchaseApprovalPlugin\Approval\ApprovalPolicy;
 use Tmonier\SyliusPurchaseApprovalPlugin\Approval\ApprovalRequirementChecker;
 use Tmonier\SyliusPurchaseApprovalPlugin\Approval\DecidableApprovalCounter;
 use Tmonier\SyliusPurchaseApprovalPlugin\Approval\MemberLimitUpdater;
+use Tmonier\SyliusPurchaseApprovalPlugin\Approval\PendingApprovalPreviewer;
 use Tmonier\SyliusPurchaseApprovalPlugin\Command\ExpireApprovalsCommand;
 use Tmonier\SyliusPurchaseApprovalPlugin\Controller\Admin\ApprovalDecisionController;
 use Tmonier\SyliusPurchaseApprovalPlugin\Controller\Shop\ApprovalController;
@@ -170,6 +171,16 @@ return static function (ContainerConfigurator $container): void {
     ;
     $services->alias(DecidableApprovalCounter::class, 'tmonier_purchase_approval.decidable_counter');
     $services
+        ->set('tmonier_purchase_approval.pending_previewer', PendingApprovalPreviewer::class)
+        ->args([
+            service('tmonier_purchase_approval.repository.order_approval'),
+            service('tmonier_purchase_approval.repository.member_limit'),
+            service('tmonier_purchase_approval.decidable_counter'),
+            service('clock'),
+            param('tmonier_purchase_approval.expire_after_days'),
+        ])
+    ;
+    $services
         ->set('tmonier_purchase_approval.twig.header_extension', HeaderApprovalsExtension::class)
         ->args([
             service('tmonier_company_accounts.current_member_resolver'),
@@ -214,6 +225,7 @@ return static function (ContainerConfigurator $container): void {
             service('sylius.context.channel'),
             service('translator'),
             service('tmonier_purchase_approval.decidable_counter'),
+            service('tmonier_purchase_approval.pending_previewer'),
         ])
         ->call('setContainer', [service(\Psr\Container\ContainerInterface::class)])
         ->tag('controller.service_arguments')

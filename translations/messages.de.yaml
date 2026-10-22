@@ -42,6 +42,12 @@ tmonier_purchase_approval:
         none: 'Keine Freigabe ausstehend'
         pending: '{1} %count% Freigabe ausstehend|]1,Inf[ %count% Freigaben ausstehend'
         many: 'Mehr als 99 Freigaben ausstehend'
+    preview:
+        title: 'Zu entscheidende Freigaben'
+        since: '{0} Heute|{1} Vor 1 Tag|]1,Inf[ Vor %count% Tagen'
+        expires: '{0} Läuft heute ab|{1} Läuft in 1 Tag ab|]1,Inf[ Läuft in %count% Tagen ab'
+        see_all: 'Alle anzeigen (%count%)'
+        loading: 'Wird geladen...'
     state:
         pending: 'Wartet auf Freigabe'
         approved: 'Freigegeben'

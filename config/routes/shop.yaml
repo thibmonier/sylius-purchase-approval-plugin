@@ -5,6 +5,12 @@ tmonier_purchase_approval_shop_approvals:
     defaults:
         _controller: tmonier_purchase_approval.controller.shop.approval::indexAction
 
+tmonier_purchase_approval_shop_approvals_preview:
+    path: /account/company/approvals-preview
+    methods: [GET]
+    defaults:
+        _controller: tmonier_purchase_approval.controller.shop.approval::previewAction
+
 tmonier_purchase_approval_shop_approval_show:
     path: /account/company/approvals/{number}
     methods: [GET]

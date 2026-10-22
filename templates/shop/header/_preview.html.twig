@@ -1,0 +1,25 @@
+{#
+    Content of the header panel (HTML fragment fetched at the first click): the oldest pending
+    approvals the member may decide. It only navigates: deciding is done on the order page.
+    Variable: preview (PendingApprovalPreview).
+#}
+<div data-test-tmonier-preview>
+    {% if preview.items is empty %}
+        <p class="px-3 py-3 mb-0 text-body" data-test-tmonier-preview-empty>{{ 'tmonier_purchase_approval.header.none'|trans }}</p>
+    {% else %}
+        <ul class="list-unstyled mb-0">
+            {% for item in preview.items %}
+                <li data-test-tmonier-preview-item="{{ item.number }}">
+                    <a href="{{ path('tmonier_purchase_approval_shop_approval_show', {'number': item.number}) }}" class="d-block px-3 py-2 text-body text-decoration-none border-bottom" style="min-height: 44px;">
+                        <span class="d-flex justify-content-between gap-3"><strong>#{{ item.number }}</strong><span>{{ item.total|sylius_format_money(item.currencyCode ?? 'EUR', app.request.locale) }}</span></span>
+                        <span class="d-block small">{% if item.buyerName != '' %}{{ item.buyerName }} &middot; {% endif %}{{ 'tmonier_purchase_approval.preview.since'|trans({'%count%': item.ageInDays}) }}</span>
+                        {% if item.expiresInDays is not null %}
+                            <span class="d-block small fw-bold text-danger-emphasis" data-test-tmonier-preview-expiry>{{ 'tmonier_purchase_approval.preview.expires'|trans({'%count%': item.expiresInDays}) }}</span>
+                        {% endif %}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+        <a href="{{ path('tmonier_purchase_approval_shop_approvals', {'decidable': 1}) }}" class="d-block px-3 py-3 fw-bold" data-test-tmonier-preview-all>{{ 'tmonier_purchase_approval.preview.see_all'|trans({'%count%': preview.total}) }}</a>
+    {% endif %}
+</div>
