@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.2.0 (unreleased)
+## 1.2.0 - 2026-10-22
 
 - Shop header: an "Approvals" entry next to "My account" (desktop and mobile account menu) for
   members who can approve, with a badge counting the pending approvals they can decide (not their
