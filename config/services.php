@@ -12,6 +12,7 @@ use Tmonier\SyliusPurchaseApprovalPlugin\Api\Shop\ShopApprovalProvider;
 use Tmonier\SyliusPurchaseApprovalPlugin\Approval\ApprovalDecisionMaker;
 use Tmonier\SyliusPurchaseApprovalPlugin\Approval\ApprovalPolicy;
 use Tmonier\SyliusPurchaseApprovalPlugin\Approval\ApprovalRequirementChecker;
+use Tmonier\SyliusPurchaseApprovalPlugin\Approval\DecidableApprovalCounter;
 use Tmonier\SyliusPurchaseApprovalPlugin\Approval\MemberLimitUpdater;
 use Tmonier\SyliusPurchaseApprovalPlugin\Command\ExpireApprovalsCommand;
 use Tmonier\SyliusPurchaseApprovalPlugin\Controller\Admin\ApprovalDecisionController;
@@ -31,6 +32,7 @@ use Tmonier\SyliusPurchaseApprovalPlugin\Mailer\ApprovalEmailListener;
 use Tmonier\SyliusPurchaseApprovalPlugin\Menu\AccountMenuListener;
 use Tmonier\SyliusPurchaseApprovalPlugin\OrderHold\ApprovalHold;
 use Tmonier\SyliusPurchaseApprovalPlugin\Security\ApprovalVoter;
+use Tmonier\SyliusPurchaseApprovalPlugin\Twig\HeaderApprovalsExtension;
 use Tmonier\SyliusPurchaseApprovalPlugin\Twig\PurchaseApprovalExtension;
 
 return static function (ContainerConfigurator $container): void {
@@ -158,6 +160,26 @@ return static function (ContainerConfigurator $container): void {
         ->tag('kernel.reset', ['method' => 'reset'])
     ;
     $services
+        ->set('tmonier_purchase_approval.decidable_counter', DecidableApprovalCounter::class)
+        ->args([
+            service('tmonier_purchase_approval.repository.order_approval'),
+            service('tmonier_purchase_approval.repository.member_limit'),
+            service('tmonier_purchase_approval.policy'),
+        ])
+        ->tag('kernel.reset', ['method' => 'reset'])
+    ;
+    $services->alias(DecidableApprovalCounter::class, 'tmonier_purchase_approval.decidable_counter');
+    $services
+        ->set('tmonier_purchase_approval.twig.header_extension', HeaderApprovalsExtension::class)
+        ->args([
+            service('tmonier_company_accounts.current_member_resolver'),
+            service('tmonier_purchase_approval.decidable_counter'),
+            param('tmonier_purchase_approval.header_badge'),
+        ])
+        ->tag('twig.extension')
+        ->tag('kernel.reset', ['method' => 'reset'])
+    ;
+    $services
         ->set('tmonier_purchase_approval.listener.account_menu', AccountMenuListener::class)
         ->args([service('tmonier_company_accounts.current_member_resolver'), service('security.authorization_checker')])
         ->tag('kernel.event_listener', ['event' => 'sylius.menu.shop.account'])
@@ -191,6 +213,7 @@ return static function (ContainerConfigurator $container): void {
             service('tmonier_purchase_approval.member_limit_updater'),
             service('sylius.context.channel'),
             service('translator'),
+            service('tmonier_purchase_approval.decidable_counter'),
         ])
         ->call('setContainer', [service(\Psr\Container\ContainerInterface::class)])
         ->tag('controller.service_arguments')

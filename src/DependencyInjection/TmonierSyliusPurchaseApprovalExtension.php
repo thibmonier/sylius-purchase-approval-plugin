@@ -26,12 +26,13 @@ final class TmonierSyliusPurchaseApprovalExtension extends AbstractResourceExten
 
     public function load(array $configs, ContainerBuilder $container): void
     {
-        /** @var array{approver_roles: list<string>, expire_after_days: int, driver: string, resources: array<string, mixed>} $config */
+        /** @var array{approver_roles: list<string>, expire_after_days: int, header_badge: bool, driver: string, resources: array<string, mixed>} $config */
         $config = $this->processConfiguration(new Configuration(), $configs);
 
         $this->registerResources('tmonier_purchase_approval', $config['driver'], $config['resources'], $container);
         $container->setParameter('tmonier_purchase_approval.approver_roles', array_values(array_unique($config['approver_roles'])));
         $container->setParameter('tmonier_purchase_approval.expire_after_days', $config['expire_after_days']);
+        $container->setParameter('tmonier_purchase_approval.header_badge', $config['header_badge']);
 
         $loader = new PhpFileLoader($container, new FileLocator(__DIR__ . '/../../config'));
         $loader->load('services.php');

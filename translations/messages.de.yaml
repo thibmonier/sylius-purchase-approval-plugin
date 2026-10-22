@@ -20,6 +20,8 @@ tmonier_purchase_approval:
         review: 'Prüfen'
         show_decided: 'Auch entschiedene Freigaben anzeigen'
         show_pending_only: 'Nur ausstehende Freigaben'
+        show_all_pending: 'Alle offenen Freigaben anzeigen'
+        no_decidable_approval: 'Keine der offenen Freigaben wartet auf Ihre Entscheidung.'
         no_pending_approval: 'Keine Bestellung wartet auf eine Freigabe.'
         no_approval: 'Noch keine Bestellung des Unternehmens brauchte eine Freigabe.'
         decided_by: 'Entschieden von'
@@ -36,6 +38,10 @@ tmonier_purchase_approval:
         company: 'Unternehmen'
         my_orders: 'Meine Bestellungen'
         closed_by_cancellation: 'Geschlossen: Die Bestellung wurde storniert'
+    header:
+        none: 'Keine Freigabe ausstehend'
+        pending: '{1} %count% Freigabe ausstehend|]1,Inf[ %count% Freigaben ausstehend'
+        many: 'Mehr als 99 Freigaben ausstehend'
     state:
         pending: 'Wartet auf Freigabe'
         approved: 'Freigegeben'

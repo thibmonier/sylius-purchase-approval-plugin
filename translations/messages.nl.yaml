@@ -20,6 +20,8 @@ tmonier_purchase_approval:
         review: 'Bekijken'
         show_decided: 'Ook afgehandelde goedkeuringen tonen'
         show_pending_only: 'Alleen openstaande goedkeuringen'
+        show_all_pending: 'Alle openstaande goedkeuringen tonen'
+        no_decidable_approval: 'Geen enkele openstaande goedkeuring wacht op uw beslissing.'
         no_pending_approval: 'Er wacht geen bestelling op goedkeuring.'
         no_approval: 'Nog geen bestelling van het bedrijf had goedkeuring nodig.'
         decided_by: 'Beslist door'
@@ -36,6 +38,10 @@ tmonier_purchase_approval:
         company: 'Bedrijf'
         my_orders: 'Mijn bestellingen'
         closed_by_cancellation: 'Gesloten: de bestelling is geannuleerd'
+    header:
+        none: 'Geen goedkeuring in afwachting'
+        pending: '{1} %count% goedkeuring in afwachting|]1,Inf[ %count% goedkeuringen in afwachting'
+        many: 'Meer dan 99 goedkeuringen in afwachting'
     state:
         pending: 'Wacht op goedkeuring'
         approved: 'Goedgekeurd'

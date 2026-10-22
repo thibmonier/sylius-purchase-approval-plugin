@@ -20,6 +20,8 @@ tmonier_purchase_approval:
         review: 'Examiner'
         show_decided: 'Afficher aussi les approbations traitées'
         show_pending_only: 'Approbations en attente seulement'
+        show_all_pending: 'Afficher toutes les approbations en attente'
+        no_decidable_approval: 'Aucune approbation en attente n''attend votre décision.'
         no_pending_approval: 'Aucune commande n''attend d''approbation.'
         no_approval: 'Aucune commande de l''entreprise n''a encore nécessité d''approbation.'
         decided_by: 'Décidée par'
@@ -36,6 +38,10 @@ tmonier_purchase_approval:
         company: 'Entreprise'
         my_orders: 'Mes commandes'
         closed_by_cancellation: 'Clôturée : la commande a été annulée'
+    header:
+        none: 'Aucune approbation en attente'
+        pending: '{1} %count% approbation en attente|]1,Inf[ %count% approbations en attente'
+        many: 'Plus de 99 approbations en attente'
     state:
         pending: 'En attente d''approbation'
         approved: 'Approuvée'

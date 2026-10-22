@@ -20,6 +20,8 @@ tmonier_purchase_approval:
         review: 'Review'
         show_decided: 'Show decided approvals too'
         show_pending_only: 'Pending approvals only'
+        show_all_pending: 'Show all pending approvals'
+        no_decidable_approval: 'None of the pending approvals is waiting for your decision.'
         no_pending_approval: 'No order is waiting for an approval.'
         no_approval: 'No order of the company needed an approval yet.'
         decided_by: 'Decided by'
@@ -36,6 +38,10 @@ tmonier_purchase_approval:
         company: 'Company'
         my_orders: 'My orders'
         closed_by_cancellation: 'Closed: the order was cancelled'
+    header:
+        none: 'No approval pending'
+        pending: '{1} %count% approval pending|]1,Inf[ %count% approvals pending'
+        many: 'More than 99 approvals pending'
     state:
         pending: 'Awaiting approval'
         approved: 'Approved'

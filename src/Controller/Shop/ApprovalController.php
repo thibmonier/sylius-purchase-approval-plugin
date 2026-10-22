@@ -16,6 +16,7 @@ use Tmonier\SyliusCompanyAccountsPlugin\Entity\CompanyMemberInterface;
 use Tmonier\SyliusCompanyAccountsPlugin\Member\CurrentMemberResolverInterface;
 use Tmonier\SyliusCompanyAccountsPlugin\Repository\CompanyMemberRepositoryInterface;
 use Tmonier\SyliusPurchaseApprovalPlugin\Approval\ApprovalDecisionMaker;
+use Tmonier\SyliusPurchaseApprovalPlugin\Approval\DecidableApprovalCounter;
 use Tmonier\SyliusPurchaseApprovalPlugin\Approval\Decider;
 use Tmonier\SyliusPurchaseApprovalPlugin\Approval\MemberLimitUpdater;
 use Tmonier\SyliusPurchaseApprovalPlugin\Entity\OrderApprovalInterface;
@@ -41,24 +42,27 @@ final class ApprovalController extends AbstractController
         private readonly MemberLimitUpdater $limitUpdater,
         private readonly ChannelContextInterface $channelContext,
         private readonly TranslatorInterface $translator,
+        private readonly DecidableApprovalCounter $decidableCounter,
     ) {
     }
 
     public function indexAction(Request $request): Response
     {
         [$member, $company] = $this->membership(ApprovalPermissions::APPROVAL_LIST);
-        $pendingOnly = !$request->query->getBoolean('all');
+        // ?decidable=1 (header entry): pending approvals this member may decide, as counted there.
+        $decidable = $request->query->getBoolean('decidable');
+        $pendingOnly = $decidable || !$request->query->getBoolean('all');
         $page = max(1, $request->query->getInt('page', 1));
 
         $paginator = new Paginator(
-            $this->approvalRepository->createListQueryBuilderByCompany($company, $pendingOnly)
+            ($decidable ? $this->decidableCounter->listQueryBuilder($member) : $this->approvalRepository->createListQueryBuilderByCompany($company, $pendingOnly))
                 ->setFirstResult(($page - 1) * self::PER_PAGE)
                 ->setMaxResults(self::PER_PAGE),
         );
         $total = count($paginator);
         $pages = max(1, (int) ceil($total / self::PER_PAGE));
         if ($page > $pages) {
-            return $this->redirectToRoute('tmonier_purchase_approval_shop_approvals', ['page' => $pages] + ($pendingOnly ? [] : ['all' => 1]));
+            return $this->redirectToRoute('tmonier_purchase_approval_shop_approvals', ['page' => $pages] + ($decidable ? ['decidable' => 1] : ($pendingOnly ? [] : ['all' => 1])));
         }
 
         return $this->render('@TmonierSyliusPurchaseApprovalPlugin/shop/account/approvals/index.html.twig', [
@@ -66,6 +70,7 @@ final class ApprovalController extends AbstractController
             'member' => $member,
             'approvals' => iterator_to_array($paginator),
             'pending_only' => $pendingOnly,
+            'decidable' => $decidable,
             'page' => $page,
             'pages' => $pages,
             'total' => $total,
