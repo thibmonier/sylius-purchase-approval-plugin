@@ -42,6 +42,12 @@ tmonier_purchase_approval:
         none: 'Ninguna aprobación pendiente'
         pending: '{1} %count% aprobación pendiente|]1,Inf[ %count% aprobaciones pendientes'
         many: 'Más de 99 aprobaciones pendientes'
+    preview:
+        title: 'Aprobaciones por decidir'
+        since: '{0} Hoy|{1} Hace 1 día|]1,Inf[ Hace %count% días'
+        expires: '{0} Caduca hoy|{1} Caduca en 1 día|]1,Inf[ Caduca en %count% días'
+        see_all: 'Ver todo (%count%)'
+        loading: 'Cargando...'
     state:
         pending: 'Pendiente de aprobación'
         approved: 'Aprobado'

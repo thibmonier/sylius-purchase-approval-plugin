@@ -42,6 +42,12 @@ tmonier_purchase_approval:
         none: 'No approval pending'
         pending: '{1} %count% approval pending|]1,Inf[ %count% approvals pending'
         many: 'More than 99 approvals pending'
+    preview:
+        title: 'Approvals to decide'
+        since: '{0} Today|{1} 1 day ago|]1,Inf[ %count% days ago'
+        expires: '{0} Expires today|{1} Expires in 1 day|]1,Inf[ Expires in %count% days'
+        see_all: 'See all (%count%)'
+        loading: 'Loading...'
     state:
         pending: 'Awaiting approval'
         approved: 'Approved'

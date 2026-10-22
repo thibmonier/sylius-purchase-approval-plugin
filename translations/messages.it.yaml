@@ -42,6 +42,12 @@ tmonier_purchase_approval:
         none: 'Nessuna approvazione in sospeso'
         pending: '{1} %count% approvazione in sospeso|]1,Inf[ %count% approvazioni in sospeso'
         many: 'Più di 99 approvazioni in sospeso'
+    preview:
+        title: 'Approvazioni da decidere'
+        since: '{0} Oggi|{1} 1 giorno fa|]1,Inf[ %count% giorni fa'
+        expires: '{0} Scade oggi|{1} Scade tra 1 giorno|]1,Inf[ Scade tra %count% giorni'
+        see_all: 'Mostra tutto (%count%)'
+        loading: 'Caricamento...'
     state:
         pending: 'In attesa di approvazione'
         approved: 'Approvato'

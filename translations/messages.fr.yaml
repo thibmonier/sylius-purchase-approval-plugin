@@ -42,6 +42,12 @@ tmonier_purchase_approval:
         none: 'Aucune approbation en attente'
         pending: '{1} %count% approbation en attente|]1,Inf[ %count% approbations en attente'
         many: 'Plus de 99 approbations en attente'
+    preview:
+        title: 'Approbations à décider'
+        since: '{0} Aujourd''hui|{1} Il y a 1 jour|]1,Inf[ Il y a %count% jours'
+        expires: '{0} Expire aujourd''hui|{1} Expire dans 1 jour|]1,Inf[ Expire dans %count% jours'
+        see_all: 'Tout voir (%count%)'
+        loading: 'Chargement...'
     state:
         pending: 'En attente d''approbation'
         approved: 'Approuvée'

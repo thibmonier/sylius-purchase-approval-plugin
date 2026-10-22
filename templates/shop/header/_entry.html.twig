@@ -14,12 +14,14 @@
     <span class="visually-hidden">{{ label }}</span>
 {% endset %}
 
+{% set preview_attributes %}data-tmonier-preview-url="{{ path('tmonier_purchase_approval_shop_approvals_preview') }}" data-tmonier-preview-label="{{ 'tmonier_purchase_approval.preview.title'|trans }}" data-tmonier-preview-loading="{{ 'tmonier_purchase_approval.preview.loading'|trans }}"{% endset %}
+
 {% if layout == 'mobile' %}
-    <li data-test-tmonier-header-approvals="mobile">
+    <li data-test-tmonier-header-approvals="mobile" data-tmonier-preview-layout="mobile" {{ preview_attributes|raw }}>
         <a href="{{ href }}" class="dropdown-item d-flex align-items-center gap-2 py-3">{{ content }}</a>
     </li>
 {% else %}
-    <div class="d-flex align-items-center" data-test-tmonier-header-approvals="desktop">
+    <div class="d-flex align-items-center position-relative" data-test-tmonier-header-approvals="desktop" data-tmonier-preview-layout="desktop" {{ preview_attributes|raw }}>
         <small aria-hidden="true" role="presentation" class="text-black px-1">|</small>
         <a href="{{ href }}" class="link-reset d-inline-flex align-items-center gap-1 px-1 py-3 my-n3">{{ content }}</a>
     </div>

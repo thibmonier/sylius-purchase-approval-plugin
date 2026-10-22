@@ -19,6 +19,7 @@ use Tmonier\SyliusPurchaseApprovalPlugin\Approval\ApprovalDecisionMaker;
 use Tmonier\SyliusPurchaseApprovalPlugin\Approval\DecidableApprovalCounter;
 use Tmonier\SyliusPurchaseApprovalPlugin\Approval\Decider;
 use Tmonier\SyliusPurchaseApprovalPlugin\Approval\MemberLimitUpdater;
+use Tmonier\SyliusPurchaseApprovalPlugin\Approval\PendingApprovalPreviewer;
 use Tmonier\SyliusPurchaseApprovalPlugin\Entity\OrderApprovalInterface;
 use Tmonier\SyliusPurchaseApprovalPlugin\Repository\MemberLimitRepositoryInterface;
 use Tmonier\SyliusPurchaseApprovalPlugin\Repository\OrderApprovalRepositoryInterface;
@@ -43,6 +44,7 @@ final class ApprovalController extends AbstractController
         private readonly ChannelContextInterface $channelContext,
         private readonly TranslatorInterface $translator,
         private readonly DecidableApprovalCounter $decidableCounter,
+        private readonly PendingApprovalPreviewer $previewer,
     ) {
     }
 
@@ -75,6 +77,17 @@ final class ApprovalController extends AbstractController
             'pages' => $pages,
             'total' => $total,
         ]);
+    }
+
+    /** Header panel (HTML fragment, fetched at the first click): the oldest approvals to decide. */
+    public function previewAction(): Response
+    {
+        [$member] = $this->membership(ApprovalPermissions::APPROVAL_LIST);
+        $response = $this->render('@TmonierSyliusPurchaseApprovalPlugin/shop/header/_preview.html.twig', [
+            'preview' => $this->previewer->preview($member),
+        ]);
+
+        return $response->setPrivate();
     }
 
     public function showAction(string $number): Response

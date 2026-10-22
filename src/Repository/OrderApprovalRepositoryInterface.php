@@ -53,6 +53,14 @@ interface OrderApprovalRepositoryInterface extends RepositoryInterface
      */
     public function createPendingDecidableByQueryBuilder(CompanyMemberInterface $member, ?MemberLimitInterface $limit): QueryBuilder;
 
+    /**
+     * The oldest of those approvals first (the ones that expire first), at most $max, with their
+     * order and buyer fetched by the same query.
+     *
+     * @return list<OrderApprovalInterface>
+     */
+    public function findOldestPendingDecidableBy(CompanyMemberInterface $member, ?MemberLimitInterface $limit, int $max): array;
+
     /** Same approvals as createPendingDecidableByQueryBuilder(), with one light COUNT query. */
     public function countPendingDecidableBy(CompanyMemberInterface $member, ?MemberLimitInterface $limit): int;
 

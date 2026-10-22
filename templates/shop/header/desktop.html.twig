@@ -2,3 +2,6 @@
 {% if count is not null %}
     {% include '@TmonierSyliusPurchaseApprovalPlugin/shop/header/_entry.html.twig' with {'count': count, 'layout': 'desktop'} only %}
 {% endif %}
+{% if count is not null %}
+    {% include '@TmonierSyliusPurchaseApprovalPlugin/shop/header/_script.html.twig' only %}
+{% endif %}

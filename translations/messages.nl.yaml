@@ -42,6 +42,12 @@ tmonier_purchase_approval:
         none: 'Geen goedkeuring in afwachting'
         pending: '{1} %count% goedkeuring in afwachting|]1,Inf[ %count% goedkeuringen in afwachting'
         many: 'Meer dan 99 goedkeuringen in afwachting'
+    preview:
+        title: 'Goed te keuren bestellingen'
+        since: '{0} Vandaag|{1} 1 dag geleden|]1,Inf[ %count% dagen geleden'
+        expires: '{0} Verloopt vandaag|{1} Verloopt over 1 dag|]1,Inf[ Verloopt over %count% dagen'
+        see_all: 'Alles bekijken (%count%)'
+        loading: 'Laden...'
     state:
         pending: 'Wacht op goedkeuring'
         approved: 'Goedgekeurd'

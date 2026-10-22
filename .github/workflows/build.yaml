@@ -16,6 +16,9 @@ on:
             cron: "0 1 * * 6" # Run at 1am every Saturday
     workflow_dispatch: ~
 
+permissions:
+    contents: read
+
 concurrency:
     group: ${{ github.workflow }}-${{ github.ref }}
     cancel-in-progress: true
@@ -30,7 +33,7 @@ jobs:
             fail-fast: false
             matrix:
                 # Sylius 2.2: PHP >= 8.2, Symfony 6.4 / 7.4. Sylius 2.3: PHP >= 8.3, Symfony 6.4 / 7.4 / 8.0
-                # (Symfony 8 needs PHP 8.4; API Platform 5 and Symfony UX 3 are resolved there).
+                # (Symfony 8 needs PHP 8.4, and runs on 8.5 too; API Platform 5 and Symfony UX 3 are resolved there).
                 # https://github.com/Sylius/Sylius/blob/2.3/composer.json
                 php: ["8.3", "8.4"]
                 symfony: ["^7.4"]
@@ -50,6 +53,11 @@ jobs:
                       database: "mysql:8.4"
                       node: "22.x"
                     - php: "8.4"
+                      symfony: "^8.0"
+                      sylius: "~2.3.0"
+                      database: "mysql:8.4"
+                      node: "22.x"
+                    - php: "8.5"
                       symfony: "^8.0"
                       sylius: "~2.3.0"
                       database: "mysql:8.4"
@@ -77,12 +85,12 @@ jobs:
 
         steps:
             -
-                uses: actions/checkout@v4
+                uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
 
             -
                 name: Build Sylius Test Application
-                uses: SyliusLabs/BuildTestAppAction@v4
+                uses: SyliusLabs/BuildTestAppAction@c3b108b5f3c299c55f429a8cf0ed88734d4f4979 # v4.3.1
                 with:
                     e2e_js: "yes"
                     cache_key: "${{ runner.os }}-php-${{ matrix.php }}-composer-${{ hashFiles('**/composer.json') }}"
