@@ -7,6 +7,8 @@ namespace Tmonier\SyliusPurchaseApprovalPlugin\Approval;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Contracts\Service\ResetInterface;
 use Tmonier\SyliusCompanyAccountsPlugin\Entity\CompanyMemberInterface;
+use Tmonier\SyliusPurchaseApprovalPlugin\Entity\MemberLimitInterface;
+use Tmonier\SyliusPurchaseApprovalPlugin\Entity\OrderApprovalInterface;
 use Tmonier\SyliusPurchaseApprovalPlugin\Repository\MemberLimitRepositoryInterface;
 use Tmonier\SyliusPurchaseApprovalPlugin\Repository\OrderApprovalRepositoryInterface;
 
@@ -18,6 +20,9 @@ final class DecidableApprovalCounter implements ResetInterface
 {
     /** @var array<int, int> by member id */
     private array $counts = [];
+
+    /** @var array<int, MemberLimitInterface|null> by member id: the count and the rows share one query */
+    private array $limits = [];
 
     public function __construct(
         private readonly OrderApprovalRepositoryInterface $approvalRepository,
@@ -34,16 +39,38 @@ final class DecidableApprovalCounter implements ResetInterface
         }
         $key = (int) $member->getId();
 
-        return $this->counts[$key] ??= $this->approvalRepository->countPendingDecidableBy($member, $this->limitRepository->findOneByMember($member));
+        return $this->counts[$key] ??= $this->approvalRepository->countPendingDecidableBy($member, $this->limitOf($member));
+    }
+
+    /**
+     * The oldest approvals the member may decide (they expire first); the caller checks that the
+     * member approves (count() is not null).
+     *
+     * @return list<OrderApprovalInterface>
+     */
+    public function oldest(CompanyMemberInterface $member, int $max): array
+    {
+        return $this->approvalRepository->findOldestPendingDecidableBy($member, $this->limitOf($member), $max);
     }
 
     public function listQueryBuilder(CompanyMemberInterface $member): QueryBuilder
     {
-        return $this->approvalRepository->createPendingDecidableByQueryBuilder($member, $this->limitRepository->findOneByMember($member));
+        return $this->approvalRepository->createPendingDecidableByQueryBuilder($member, $this->limitOf($member));
     }
 
     public function reset(): void
     {
         $this->counts = [];
+        $this->limits = [];
+    }
+
+    private function limitOf(CompanyMemberInterface $member): ?MemberLimitInterface
+    {
+        $key = (int) $member->getId();
+        if (!array_key_exists($key, $this->limits)) {
+            $this->limits[$key] = $this->limitRepository->findOneByMember($member);
+        }
+
+        return $this->limits[$key];
     }
 }

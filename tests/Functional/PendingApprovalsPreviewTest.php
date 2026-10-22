@@ -31,6 +31,20 @@ final class PendingApprovalsPreviewTest extends WebTestCase
         self::assertStringNotContainsString((string) $s->pendingOrder->getNumber(), (string) $this->client->getResponse()->getContent(), 'The panel content is not part of the page.');
     }
 
+    public function testTheScriptIsAStaticFileSoThatAStrictContentSecurityPolicyWorks(): void
+    {
+        $s = new ApprovalScenario($this->catalog());
+        $this->loginShopUser(ApprovalScenario::customerOf($s->approverA));
+
+        $crawler = $this->client->request('GET', $this->shopUrl('/'));
+
+        $scripts = $crawler->filter('script[src$="/header-approvals.js"][defer]');
+        self::assertCount(1, $scripts, 'One deferred script for the desktop and the mobile entries.');
+        self::assertStringContainsString('tmoniersyliuspurchaseapprovalplugin', (string) $scripts->attr('src'));
+        self::assertStringNotContainsString('tmonierApprovalsPanel', (string) $this->client->getResponse()->getContent(), 'No inline script.');
+        self::assertFileExists(dirname(__DIR__, 2) . '/public/header-approvals.js');
+    }
+
     public function testThePanelListsTheFiveOldestInOrderWithASeeAllLinkToTheSeven(): void
     {
         $s = new ApprovalScenario($this->catalog());
@@ -104,6 +118,37 @@ final class PendingApprovalsPreviewTest extends WebTestCase
 
         self::assertStringNotContainsString((string) $s->pendingOrder->getNumber(), (string) $this->client->getResponse()->getContent());
         self::assertStringNotContainsString('Bob Buyer', (string) $this->client->getResponse()->getContent());
+    }
+
+    public function testABuyerNameIsEscapedInThePanel(): void
+    {
+        $s = new ApprovalScenario($this->catalog());
+        $hostile = $this->catalog()->member($s->companyA, $this->catalog()->customer('hostile-a', true, '<script>alert(1)</script>', 'Buyer'));
+        $this->catalog()->orderAgainstLimit($hostile, -1);
+        $this->loginShopUser(ApprovalScenario::customerOf($s->approverA));
+
+        $this->client->request('GET', $this->shopUrl(self::PREVIEW));
+
+        $content = (string) $this->client->getResponse()->getContent();
+        self::assertStringNotContainsString('<script>alert(1)', $content);
+        self::assertStringContainsString('&lt;script&gt;alert(1)&lt;/script&gt;', $content);
+    }
+
+    public function testAnApproverOfAnotherCompanySeesOnlyTheirOwnCompanyOrders(): void
+    {
+        $s = new ApprovalScenario($this->catalog());
+        $companyB = $s->approverB->getCompany();
+        self::assertInstanceOf(\Tmonier\SyliusCompanyAccountsPlugin\Entity\CompanyInterface::class, $companyB);
+        $buyerB = $this->catalog()->member($companyB, $this->catalog()->customer('buyer-b', true, 'Barb', 'Beta'));
+        $orderB = $this->catalog()->orderAgainstLimit($buyerB, -1);
+        $this->loginShopUser(ApprovalScenario::customerOf($s->approverB));
+
+        $crawler = $this->client->request('GET', $this->shopUrl(self::PREVIEW));
+
+        $shown = $crawler->filter('[data-test-tmonier-preview-item]')->each(static fn (Crawler $item): string => (string) $item->attr('data-test-tmonier-preview-item'));
+        self::assertSame([(string) $orderB->getNumber()], $shown);
+        self::assertStringNotContainsString((string) $s->pendingOrder->getNumber(), (string) $this->client->getResponse()->getContent());
+        self::assertStringContainsString('See all (1)', $crawler->text());
     }
 
     public function testTheirOwnOrdersAndThoseAboveTheirLimitAreNotListed(): void

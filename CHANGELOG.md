@@ -11,6 +11,10 @@
 - Accessibility: the entry becomes a button with `aria-expanded`, the panel follows it in the tab
   order, Escape closes it and returns the focus to the button; without JavaScript the entry stays
   a link to the list.
+- The panel script is a static file of the bundle
+  (`bundles/tmoniersyliuspurchaseapprovalplugin/header-approvals.js`, run `assets:install`),
+  loaded with `defer`: no inline script, so a strict `script-src 'self'` policy needs no nonce.
+  After loading, the focus moves to the first link of the panel.
 - Same permission and same scope as the list (`APPROVAL_LIST`, the member's company, not their own
   orders, within their approval limit): 403 for members who do not approve.
 - Translations of the new labels in en, fr, de, es, it, nl and pl.

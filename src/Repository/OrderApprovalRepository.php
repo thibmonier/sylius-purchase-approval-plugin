@@ -158,7 +158,8 @@ class OrderApprovalRepository extends EntityRepository implements OrderApprovalR
 
     public function findOldestPendingDecidableBy(CompanyMemberInterface $member, ?MemberLimitInterface $limit, int $max): array
     {
-        // customer.user is the inverse side of a one-to-one: fetched here, or one query per buyer.
+        // customer.user is the inverse side of a one-to-one: Doctrine loads it with each customer
+        // (no proxy possible), so fetch it in this query or it costs one more per buyer.
         /** @var list<OrderApprovalInterface> $approvals */
         $approvals = $this->createPendingDecidableByQueryBuilder($member, $limit)
             ->addSelect('shopUser')

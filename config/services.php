@@ -173,8 +173,6 @@ return static function (ContainerConfigurator $container): void {
     $services
         ->set('tmonier_purchase_approval.pending_previewer', PendingApprovalPreviewer::class)
         ->args([
-            service('tmonier_purchase_approval.repository.order_approval'),
-            service('tmonier_purchase_approval.repository.member_limit'),
             service('tmonier_purchase_approval.decidable_counter'),
             service('clock'),
             param('tmonier_purchase_approval.expire_after_days'),

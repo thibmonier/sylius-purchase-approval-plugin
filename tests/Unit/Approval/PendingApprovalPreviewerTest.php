@@ -44,6 +44,18 @@ final class PendingApprovalPreviewerTest extends TestCase
         self::assertSame(7, $preview->total);
     }
 
+    public function testTheLimitOfTheMemberIsReadOnceForTheCountAndTheRows(): void
+    {
+        $limits = $this->createMock(MemberLimitRepositoryInterface::class);
+        $limits->expects(self::once())->method('findOneByMember')->willReturn(null);
+        $repository = $this->createStub(OrderApprovalRepositoryInterface::class);
+        $repository->method('findOldestPendingDecidableBy')->willReturn([$this->approval('1', '-1 day')]);
+        $repository->method('countPendingDecidableBy')->willReturn(1);
+        $counter = new DecidableApprovalCounter($repository, $limits, new ApprovalPolicy($limits, ['approver']));
+
+        (new PendingApprovalPreviewer($counter, new MockClock(self::NOW), 14))->preview($this->member(CompanyMemberInterface::ROLE_APPROVER));
+    }
+
     public function testAnItemCarriesNumberBuyerAmountAndAge(): void
     {
         $item = $this->previewOf($this->approval('000123', '-3 days -2 hours', 'Bob Buyer', 12500))->items[0];
@@ -96,7 +108,7 @@ final class PendingApprovalPreviewerTest extends TestCase
         $limits = $this->createStub(MemberLimitRepositoryInterface::class);
         $counter = new DecidableApprovalCounter($repository, $limits, new ApprovalPolicy($limits, ['approver']));
 
-        return new PendingApprovalPreviewer($repository, $limits, $counter, new MockClock(self::NOW), 14);
+        return new PendingApprovalPreviewer($counter, new MockClock(self::NOW), 14);
     }
 
     private function approval(string $number, string $requested, ?string $buyer = 'Bob Buyer', int $total = 1000): OrderApprovalInterface

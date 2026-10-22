@@ -7,8 +7,6 @@ namespace Tmonier\SyliusPurchaseApprovalPlugin\Approval;
 use Psr\Clock\ClockInterface;
 use Tmonier\SyliusCompanyAccountsPlugin\Entity\CompanyMemberInterface;
 use Tmonier\SyliusPurchaseApprovalPlugin\Entity\OrderApprovalInterface;
-use Tmonier\SyliusPurchaseApprovalPlugin\Repository\MemberLimitRepositoryInterface;
-use Tmonier\SyliusPurchaseApprovalPlugin\Repository\OrderApprovalRepositoryInterface;
 
 /**
  * The header panel: the oldest pending approvals the member may decide (they expire first), with
@@ -22,8 +20,6 @@ final readonly class PendingApprovalPreviewer
     public const EXPIRY_ALERT_DAYS = 3;
 
     public function __construct(
-        private OrderApprovalRepositoryInterface $approvalRepository,
-        private MemberLimitRepositoryInterface $limitRepository,
         private DecidableApprovalCounter $counter,
         private ClockInterface $clock,
         private int $expireAfterDays,
@@ -36,7 +32,7 @@ final readonly class PendingApprovalPreviewer
         if (null === $total || 0 === $total) {
             return new PendingApprovalPreview([], 0);
         }
-        $approvals = $this->approvalRepository->findOldestPendingDecidableBy($member, $this->limitRepository->findOneByMember($member), self::LIMIT);
+        $approvals = $this->counter->oldest($member, self::LIMIT);
         $now = $this->clock->now();
 
         return new PendingApprovalPreview(
