@@ -45,6 +45,7 @@
         }
         var loaded = false;
         var loading = false;
+        var escapeHandled = false;
 
         function setOpen(open) {
             panel.hidden = !open;
@@ -81,19 +82,36 @@
                 });
         }
 
-        button.addEventListener('click', function () {
+        button.addEventListener('click', function (event) {
+            if (layout === 'mobile') {
+                // The entry lives in a Bootstrap dropdown, which would close on this click and hide the panel.
+                event.stopPropagation();
+            }
             var open = panel.hidden;
             setOpen(open);
             if (open) {
                 load();
             }
         });
-        entry.addEventListener('keydown', function (event) {
-            if (event.key === 'Escape' && !panel.hidden) {
-                setOpen(false);
-                button.focus();
+        // Capture phase on window: Bootstrap closes its dropdowns on Escape from capture listeners of its own
+        // (keydown and keyup), and the mobile entry lives in the account dropdown.
+        window.addEventListener('keydown', function (event) {
+            if (event.key !== 'Escape' || panel.hidden || !entry.contains(event.target)) {
+                return;
             }
-        });
+            if (layout === 'mobile') {
+                event.stopPropagation();
+                escapeHandled = true;
+            }
+            setOpen(false);
+            button.focus();
+        }, true);
+        window.addEventListener('keyup', function (event) {
+            if (escapeHandled && event.key === 'Escape') {
+                event.stopPropagation();
+                escapeHandled = false;
+            }
+        }, true);
         entry.addEventListener('focusout', function (event) {
             if (event.relatedTarget && !entry.contains(event.relatedTarget)) {
                 setOpen(false);
