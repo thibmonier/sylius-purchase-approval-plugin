@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.4.0] - unreleased
+## [1.4.0] - 2026-10-25
 
 - New setting `amount_basis` (`gross` or `net`) for the amount compared to the order limit of the buyer
   and frozen on the approval request, therefore compared to the approval limit of the approvers. `net` is
