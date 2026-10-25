@@ -122,6 +122,10 @@ tmonier_sylius_purchase_approval:
     approver_roles: [approver]
     # Pending approvals older than this are expired by tmonier:approval:expire (orders cancelled).
     expire_after_days: 14
+    # Amount compared to the order limit and frozen on the approval request (hence compared to the
+    # approval limit of the approvers): "gross" = total, tax included (default, as before 1.4);
+    # "net" = total without its tax, shipping included.
+    amount_basis: gross
     # "Approvals" entry with the pending count in the shop header (members who can approve only).
     header_badge: true
 ```
@@ -209,6 +213,7 @@ Services: `ApprovalPolicy` (rules), `ApprovalDecisionMaker` (decisions),
 - Invoicing tools other than sylius/invoicing-plugin are not bridged: if they invoice at
   checkout, an order rejected later needs a credit note.
 - Limits are amounts per order, in one currency per member.
+- The amount compared to the limits is chosen with `amount_basis` (`gross`: the total of the order, tax included; `net`: the total without its tax). It is frozen on the approval at the request, so changing the setting only applies to the orders placed after it; approvals already pending keep the amount they were requested with. To compute it otherwise, replace the service `tmonier_purchase_approval.amount_resolver` with a class implementing `ApprovalAmountResolverInterface`.
 - Company admins do not see the approvals, nor the header entry, unless their role is in `approver_roles` (`approver_roles: [approver, admin]` makes them approvers: they decide like any approver, never on their own orders and within their own approval limit).
 - The `requested` event and the e-mails to the approvers are sent after the flush, not after an
   outer transaction opened by the caller: the API checkout (Messenger `doctrine_transaction`

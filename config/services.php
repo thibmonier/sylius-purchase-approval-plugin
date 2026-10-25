@@ -9,6 +9,8 @@ use Tmonier\SyliusPurchaseApprovalPlugin\Api\Admin\AdminApprovalDecisionProcesso
 use Tmonier\SyliusPurchaseApprovalPlugin\Api\Admin\AdminApprovalProvider;
 use Tmonier\SyliusPurchaseApprovalPlugin\Api\Shop\ShopApprovalDecisionProcessor;
 use Tmonier\SyliusPurchaseApprovalPlugin\Api\Shop\ShopApprovalProvider;
+use Tmonier\SyliusPurchaseApprovalPlugin\Approval\ApprovalAmountResolver;
+use Tmonier\SyliusPurchaseApprovalPlugin\Approval\ApprovalAmountResolverInterface;
 use Tmonier\SyliusPurchaseApprovalPlugin\Approval\ApprovalDecisionMaker;
 use Tmonier\SyliusPurchaseApprovalPlugin\Approval\ApprovalPolicy;
 use Tmonier\SyliusPurchaseApprovalPlugin\Approval\ApprovalRequirementChecker;
@@ -41,11 +43,17 @@ return static function (ContainerConfigurator $container): void {
 
     // Rules
     $services
+        ->set('tmonier_purchase_approval.amount_resolver', ApprovalAmountResolver::class)
+        ->args([param('tmonier_purchase_approval.amount_basis')])
+    ;
+    $services->alias(ApprovalAmountResolverInterface::class, 'tmonier_purchase_approval.amount_resolver');
+    $services
         ->set('tmonier_purchase_approval.requirement_checker', ApprovalRequirementChecker::class)
         ->args([
             service('tmonier_company_accounts.repository.company_member'),
             service('tmonier_purchase_approval.repository.member_limit'),
             service('tmonier_company_accounts.company_order_eligibility_checker'),
+            service('tmonier_purchase_approval.amount_resolver'),
         ])
     ;
     $services
@@ -81,6 +89,7 @@ return static function (ContainerConfigurator $container): void {
         ->set('tmonier_purchase_approval.listener.approval_request', OrderApprovalRequestListener::class)
         ->args([
             service('tmonier_purchase_approval.requirement_checker'),
+            service('tmonier_purchase_approval.amount_resolver'),
             service('tmonier_purchase_approval.repository.order_approval'),
             service('tmonier_purchase_approval.factory.order_approval'),
             service('event_dispatcher'),
