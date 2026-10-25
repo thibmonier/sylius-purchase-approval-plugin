@@ -13,7 +13,7 @@ use Tmonier\SyliusPurchaseApprovalPlugin\Repository\MemberLimitRepositoryInterfa
 /**
  * An order needs an approval when it is placed for an active member of an active company
  * (signed in, or by staff on their behalf: company-accounts eligibility, never a guest
- * checkout) whose order limit it exceeds. A limit in another currency than the order cannot
+ * checkout) whose order limit it exceeds (the amount compared is the one of the amount resolver: total tax included or not). A limit in another currency than the order cannot
  * be compared: the order needs an approval. No limit configured: no approval.
  */
 final readonly class ApprovalRequirementChecker
@@ -22,6 +22,7 @@ final readonly class ApprovalRequirementChecker
         private CompanyMemberRepositoryInterface $memberRepository,
         private MemberLimitRepositoryInterface $limitRepository,
         private CompanyOrderEligibilityCheckerInterface $eligibilityChecker,
+        private ApprovalAmountResolverInterface $amountResolver,
     ) {
     }
 
@@ -44,6 +45,6 @@ final readonly class ApprovalRequirementChecker
             return new ApprovalRequirement($member, null);
         }
 
-        return $order->getTotal() > $orderLimit ? new ApprovalRequirement($member, $orderLimit) : null;
+        return $this->amountResolver->resolve($order) > $orderLimit ? new ApprovalRequirement($member, $orderLimit) : null;
     }
 }

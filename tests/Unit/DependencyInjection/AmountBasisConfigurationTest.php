@@ -13,28 +13,27 @@ final class AmountBasisConfigurationTest extends TestCase
 {
     public function testTheDefaultBasisIsTheTotalTaxIncluded(): void
     {
-        self::assertSame('gross', $this->process([])['amount_basis']);
+        self::assertSame('gross', $this->basis([]));
     }
 
     public function testTheNetBasisCanBeChosen(): void
     {
-        self::assertSame('net', $this->process(['amount_basis' => 'net'])['amount_basis']);
+        self::assertSame('net', $this->basis(['amount_basis' => 'net']));
     }
 
     public function testAnUnknownBasisIsRefused(): void
     {
         $this->expectException(InvalidConfigurationException::class);
 
-        $this->process(['amount_basis' => 'half']);
+        $this->basis(['amount_basis' => 'half']);
     }
 
-    /**
-     * @param array<string, mixed> $config
-     *
-     * @return array<string, mixed>
-     */
-    private function process(array $config): array
+    /** @param array<string, mixed> $config */
+    private function basis(array $config): string
     {
-        return (new Processor())->processConfiguration(new Configuration(), [$config]);
+        $processed = (new Processor())->processConfiguration(new Configuration(), [$config]);
+        self::assertIsString($processed['amount_basis']);
+
+        return $processed['amount_basis'];
     }
 }

@@ -11,6 +11,7 @@ use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Tmonier\SyliusCompanyAccountsPlugin\Entity\CompanyMemberInterface;
+use Tmonier\SyliusPurchaseApprovalPlugin\Approval\ApprovalAmountResolver;
 use Tmonier\SyliusPurchaseApprovalPlugin\Entity\MemberLimit;
 use Tmonier\SyliusPurchaseApprovalPlugin\Entity\MemberLimitInterface;
 use Tmonier\SyliusPurchaseApprovalPlugin\Entity\OrderApproval;
@@ -34,6 +35,11 @@ final class Configuration implements ConfigurationInterface
                     ->defaultValue([CompanyMemberInterface::ROLE_APPROVER])
                     ->requiresAtLeastOneElement()
                     ->enumPrototype()->values(CompanyMemberInterface::ROLES)->end()
+                ->end()
+                ->enumNode('amount_basis')
+                    ->info('Amount compared to the order limit and frozen on the approval: "gross" (total, tax included) or "net" (total without its tax).')
+                    ->values(ApprovalAmountResolver::BASES)
+                    ->defaultValue(ApprovalAmountResolver::GROSS)
                 ->end()
                 ->booleanNode('header_badge')
                     ->info('Show the "Approvals" entry with the number of orders waiting for the member in the shop header (members who can approve only).')

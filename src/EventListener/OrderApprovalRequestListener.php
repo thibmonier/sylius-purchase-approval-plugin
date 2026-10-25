@@ -12,6 +12,7 @@ use Sylius\Component\Core\OrderCheckoutStates;
 use Sylius\Resource\Factory\FactoryInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\Service\ResetInterface;
+use Tmonier\SyliusPurchaseApprovalPlugin\Approval\ApprovalAmountResolverInterface;
 use Tmonier\SyliusPurchaseApprovalPlugin\Approval\ApprovalRequirementChecker;
 use Tmonier\SyliusPurchaseApprovalPlugin\Entity\OrderApprovalInterface;
 use Tmonier\SyliusPurchaseApprovalPlugin\Event\OrderApprovalEvent;
@@ -31,6 +32,7 @@ final class OrderApprovalRequestListener implements ResetInterface
     /** @param FactoryInterface<OrderApprovalInterface> $approvalFactory */
     public function __construct(
         private readonly ApprovalRequirementChecker $requirementChecker,
+        private readonly ApprovalAmountResolverInterface $amountResolver,
         private readonly OrderApprovalRepositoryInterface $approvalRepository,
         private readonly FactoryInterface $approvalFactory,
         private readonly EventDispatcherInterface $eventDispatcher,
@@ -71,7 +73,7 @@ final class OrderApprovalRequestListener implements ResetInterface
             $approval = $this->approvalFactory->createNew();
             $approval->setOrder($order);
             $approval->setCompany($requirement->member->getCompany());
-            $approval->setTotal($order->getTotal());
+            $approval->setTotal($this->amountResolver->resolve($order));
             $approval->setCurrencyCode($order->getCurrencyCode());
             $approval->setOrderLimit($requirement->orderLimit);
             $entityManager->persist($approval);

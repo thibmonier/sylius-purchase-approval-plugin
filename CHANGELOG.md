@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.4.0] - unreleased
+
+- New setting `amount_basis` (`gross` or `net`) for the amount compared to the order limit of the buyer
+  and frozen on the approval request, therefore compared to the approval limit of the approvers. `net` is
+  the total of the order without its tax (shipping included): a store that shows B2B prices excluding tax
+  can state its limits in the same terms as its carts. Replace the service
+  `tmonier_purchase_approval.amount_resolver` (`ApprovalAmountResolverInterface`) to compute it otherwise.
+- The default is `gross` (the total, tax included): nothing changes for existing installations, so this is a minor
+  version without migration. Switching to `net` applies to the orders placed afterwards; approvals already
+  pending keep their frozen amount, and limits are to be reviewed since the same order now weighs less.
+- `ApprovalRequirementChecker` and `OrderApprovalRequestListener` get the resolver as a constructor argument
+  (internal services, wired by the bundle; only code that builds them by hand is concerned).
+
 ## [1.3.0] - 2026-10-22
 
 - Shop header: a click on the "Approvals" entry opens a panel with the 5 oldest approvals the
