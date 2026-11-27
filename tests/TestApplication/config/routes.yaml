@@ -9,3 +9,6 @@ tmonier_sylius_webhook_outbox:
 
 tmonier_sylius_purchase_approval:
     resource: "@TmonierSyliusPurchaseApprovalPlugin/config/routes.yaml"
+
+tmonier_sylius_platform_health:
+    resource: "@TmonierSyliusPlatformHealthPlugin/config/routes.yaml"

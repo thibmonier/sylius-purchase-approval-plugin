@@ -44,6 +44,15 @@ final class TranslationsTest extends TestCase
         }
     }
 
+    public function testEveryHealthMessageIsTranslated(): void
+    {
+        $messages = $this->flatten($this->parse('messages', 'en'));
+
+        foreach (['overdue.ok', 'overdue.found', 'closed_orders.ok', 'closed_orders.found'] as $key) {
+            self::assertArrayHasKey('tmonier_purchase_approval.health.' . $key, $messages);
+        }
+    }
+
     public function testEveryStateAndRefusalHasALabel(): void
     {
         $messages = $this->flatten($this->parse('messages', 'en'));
