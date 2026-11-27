@@ -173,6 +173,20 @@ orders must wait for `order.approved` when `order.approval_requested` was emitte
 order (both carry the order payload, plus an `approval` block), or rely on `order.placed` only
 for orders without approval.
 
+## Health probes
+
+If [`tmonier/sylius-platform-health-plugin`](https://github.com/thibmonier/sylius-platform-health-plugin) (`^0.5`) is installed, the plugin shows two probes in the **Plugins** category of the health page, the dashboard and `tmonier:health:check`. The health plugin is only suggested: without it nothing is loaded and nothing changes.
+
+| Identifier | Measures | `ok` | `warning` |
+|---|---|---|---|
+| `purchase_approval.overdue` | approvals still `pending` after `expire_after_days` (the daily `tmonier:approval:expire` no longer runs) | none | at least one |
+| `purchase_approval.closed_orders` | approvals still `pending` on an order that is no longer open | none | at least one |
+
+- An approval requested exactly `expire_after_days` days ago is not overdue; one second more and it is.
+- Read-only: one query on the `state, created_at` index per probe that returns identifiers only (never more than 501, the summary then reads "500+"), no entity loaded.
+- The summaries give a count and the delay: no order number, no customer, no amount. Each non-`ok` result links to the orders grid filtered on the pending approvals.
+- A probe whose query fails answers `unknown` (the cause goes to the log, not to the page).
+
 ## API
 
 | Operation | Who | Notes |
