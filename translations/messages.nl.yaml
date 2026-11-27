@@ -1,4 +1,11 @@
 tmonier_purchase_approval:
+    health:
+        overdue:
+            ok: 'Alle openstaande goedkeuringen vallen binnen de vervaltermijn.'
+            found: '%count% openstaande goedkeuring(en) ouder dan %days% dagen: het vervallen (tmonier:approval:expire) draait niet, controleer de cron.'
+        closed_orders:
+            ok: 'Geen openstaande goedkeuring voor een gesloten bestelling.'
+            found: '%count% openstaande goedkeuring(en) voor een bestelling die niet meer open is: voer tmonier:approval:expire uit om ze te sluiten.'
     ui:
         approvals: 'Goedkeuringen'
         approval: 'Goedkeuring'

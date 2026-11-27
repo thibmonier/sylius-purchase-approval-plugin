@@ -1,4 +1,11 @@
 tmonier_purchase_approval:
+    health:
+        overdue:
+            ok: 'Alle ausstehenden Freigaben liegen innerhalb der Verfallsfrist.'
+            found: '%count% ausstehende Freigabe(n) älter als %days% Tage: Der Verfall (tmonier:approval:expire) läuft nicht, prüfen Sie den Cron-Job.'
+        closed_orders:
+            ok: 'Keine ausstehende Freigabe zu einer geschlossenen Bestellung.'
+            found: '%count% ausstehende Freigabe(n) zu einer nicht mehr offenen Bestellung: Führen Sie tmonier:approval:expire aus, um sie zu schließen.'
     ui:
         approvals: 'Freigaben'
         approval: 'Freigabe'
