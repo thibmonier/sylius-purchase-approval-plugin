@@ -1,4 +1,11 @@
 tmonier_purchase_approval:
+    health:
+        overdue:
+            ok: 'Every pending approval is within its expiry delay.'
+            found: '%count% pending approval(s) older than %days% days: the expiry (tmonier:approval:expire) does not run, check its cron.'
+        closed_orders:
+            ok: 'No pending approval on a closed order.'
+            found: '%count% pending approval(s) on an order that is no longer open: run tmonier:approval:expire to close them.'
     ui:
         approvals: 'Approvals'
         approval: 'Approval'

@@ -1,4 +1,11 @@
 tmonier_purchase_approval:
+    health:
+        overdue:
+            ok: 'Tutte le richieste in sospeso rientrano nel termine di scadenza.'
+            found: '%count% richiesta/e di approvazione in sospeso da oltre %days% giorni: la scadenza (tmonier:approval:expire) non viene eseguita, verifichi il cron.'
+        closed_orders:
+            ok: 'Nessuna richiesta in sospeso su un ordine chiuso.'
+            found: '%count% richiesta/e di approvazione in sospeso su un ordine non più aperto: esegua tmonier:approval:expire per chiuderle.'
     ui:
         approvals: 'Approvazioni'
         approval: 'Approvazione'

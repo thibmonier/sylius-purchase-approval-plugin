@@ -169,6 +169,20 @@ commandes doit attendre `order.approved` lorsque `order.approval_requested` a é
 commande (les deux portent la charge utile de la commande, plus un bloc `approval`), ou se fier à `order.placed` uniquement
 pour les commandes sans validation.
 
+## Sondes de santé
+
+Si [`tmonier/sylius-platform-health-plugin`](https://github.com/thibmonier/sylius-platform-health-plugin) (`^0.5`) est installé, le plugin affiche deux sondes dans la catégorie **Plugins** de la page de santé, du tableau de bord et de `tmonier:health:check`. Le plugin de santé est seulement suggéré : sans lui, rien n'est chargé et rien ne change.
+
+| Identifiant | Mesure | `ok` | `warning` |
+|---|---|---|---|
+| `purchase_approval.overdue` | demandes encore `pending` après `expire_after_days` (le `tmonier:approval:expire` quotidien ne tourne plus) | aucune | au moins une |
+| `purchase_approval.closed_orders` | demandes encore `pending` sur une commande qui n'est plus ouverte | aucune | au moins une |
+
+- Une demande faite il y a exactement `expire_after_days` jours n'est pas échue ; une seconde de plus, elle l'est.
+- Lecture seule : une requête sur l'index `state, created_at` par sonde, qui ne renvoie que des identifiants (501 au plus, le résumé indique alors « 500+ »), aucune entité chargée.
+- Les résumés donnent un nombre et le délai : ni numéro de commande, ni client, ni montant. Chaque résultat qui n'est pas `ok` renvoie vers la grille des commandes filtrée sur les approbations en attente.
+- Une sonde dont la requête échoue répond `unknown` (la cause va au journal, pas à la page).
+
 ## API
 
 | Opération | Qui | Notes |

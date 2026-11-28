@@ -1,4 +1,11 @@
 tmonier_purchase_approval:
+    health:
+        overdue:
+            ok: 'Wszystkie oczekujące zatwierdzenia mieszczą się w terminie wygaśnięcia.'
+            found: '%count% oczekujących zatwierdzeń starszych niż %days% dni: wygaszanie (tmonier:approval:expire) nie działa, sprawdź zadanie cron.'
+        closed_orders:
+            ok: 'Brak oczekujących zatwierdzeń dla zamkniętego zamówienia.'
+            found: '%count% oczekujących zatwierdzeń dla zamówienia, które nie jest już otwarte: uruchom tmonier:approval:expire, aby je zamknąć.'
     ui:
         approvals: 'Zatwierdzenia'
         approval: 'Zatwierdzenie'

@@ -1,4 +1,11 @@
 tmonier_purchase_approval:
+    health:
+        overdue:
+            ok: 'Toutes les demandes en attente sont dans le délai d''expiration.'
+            found: '%count% demande(s) d''approbation en attente depuis plus de %days% jours : l''expiration (tmonier:approval:expire) ne tourne pas, vérifiez sa tâche cron.'
+        closed_orders:
+            ok: 'Aucune demande en attente sur une commande close.'
+            found: '%count% demande(s) d''approbation en attente sur une commande qui n''est plus ouverte : lancez tmonier:approval:expire pour les clore.'
     ui:
         approvals: 'Approbations'
         approval: 'Approbation'

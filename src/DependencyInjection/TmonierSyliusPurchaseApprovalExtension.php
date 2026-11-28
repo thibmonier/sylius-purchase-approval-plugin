@@ -10,6 +10,7 @@ use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
+use Tmonier\SyliusPlatformHealthPlugin\Health\HealthCheckInterface;
 use Tmonier\SyliusPurchaseApprovalPlugin\Approval\ApprovalDecisionMaker;
 use Tmonier\SyliusPurchaseApprovalPlugin\Entity\OrderApprovalInterface;
 use Tmonier\SyliusPurchaseApprovalPlugin\Mailer\Emails;
@@ -23,6 +24,17 @@ final class TmonierSyliusPurchaseApprovalExtension extends AbstractResourceExten
     private const OUTBOX_PARAMETER = 'tmonier_purchase_approval.webhook_outbox_bridge';
 
     private const ADMIN_ORDER_CREATION_PARAMETER = 'tmonier_purchase_approval.admin_order_creation_bridge';
+
+    /** @var \Closure(string): bool */
+    private readonly \Closure $interfaceExists;
+
+    /**
+     * @param (\Closure(string): bool)|null $interfaceExists
+     */
+    public function __construct(?\Closure $interfaceExists = null)
+    {
+        $this->interfaceExists = $interfaceExists ?? interface_exists(...);
+    }
 
     public function load(array $configs, ContainerBuilder $container): void
     {
@@ -47,6 +59,11 @@ final class TmonierSyliusPurchaseApprovalExtension extends AbstractResourceExten
         }
         if ($this->flag($container, self::ADMIN_ORDER_CREATION_PARAMETER)) {
             $loader->load('services/admin_order_creation.php');
+        }
+
+        // HealthCheckInterface::class is only a string here: it does not load the interface, so a shop without the health plugin never hits a fatal error.
+        if (($this->interfaceExists)(HealthCheckInterface::class)) {
+            $loader->load('health_checks.php');
         }
     }
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## [Unreleased]
+
+- Health probes for the [platform health plugin](https://github.com/thibmonier/sylius-platform-health-plugin):
+  `purchase_approval.overdue` (approvals pending for more than `expire_after_days`: the expiry cron no longer runs) and
+  `purchase_approval.closed_orders` (approvals pending on an order that is no longer open), both warning at one. The
+  health plugin is only suggested (`suggest`), never required: the probes are loaded only when it is installed.
+
 ## [1.4.0] - 2026-10-25
 
 - New setting `amount_basis` (`gross` or `net`) for the amount compared to the order limit of the buyer

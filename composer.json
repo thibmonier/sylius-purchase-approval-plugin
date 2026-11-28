@@ -39,10 +39,12 @@
         "symfony/web-profiler-bundle": "^6.4 || ^7.4 || ^8.0",
         "symfony/webpack-encore-bundle": "^2.2",
         "tmonier/sylius-admin-order-creation-plugin": "^1.0",
+        "tmonier/sylius-platform-health-plugin": "^0.5",
         "tmonier/sylius-webhook-outbox-plugin": "^1.0"
     },
     "suggest": {
         "sylius/invoicing-plugin": "Invoices are generated when an order is approved, not when it is placed",
+        "tmonier/sylius-platform-health-plugin": "Shows the health probes of this plugin (overdue approvals, approvals of closed orders) on the administration page and dashboard",
         "tmonier/sylius-webhook-outbox-plugin": "order.approved, order.approval_rejected and order.approval_expired webhooks"
     },
     "config": {

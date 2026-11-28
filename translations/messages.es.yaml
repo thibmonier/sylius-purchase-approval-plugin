@@ -1,4 +1,11 @@
 tmonier_purchase_approval:
+    health:
+        overdue:
+            ok: 'Todas las solicitudes pendientes están dentro del plazo de caducidad.'
+            found: '%count% solicitud(es) de aprobación pendiente(s) desde hace más de %days% días: la caducidad (tmonier:approval:expire) no se ejecuta, revise su tarea cron.'
+        closed_orders:
+            ok: 'Ninguna solicitud pendiente sobre un pedido cerrado.'
+            found: '%count% solicitud(es) de aprobación pendiente(s) sobre un pedido que ya no está abierto: ejecute tmonier:approval:expire para cerrarlas.'
     ui:
         approvals: 'Aprobaciones'
         approval: 'Aprobación'
